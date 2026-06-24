@@ -766,6 +766,14 @@ Zwróć wynik w formacie JSON:
         <div className="space-y-3">
           {posts.map((post) => (
             <div key={post.id} className="bg-[#131837] border border-white/10 rounded-2xl p-5 flex items-center gap-4 hover:border-white/20 transition-colors">
+              {/* Cover thumbnail */}
+              <div className="w-16 h-16 rounded-xl overflow-hidden bg-[#1a2040] flex-shrink-0 border border-white/10 relative">
+                <img 
+                  src={post.imageUrl || "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=150&q=80"} 
+                  alt="" 
+                  className="w-full h-full object-cover" 
+                />
+              </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
                   <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${post.status === 'published' ? 'bg-emerald-600/20 text-emerald-400' : 'bg-amber-600/20 text-amber-400'}`}>
@@ -798,19 +806,66 @@ Zwróć wynik w formacie JSON:
   );
 }
 
+const BLOG_PRESET_IMAGES = [
+  { name: 'Praca zespołowa', url: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80' },
+  { name: 'Wykresy i dane', url: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80' },
+  { name: 'Rekrutacja / Ludzie', url: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=800&q=80' },
+  { name: 'Biuro / Skupienie', url: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80' },
+  { name: 'Zdrowie i morale', url: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=800&q=80' },
+  { name: 'Burza mózgów', url: 'https://images.unsplash.com/photo-1531535934202-f022eed250c2?auto=format&fit=crop&w=800&q=80' }
+];
+
 function BlogPostEditor({ post, onSave, onBack }: { post: BlogPost; onSave: (p: BlogPost) => void; onBack: () => void }) {
   const [p, setP] = useState(post);
   const [tagsInput, setTagsInput] = useState(post.tags.join(', '));
   const [tab, setTab] = useState<'content' | 'seo'>('content');
+  const [imageTab, setImageTab] = useState<'upload' | 'preset' | 'url'>('preset');
 
   const update = (patch: Partial<BlogPost>) => setP((prev) => ({ ...prev, ...patch }));
 
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    if (file.size > 800 * 1024) {
+      alert("UWAGA: Wybrany obraz jest dosyć duży. Aby nie przepełnić pamięci przeglądarki (localStorage), zalecamy używanie plików o rozmiarze poniżej 800 KB lub skorzystanie z gotowych szablonów Unsplash.");
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      if (typeof reader.result === 'string') {
+        update({ imageUrl: reader.result });
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const insertMarkdown = (prefix: string, suffix = '') => {
+    const textarea = document.getElementById('blog-content-textarea') as HTMLTextAreaElement;
+    if (!textarea) return;
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const text = textarea.value;
+    const selected = text.substring(start, end);
+    const replacement = prefix + selected + suffix;
+    const newContent = text.substring(0, start) + replacement + text.substring(end);
+    update({ content: newContent });
+    
+    setTimeout(() => {
+      textarea.focus();
+      textarea.setSelectionRange(start + prefix.length, start + prefix.length + selected.length);
+    }, 50);
+  };
+
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="flex items-center gap-4">
         <button onClick={onBack} className="text-slate-400 hover:text-white"><ArrowLeft size={20} /></button>
         <div className="flex-1">
-          <h2 className="text-2xl font-bold text-white">{p.id.startsWith('post_') && !p.title ? 'Nowy wpis' : p.title || 'Edycja wpisu'}</h2>
+          <h2 className="text-2xl font-bold text-white">
+            {p.id.startsWith('post_') && !p.title ? 'Nowy wpis' : p.title || 'Edycja wpisu'}
+          </h2>
         </div>
         <div className="flex gap-3">
           <select
@@ -821,50 +876,230 @@ function BlogPostEditor({ post, onSave, onBack }: { post: BlogPost; onSave: (p: 
             <option value="draft">Szkic</option>
             <option value="published">Opublikowany</option>
           </select>
-          <button onClick={() => onSave({ ...p, tags: tagsInput.split(',').map((t) => t.trim()).filter(Boolean) })} className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-colors">
-            <Save size={15} /> Zapisz
+          <button 
+            onClick={() => onSave({ ...p, tags: tagsInput.split(',').map((t) => t.trim()).filter(Boolean) })} 
+            className="flex items-center gap-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:opacity-90 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all shadow-md"
+          >
+            <Save size={15} /> Zapisz wpis
           </button>
         </div>
       </div>
 
+      {/* Tabs */}
       <div className="flex gap-2">
         {(['content', 'seo'] as const).map((t) => (
-          <button key={t} onClick={() => setTab(t)} className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${tab === t ? 'bg-violet-600 text-white' : 'bg-[#131837] text-slate-400 hover:text-white border border-white/10'}`}>
-            {t === 'content' ? 'Treść' : 'SEO'}
+          <button 
+            key={t} 
+            onClick={() => setTab(t)} 
+            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${tab === t ? 'bg-violet-600 text-white' : 'bg-[#131837] text-slate-400 hover:text-white border border-white/10'}`}
+          >
+            {t === 'content' ? 'Treść i Media' : 'Meta tagi SEO'}
           </button>
         ))}
       </div>
 
-      <div className="bg-[#131837] border border-white/10 rounded-2xl p-6 space-y-4">
+      {/* Editor Content */}
+      <div className="bg-[#131837] border border-white/10 rounded-2xl p-6 space-y-5">
         {tab === 'content' && (
           <>
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1.5">Tytuł wpisu</label>
-              <input value={p.title} onChange={(e) => update({ title: e.target.value, slug: slugify(e.target.value) })} className="w-full bg-[#1a2040] border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-violet-500" placeholder="Tytuł wpisu..." />
+              <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wider">Tytuł wpisu *</label>
+              <input 
+                value={p.title} 
+                onChange={(e) => update({ title: e.target.value, slug: slugify(e.target.value) })} 
+                className="w-full bg-[#1a2040] border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-violet-500" 
+                placeholder="np. 5 sposobów na podniesienie morale w zespole" 
+              />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-medium text-slate-400 mb-1.5">Slug URL</label>
-                <input value={p.slug} onChange={(e) => update({ slug: e.target.value })} className="w-full bg-[#1a2040] border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-violet-500" />
+                <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wider">Adres URL wpisu (Slug)</label>
+                <input 
+                  value={p.slug} 
+                  onChange={(e) => update({ slug: e.target.value })} 
+                  className="w-full bg-[#1a2040] border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-violet-500" 
+                />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-400 mb-1.5">Kategoria</label>
-                <select value={p.category} onChange={(e) => update({ category: e.target.value })} className="w-full bg-[#1a2040] border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-violet-500">
+                <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wider">Kategoria główna</label>
+                <select 
+                  value={p.category} 
+                  onChange={(e) => update({ category: e.target.value })} 
+                  className="w-full bg-[#1a2040] border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-violet-500"
+                >
                   {BLOG_CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
                 </select>
               </div>
             </div>
-            <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1.5">Opis (excerpt)</label>
-              <textarea value={p.excerpt} onChange={(e) => update({ excerpt: e.target.value })} rows={2} className="w-full bg-[#1a2040] border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-violet-500 resize-none" />
+
+            {/* OKŁADKA WPISU */}
+            <div className="border border-white/5 bg-[#171b3e] rounded-xl p-5 space-y-4">
+              <div>
+                <h4 className="text-white font-semibold text-xs uppercase tracking-wider mb-1">Obrazek wyróżniający (Okładka)</h4>
+                <p className="text-slate-400 text-xs">Wybierz gotowy szablon z galerii, wgraj własne zdjęcie lub wklej dowolny adres URL.</p>
+              </div>
+
+              {/* Wybór metody */}
+              <div className="flex gap-2 border-b border-white/5 pb-3">
+                {([
+                  { id: 'preset', label: 'Wybierz szablon Unsplash' },
+                  { id: 'upload', label: 'Wgraj plik z dysku' },
+                  { id: 'url', label: 'Wklej link bezpośredni' }
+                ] as const).map(t => (
+                  <button
+                    key={t.id}
+                    type="button"
+                    onClick={() => setImageTab(t.id)}
+                    className={`text-xs px-3 py-1.5 rounded-lg font-medium transition-all ${imageTab === t.id ? 'bg-violet-600 text-white' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
+                  >
+                    {t.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Preset Gallery */}
+              {imageTab === 'preset' && (
+                <div className="grid grid-cols-2 sm:grid-cols-6 gap-3">
+                  {BLOG_PRESET_IMAGES.map((img) => (
+                    <button
+                      key={img.name}
+                      type="button"
+                      onClick={() => update({ imageUrl: img.url })}
+                      className={`group relative aspect-[4/3] rounded-lg overflow-hidden border transition-all ${p.imageUrl === img.url ? 'border-violet-500 ring-2 ring-violet-500/50' : 'border-white/10 opacity-70 hover:opacity-100'}`}
+                    >
+                      <img src={img.url} alt={img.name} className="w-full h-full object-cover" />
+                      <span className="absolute inset-x-0 bottom-0 bg-black/75 text-[9px] text-white py-1 text-center truncate px-1">{img.name}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Upload file */}
+              {imageTab === 'upload' && (
+                <div className="flex flex-col sm:flex-row gap-4 items-center">
+                  <label className="flex items-center gap-2 bg-[#1a2040] hover:bg-white/10 border border-white/10 px-4 py-2.5 rounded-xl text-xs text-white font-medium cursor-pointer transition-colors">
+                    <Upload size={14} className="text-violet-400" />
+                    Wybierz plik z dysku...
+                    <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+                  </label>
+                  <p className="text-[10px] text-slate-400">Przeglądarka przetworzy plik na format lokalny Base64. Zalecane obrazy do 800 KB.</p>
+                </div>
+              )}
+
+              {/* Raw URL */}
+              {imageTab === 'url' && (
+                <div>
+                  <input
+                    value={p.imageUrl || ''}
+                    onChange={(e) => update({ imageUrl: e.target.value })}
+                    placeholder="https://images.unsplash.com/photo-..."
+                    className="w-full bg-[#1a2040] border border-white/10 rounded-xl px-4 py-3 text-white text-xs outline-none focus:border-violet-500 font-mono"
+                  />
+                </div>
+              )}
+
+              {/* Live Preview */}
+              {p.imageUrl && (
+                <div className="flex gap-4 items-center bg-[#111430] p-3 rounded-lg border border-white/5">
+                  <div className="w-24 aspect-[16/9] rounded overflow-hidden bg-slate-800 flex-shrink-0">
+                    <img src={p.imageUrl} alt="Podgląd okładki" className="w-full h-full object-cover" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-[10px] text-slate-400">Podgląd ustawionej okładki</div>
+                    <div className="text-emerald-400 text-xs font-semibold flex items-center gap-1 mt-0.5">
+                      ✓ Obrazek jest przypisany do artykułu
+                    </div>
+                  </div>
+                  <button 
+                    onClick={() => update({ imageUrl: '' })}
+                    className="text-xs text-red-400 hover:text-red-300 font-medium px-3 py-1 hover:bg-red-500/10 rounded-lg transition-colors"
+                  >
+                    Usuń zdjęcie
+                  </button>
+                </div>
+              )}
             </div>
+
+            {/* Excerpt */}
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1.5">Treść (Markdown)</label>
-              <textarea value={p.content} onChange={(e) => update({ content: e.target.value })} rows={18} className="w-full bg-[#1a2040] border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-violet-500 resize-none font-mono text-xs leading-relaxed" />
+              <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wider">Krótki wstęp / Wypis (Excerpt) *</label>
+              <textarea 
+                value={p.excerpt} 
+                onChange={(e) => update({ excerpt: e.target.value })} 
+                rows={2} 
+                placeholder="Podsumowanie artykułu widoczne na liście (150-200 znaków)..."
+                className="w-full bg-[#1a2040] border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-violet-500 resize-none" 
+              />
             </div>
+
+            {/* Content text-editor with formatting toolbar */}
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1.5">Tagi (oddzielone przecinkami)</label>
-              <input value={tagsInput} onChange={(e) => setTagsInput(e.target.value)} className="w-full bg-[#1a2040] border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-violet-500" placeholder="HR, zaangażowanie, eNPS" />
+              <div className="flex justify-between items-center mb-1.5">
+                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider">Treść artykułu (Markdown) *</label>
+                <span className="text-[10px] text-slate-500 font-mono">Formatowanie Markdown aktywne</span>
+              </div>
+
+              {/* Formatting Toolbar */}
+              <div className="bg-[#171b3e] border-t border-x border-white/10 rounded-t-xl px-3 py-2 flex flex-wrap gap-1.5 items-center">
+                <button type="button" onClick={() => insertMarkdown('**', '**')} className="px-2.5 py-1 bg-[#1a2040] hover:bg-white/10 text-white rounded text-xs font-bold font-mono" title="Pogrubienie">B</button>
+                <button type="button" onClick={() => insertMarkdown('*', '*')} className="px-2.5 py-1 bg-[#1a2040] hover:bg-white/10 text-white rounded text-xs italic font-mono" title="Kursywa">I</button>
+                <div className="w-[1px] h-4 bg-white/10 mx-1" />
+                <button type="button" onClick={() => insertMarkdown('## ')} className="px-2 py-1 bg-[#1a2040] hover:bg-white/10 text-white rounded text-xs font-bold" title="Nagłówek H2">H2</button>
+                <button type="button" onClick={() => insertMarkdown('### ')} className="px-2 py-1 bg-[#1a2040] hover:bg-white/10 text-white rounded text-xs font-bold" title="Nagłówek H3">H3</button>
+                <div className="w-[1px] h-4 bg-white/10 mx-1" />
+                <button type="button" onClick={() => insertMarkdown('> ')} className="px-2 py-1 bg-[#1a2040] hover:bg-white/10 text-white text-xs" title="Cytat">Cytat</button>
+                <button type="button" onClick={() => insertMarkdown('- ')} className="px-2 py-1 bg-[#1a2040] hover:bg-white/10 text-white text-xs" title="Element listy">Lista</button>
+                <div className="w-[1px] h-4 bg-white/10 mx-1" />
+                
+                {/* Image insert */}
+                <button 
+                  type="button" 
+                  onClick={() => {
+                    const url = prompt("Wklej bezpośredni adres URL zdjęcia (np. z Unsplash lub innego hostingu):");
+                    if (url) insertMarkdown(`![Opis obrazka](${url})`);
+                  }} 
+                  className="flex items-center gap-1 px-2.5 py-1 bg-violet-600/30 hover:bg-violet-600/50 text-violet-300 rounded text-xs font-medium"
+                  title="Wstaw obrazek w treści"
+                >
+                  <Image size={12} /> Dodaj zdjęcie
+                </button>
+
+                {/* Link insert */}
+                <button 
+                  type="button" 
+                  onClick={() => {
+                    const url = prompt("Wpisz lub wklej adres URL linku:");
+                    if (url) insertMarkdown(`[Tekst linku](${url})`);
+                  }} 
+                  className="flex items-center gap-1 px-2.5 py-1 bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 rounded text-xs font-medium"
+                  title="Wstaw link"
+                >
+                  <Link size={12} /> Link
+                </button>
+              </div>
+
+              <textarea 
+                id="blog-content-textarea"
+                value={p.content} 
+                onChange={(e) => update({ content: e.target.value })} 
+                rows={16} 
+                placeholder="Wpisz treść artykułu..."
+                className="w-full bg-[#1a2040] border border-white/10 rounded-b-xl px-4 py-3 text-white text-sm outline-none focus:border-violet-500 font-mono text-xs leading-relaxed" 
+              />
+              <p className="text-[10px] text-slate-500 mt-1.5">
+                💡 Wskazówka: Możesz dodawać zdjęcia wewnątrz treści artykułu za pomocą przycisku 🖼 **Dodaj zdjęcie**. Wklej dowolny link graficzny.
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wider">Tagi (oddzielone przecinkami)</label>
+              <input 
+                value={tagsInput} 
+                onChange={(e) => setTagsInput(e.target.value)} 
+                className="w-full bg-[#1a2040] border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-violet-500" 
+                placeholder="np. zaangażowanie, analityka HR, retention" 
+              />
             </div>
           </>
         )}
@@ -872,21 +1107,21 @@ function BlogPostEditor({ post, onSave, onBack }: { post: BlogPost; onSave: (p: 
         {tab === 'seo' && (
           <>
             <div className="p-4 bg-violet-600/10 border border-violet-600/20 rounded-xl">
-              <p className="text-violet-300 text-sm font-medium mb-1">Podgląd w Google</p>
-              <p className="text-blue-400 text-sm font-medium">{p.seoTitle || p.title}</p>
-              <p className="text-green-400 text-xs">hrly.pl/blog/{p.slug}</p>
-              <p className="text-slate-400 text-xs mt-1 leading-relaxed">{p.seoDescription || p.excerpt}</p>
+              <p className="text-violet-300 text-xs font-semibold mb-1 uppercase tracking-wider font-mono">Podgląd w Google</p>
+              <p className="text-blue-400 text-sm font-bold truncate">{p.seoTitle || p.title || 'Tytuł wpisu'}</p>
+              <p className="text-green-400 text-xs font-mono">hrly.pl/blog/{p.slug || 'adres-wpisu'}</p>
+              <p className="text-slate-400 text-xs mt-1 leading-relaxed line-clamp-2">{p.seoDescription || p.excerpt || 'Opis wpisu...'}</p>
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1.5">Tytuł SEO <span className="text-slate-500">({p.seoTitle.length}/60 znaków)</span></label>
-              <input value={p.seoTitle} onChange={(e) => update({ seoTitle: e.target.value })} maxLength={70} className="w-full bg-[#1a2040] border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-violet-500" />
+              <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wider">Tytuł SEO <span className="text-slate-500 font-normal">({p.seoTitle.length}/60 znaków)</span></label>
+              <input value={p.seoTitle} onChange={(e) => update({ seoTitle: e.target.value })} maxLength={70} className="w-full bg-[#1a2040] border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-violet-500" placeholder="Meta title..." />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1.5">Opis SEO / Meta Description <span className="text-slate-500">({p.seoDescription.length}/160 znaków)</span></label>
-              <textarea value={p.seoDescription} onChange={(e) => update({ seoDescription: e.target.value })} maxLength={170} rows={3} className="w-full bg-[#1a2040] border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-violet-500 resize-none" />
+              <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wider">Opis SEO / Meta Description <span className="text-slate-500 font-normal">({p.seoDescription.length}/160 znaków)</span></label>
+              <textarea value={p.seoDescription} onChange={(e) => update({ seoDescription: e.target.value })} maxLength={170} rows={3} className="w-full bg-[#1a2040] border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-violet-500 resize-none" placeholder="Meta description..." />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1.5">Autor</label>
+              <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wider">Autor wpisu</label>
               <input value={p.author} onChange={(e) => update({ author: e.target.value })} className="w-full bg-[#1a2040] border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-violet-500" />
             </div>
           </>
@@ -1291,6 +1526,23 @@ function AdminSettings({ config, updateSection }: { config: SiteConfig; updateSe
         <button onClick={() => { updateSection('global', global); showToast('Ustawienia zapisane!'); }} className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition-colors">
           <Save size={15} /> Zapisz ustawienia globalne
         </button>
+      </div>
+
+      <div className="bg-[#131837] border border-white/10 rounded-2xl p-6 space-y-4">
+        <h3 className="text-white font-semibold flex items-center gap-2"><Image size={18} className="text-violet-400" /> Zdjęcie wyróżniające stronę (Open Graph) & Favicon</h3>
+        <p className="text-slate-400 text-xs">Ustawiono automatycznie spakowany obraz udostępniania w social media (1200x630px) oraz ikonę 📊 witryny.</p>
+        <div className="flex flex-col sm:flex-row gap-4 items-center bg-[#111430] p-4 rounded-xl border border-white/5">
+          <div className="w-32 aspect-[1.91/1] rounded overflow-hidden bg-slate-800 flex-shrink-0 relative border border-white/10">
+            <img src="/hrly_og_banner.png" alt="Podgląd og:image" className="w-full h-full object-cover" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="text-[10px] text-slate-400 uppercase tracking-wider">Adres URL obrazu społecznościowego</div>
+            <code className="text-xs text-violet-300 block truncate mt-1 font-mono">https://hrly.pl/hrly_og_banner.png</code>
+            <p className="text-slate-500 text-[10px] mt-1.5">
+              ✓ Obrazek jest spakowany w katalogu publicznym i wczytywany przy publikacji na Vercelu.
+            </p>
+          </div>
+        </div>
       </div>
 
       <div className="bg-[#131837] border border-white/10 rounded-2xl p-6 space-y-4">

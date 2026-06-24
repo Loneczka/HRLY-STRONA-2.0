@@ -14,7 +14,7 @@ import { HrlyPricingCalculator } from './components/HrlyPricingCalculator';
 import { HrlyHeroGraphic } from './components/HrlyHeroGraphic';
 import { HrlyMethodologyVisual } from './components/HrlyMethodologyVisual';
 import { AdminPanel } from './components/AdminPanel';
-import { addLead } from './hooks/useSiteConfig';
+import { addLead, useSiteConfig } from './hooks/useSiteConfig';
 
 type PageRoute = 'home' | 'features' | 'pricing' | 'about' | 'blog' | 'contact' | 'admin';
 
@@ -364,7 +364,9 @@ const getScreenshotImpactText = (num: string) => {
 };
 
 export default function App() {
+  const { config, updateSection } = useSiteConfig();
   const [activeTab, setActiveTab] = useState<PageRoute>('home');
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [heroRole, setHeroRole] = useState<'director' | 'manager' | 'ceo'>('director');
   const [activeFeatureTab, setActiveFeatureTab] = useState<'cyclical' | 'pulse' | 'onboarding' | 'custom'>('cyclical');
@@ -645,17 +647,21 @@ export default function App() {
                     {/* Badge */}
                     <div className="inline-flex items-center gap-2 bg-[#E3DEEE]/60 text-[#3B2F8C] px-3.5 py-1.5 rounded-full border border-[#C4BBDE]/40 text-[10px] font-bold uppercase tracking-wider shadow-xs">
                       <Sparkles className="w-3.5 h-3.5 text-[#F4A574]" />
-                      01 · ANALITYKA I REKOMENDACJE HR W KILKA MINUT
+                      {config.hero.badge || "01 · ANALITYKA I REKOMENDACJE HR W KILKA MINUT"}
                     </div>
 
                     {/* Headline & Description */}
                     <div className="space-y-4">
                       <h2 className="font-display font-extrabold text-3xl sm:text-5xl lg:text-[44px] text-[#14183D] tracking-tight leading-[1.1] uppercase">
-                        Decyzje HR oparte <br />na danych, <br />
-                        <span className="text-[#3B2F8C] normal-case italic font-light">a nie na domysłach.</span>
+                        {config.hero.headline.includes('a nie na domysłach') ? (
+                          <>
+                            Decyzje HR oparte <br />na danych, <br />
+                            <span className="text-[#3B2F8C] normal-case italic font-light">a nie na domysłach.</span>
+                          </>
+                        ) : config.hero.headline}
                       </h2>
                       <p className="text-xs sm:text-sm text-[#55506E] leading-relaxed max-w-lg">
-                        Automatyczna platforma HR Analytics, która bada nastroje zespołu, predykcyjnie wykrywa ryzyka odejść i dostarcza menedżerom gotowe plany działań oraz checklisty w kilka minut.
+                        {config.hero.subheadline || "Automatyczna platforma HR Analytics, która bada nastroje zespołu, predykcyjnie wykrywa ryzyka odejść i dostarcza menedżerom gotowe plany działań oraz checklisty w kilka minut."}
                       </p>
                     </div>
 
@@ -665,7 +671,7 @@ export default function App() {
                         onClick={() => setActiveTab('pricing')}
                         className="w-full sm:w-auto py-3.5 px-6 bg-[#3B2F8C] hover:bg-[#231B5E] text-white rounded-xl text-xs font-bold tracking-tight shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer hover:scale-[1.02]"
                       >
-                        Wypróbuj bezpłatnie
+                        {config.hero.ctaPrimaryText || "Wypróbuj bezpłatnie"}
                         <ArrowRight className="w-4 h-4 text-[#F4A574]" />
                       </button>
                       
@@ -673,7 +679,7 @@ export default function App() {
                         onClick={() => setIsDashboardModalOpen(true)}
                         className="w-full sm:w-auto py-3.5 px-6 bg-white hover:bg-[#F4F1EC] text-[#3B2F8C] border border-[#C4BBDE] rounded-xl text-xs font-bold tracking-tight text-center transition-all cursor-pointer hover:scale-[1.02]"
                       >
-                        Obejrzyj demo interaktywne
+                        {config.hero.ctaSecondaryText || "Obejrzyj demo interaktywne"}
                       </button>
                     </div>
 
@@ -700,6 +706,21 @@ export default function App() {
                   </div>
                 </div>
 
+                {/* Dynamic Stats Row from CMS config */}
+                <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-6 pt-8 border-t border-[#EFEAE1]/60 mt-8 relative z-10">
+                  <div className="bg-white/80 border border-[#EFEAE1]/75 p-5 rounded-2xl shadow-2xs text-center hover:border-[#C4BBDE]/55 transition-all">
+                    <div className="text-3xl font-extrabold text-[#3B2F8C] font-mono leading-none">{config.stats.stat1Value || "58"}</div>
+                    <div className="text-[10px] text-[#A39AB4] font-mono uppercase font-bold tracking-wider mt-2">{config.stats.stat1Label || "Analizowanych czynników"}</div>
+                  </div>
+                  <div className="bg-white/80 border border-[#EFEAE1]/75 p-5 rounded-2xl shadow-2xs text-center hover:border-[#C4BBDE]/55 transition-all">
+                    <div className="text-3xl font-extrabold text-[#F4A574] font-mono leading-none">{config.stats.stat2Value || "10×"}</div>
+                    <div className="text-[10px] text-[#A39AB4] font-mono uppercase font-bold tracking-wider mt-2">{config.stats.stat2Label || "Szybsze raportowanie"}</div>
+                  </div>
+                  <div className="bg-white/80 border border-[#EFEAE1]/75 p-5 rounded-2xl shadow-2xs text-center hover:border-[#C4BBDE]/55 transition-all">
+                    <div className="text-3xl font-extrabold text-[#3B2F8C] font-mono leading-none">{config.stats.stat3Value || "+23%"}</div>
+                    <div className="text-[10px] text-[#A39AB4] font-mono uppercase font-bold tracking-wider mt-2">{config.stats.stat3Label || "Wzrost zaangażowania"}</div>
+                  </div>
+                </div>
               </section>
 
               {/* SECTION: Interactive Demo Trigger Banner */}
@@ -1797,7 +1818,7 @@ export default function App() {
               exit={{ opacity: 0, y: -15 }}
               transition={{ duration: 0.3 }}
             >
-              <HrlyBlogSection />
+              <HrlyBlogSection config={config} />
             </motion.div>
           )}
 

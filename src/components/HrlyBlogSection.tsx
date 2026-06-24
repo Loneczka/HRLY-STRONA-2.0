@@ -4,6 +4,7 @@ import {
   Search, BookOpen, Clock, Calendar, ChevronRight, X, 
   Send, CheckCircle, ArrowRight, BookMarked, Filter, Share2, Mail
 } from 'lucide-react';
+import { SiteConfig } from '../hooks/useSiteConfig';
 
 // Exact categories from PDF Page 8 filter list
 const PDF_CATEGORIES = [
@@ -12,8 +13,11 @@ const PDF_CATEGORIES = [
   "rozwój kariery", "rozwój i szkolenia", "przyszłość pracy", "kultura organizacyjna"
 ];
 
-const getArticleImage = (id: number) => {
-  switch (id) {
+const getArticleImage = (article: BlogArticle & { imageUrl?: string }) => {
+  if (article.imageUrl) return article.imageUrl;
+  const idStr = String(article.id);
+  const numericId = parseInt(idStr.replace(/\D/g, ''), 10) || 1;
+  switch (numericId % 5 + 1) {
     case 1: return "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80"; // Teamwork
     case 2: return "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&q=80"; // Charts/Data
     case 3: return "https://images.unsplash.com/photo-1552581230-c01bc9148c5b?auto=format&fit=crop&w=600&q=80"; // Tough meeting
@@ -25,19 +29,36 @@ const getArticleImage = (id: number) => {
 
 export interface HrlyBlogSectionProps {
   onNavigate?: (tab: string) => void;
+  config?: SiteConfig;
 }
 
-export const HrlyBlogSection: React.FC<HrlyBlogSectionProps> = ({ onNavigate }) => {
+export const HrlyBlogSection: React.FC<HrlyBlogSectionProps> = ({ onNavigate, config }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Wszystkie");
-  const [selectedArticle, setSelectedArticle] = useState<BlogArticle | null>(null);
+  const [selectedArticle, setSelectedArticle] = useState<any | null>(null);
   
   // Newsletter state
   const [newsletterEmail, setNewsletterEmail] = useState("");
   const [newsletterSubscribed, setNewsletterSubscribed] = useState(false);
 
+  const allArticles = useMemo(() => {
+    const dynamicArticles = (config?.blogPosts || [])
+      .filter(post => post.status === 'published')
+      .map(post => ({
+        id: post.id,
+        title: post.title,
+        category: post.category,
+        summary: post.excerpt || post.title,
+        content: post.content,
+        readTime: `${Math.ceil(post.content.split(/\s+/).length / 200) || 3} min czytania`,
+        publishDate: post.publishedAt ? post.publishedAt.split('T')[0] : new Date().toISOString().split('T')[0],
+        imageUrl: post.imageUrl
+      }));
+    return [...dynamicArticles, ...BLOG_ARTICLES];
+  }, [config?.blogPosts]);
+
   const filteredArticles = useMemo(() => {
-    return BLOG_ARTICLES.filter(article => {
+    return allArticles.filter(article => {
       const matchesSearch = 
         article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         article.summary.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -47,12 +68,11 @@ export const HrlyBlogSection: React.FC<HrlyBlogSectionProps> = ({ onNavigate }) 
         return matchesSearch;
       }
       
-      // Flexible matching (case insensitive and taking into account small typos or subcategories)
       const matchesCategory = 
         article.category.toLowerCase().trim() === selectedCategory.toLowerCase().trim();
       return matchesSearch && matchesCategory;
     });
-  }, [searchQuery, selectedCategory]);
+  }, [allArticles, searchQuery, selectedCategory]);
 
   const handleNewsletterSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -178,7 +198,7 @@ export const HrlyBlogSection: React.FC<HrlyBlogSectionProps> = ({ onNavigate }) 
             <Search className="w-4 h-4 text-[#A39AB4] absolute left-3 top-3" />
           </div>
           <div className="text-xs text-[#55506E] font-mono shrink-0">
-            Pokazano: <strong>{filteredArticles.length}</strong> artykułów z <strong>{BLOG_ARTICLES.length}</strong> ogółem
+            Pokazano: <strong>{filteredArticles.length}</strong> artykułów z <strong>{allArticles.length}</strong> ogółem
           </div>
         </div>
 
@@ -207,7 +227,7 @@ export const HrlyBlogSection: React.FC<HrlyBlogSectionProps> = ({ onNavigate }) 
                     {/* Beautiful cover image with zoom effect on hover */}
                     <div className="aspect-[16/9] w-full overflow-hidden bg-[#F4F1EC] relative border-b border-[#EFEAE1]/60">
                       <img 
-                        src={getArticleImage(article.id)} 
+                        src={getArticleImage(article)} 
                         alt={article.title} 
                         referrerPolicy="no-referrer"
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
@@ -273,7 +293,7 @@ export const HrlyBlogSection: React.FC<HrlyBlogSectionProps> = ({ onNavigate }) 
             {/* Cinematic Cover photo inside Modal */}
             <div className="aspect-[21/9] w-full rounded-xl overflow-hidden bg-[#F4F1EC] border border-[#C4BBDE]/30 shadow-xs relative">
               <img 
-                src={getArticleImage(selectedArticle.id)} 
+                src={getArticleImage(selectedArticle)} 
                 alt={selectedArticle.title}
                 referrerPolicy="no-referrer"
                 className="w-full h-full object-cover"
