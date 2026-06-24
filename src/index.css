@@ -1,0 +1,136 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800&family=Fraunces:ital,opsz,wght@1,9..144,300..900&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-primary-faint: #F4F1EC;
+  --color-primary-light: #E3DEEE;
+  --color-border-indigo: #C4BBDE;
+  --color-indigo-primary: #3B2F8C;
+  --color-indigo-hover: #231B5E;
+  --color-accent-apricot: #F4A574;
+  --color-neutral-surface: #FFFFFF;
+  --color-neutral-bg: #FBFAF8;
+  --color-border-soft: #EFEAE1;
+  --color-faint-gray: #A39AB4;
+  --color-muted-purple: #55506E;
+  --color-text-dark: #14183D;
+  --color-success-green: #047857;
+  --color-success-soft: #D1FAE5;
+  --color-warning-orange: #B45309;
+  --color-danger-red: #B91C1C;
+  
+  --font-sans: 'Poppins', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Montserrat', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --font-script: 'Fraunces', serif;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotateX(12deg); }
+  50% { transform: translateY(-8px) rotateX(12deg); }
+}
+
+@keyframes pulse-glowing {
+  0%, 100% { box-shadow: 0 0 15px rgba(244, 165, 116, 0.4); }
+  50% { box-shadow: 0 0 25px rgba(244, 165, 116, 0.82); }
+}
+
+@keyframes grid-move {
+  0% { background-position: 0 0; }
+  100% { background-position: 40px 40px; }
+}
+
+.isometric-container {
+  perspective: 1200px;
+}
+
+.isometric-card {
+  transform-style: preserve-3d;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+}
+
+.isometric-grid {
+  background-image: 
+    linear-gradient(to right, rgba(196, 187, 222, 0.1) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(196, 187, 222, 0.1) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.isometric-grid-moving {
+  animation: grid-move 20s linear infinite;
+}
+
+/* Geometric Balance Custom rules */
+.glow-border {
+  position: relative;
+  background: linear-gradient(180deg, rgba(59, 47, 140, 0.05) 0%, rgba(59, 47, 140, 0) 100%);
+  border: 1px solid rgba(196, 187, 222, 0.3);
+  box-shadow: 0 0 20px rgba(59, 47, 140, 0.05);
+}
+
+.grid-pattern {
+  background-image: radial-gradient(rgba(196, 187, 222, 0.2) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.gradient-text {
+  background: linear-gradient(to right, #14183D 30%, #3B2F8C 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(196, 187, 222, 0.3);
+}
+
+.dark-glass-panel {
+  background: rgba(20, 24, 61, 0.95);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(244, 165, 116, 0.15);
+}
+
+/* Pulse Wave SVG Animations */
+@keyframes pulseWaveAnim {
+  0% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: -200;
+  }
+}
+
+@keyframes pulseWaveAnimAlt {
+  0% {
+    stroke-dashoffset: -40;
+  }
+  100% {
+    stroke-dashoffset: -240;
+  }
+}
+
+@keyframes travelDotAnim {
+  0% {
+    cx: 0px;
+  }
+  100% {
+    cx: 200px;
+  }
+}
+
+.pulse-wave-1 {
+  stroke-dasharray: 60 140;
+  animation: pulseWaveAnim 3.5s linear infinite;
+}
+
+.pulse-wave-2 {
+  stroke-dasharray: 50 150;
+  animation: pulseWaveAnimAlt 2.8s linear infinite;
+}
+
+.traveling-dot {
+  animation: travelDotAnim 2.8s linear infinite;
+}
+
+

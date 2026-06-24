@@ -1,0 +1,8 @@
+{
+  "name": "HRly Analytics",
+  "description": "Inteligentna i przyjazna platforma analityki HR i badania kapitału ludzkiego. Pozwala mierzyć 58 czynników w 11 obszarach organizacji, dając liderom gotowe narzędzia, rekomendacje i plany działania w kilka minut.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
