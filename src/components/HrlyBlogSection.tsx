@@ -27,6 +27,108 @@ const getArticleImage = (article: BlogArticle & { imageUrl?: string }) => {
   }
 };
 
+function parseMarkdownToReact(md: string): React.ReactNode[] {
+  if (!md) return [];
+  
+  const lines = md.split('\n');
+  const elements: React.ReactNode[] = [];
+  let currentList: React.ReactNode[] = [];
+  
+  const parseInlineStyles = (text: string): React.ReactNode[] => {
+    const regex = /(!?\[[^\]]*\]\([^)]*\)|\*\*[^*]+\*\*|\*[^*]+\*)/g;
+    const tokens = text.split(regex);
+    
+    return tokens.map((token, i) => {
+      if (token.startsWith('!') && token.startsWith('![') && token.includes('](')) {
+        const altMatch = token.match(/!\[([^\]]*)\]/);
+        const urlMatch = token.match(/\(([^)]*)\)/);
+        const alt = altMatch ? altMatch[1] : '';
+        const url = urlMatch ? urlMatch[1] : '';
+        return (
+          <img 
+            key={`img-${i}`} 
+            src={url} 
+            alt={alt} 
+            className="my-5 rounded-2xl max-w-full h-auto mx-auto border border-[#EFEAE1] shadow-md object-contain max-h-[380px]" 
+            referrerPolicy="no-referrer"
+          />
+        );
+      } else if (token.startsWith('[') && token.includes('](')) {
+        const labelMatch = token.match(/\[([^\]]*)\]/);
+        const urlMatch = token.match(/\(([^)]*)\)/);
+        const label = labelMatch ? labelMatch[1] : '';
+        const url = urlMatch ? urlMatch[1] : '';
+        return (
+          <a key={`a-${i}`} href={url} target="_blank" rel="noopener noreferrer" className="text-[#3B2F8C] font-bold hover:underline">
+            {label}
+          </a>
+        );
+      } else if (token.startsWith('**') && token.endsWith('**')) {
+        return <strong key={`bold-${i}`} className="font-extrabold text-[#14183D]">{token.slice(2, -2)}</strong>;
+      } else if (token.startsWith('*') && token.endsWith('*')) {
+        return <em key={`em-${i}`} className="italic text-[#55506E]">{token.slice(1, -1)}</em>;
+      }
+      return token;
+    });
+  };
+
+  const flushList = (key: number) => {
+    if (currentList.length > 0) {
+      elements.push(
+        <ul key={`list-${key}`} className="list-disc pl-6 space-y-2 my-4 text-xs sm:text-sm text-[#55506E] leading-relaxed text-left">
+          {currentList}
+        </ul>
+      );
+      currentList = [];
+    }
+  };
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    
+    if (line.startsWith('## ')) {
+      flushList(i);
+      elements.push(
+        <h2 key={`h2-${i}`} className="font-display font-bold text-lg sm:text-xl text-[#14183D] tracking-tight mt-7 mb-4.5 border-b border-[#EFEAE1] pb-1.5 text-left">
+          {parseInlineStyles(line.slice(3))}
+        </h2>
+      );
+    } else if (line.startsWith('### ')) {
+      flushList(i);
+      elements.push(
+        <h3 key={`h3-${i}`} className="font-display font-bold text-sm sm:text-base text-[#14183D] tracking-tight mt-6 mb-3 text-left">
+          {parseInlineStyles(line.slice(4))}
+        </h3>
+      );
+    } else if (line.startsWith('- ') || line.startsWith('* ')) {
+      currentList.push(
+        <li key={`li-${i}`} className="leading-relaxed">
+          {parseInlineStyles(line.slice(2))}
+        </li>
+      );
+    } else if (line.startsWith('> ')) {
+      flushList(i);
+      elements.push(
+        <blockquote key={`quote-${i}`} className="border-l-4 border-[#F4A574] bg-[#F4F1EC]/60 px-5 py-3.5 my-5 rounded-r-2xl italic text-xs sm:text-sm text-[#55506E] text-left">
+          {parseInlineStyles(line.slice(2))}
+        </blockquote>
+      );
+    } else if (line === '') {
+      flushList(i);
+    } else {
+      flushList(i);
+      elements.push(
+        <p key={`p-${i}`} className="my-4 leading-relaxed text-xs sm:text-sm text-[#55506E] font-normal text-left">
+          {parseInlineStyles(line)}
+        </p>
+      );
+    }
+  }
+  
+  flushList(lines.length);
+  return elements;
+}
+
 export interface HrlyBlogSectionProps {
   onNavigate?: (tab: string) => void;
   config?: SiteConfig;
@@ -327,9 +429,9 @@ export const HrlyBlogSection: React.FC<HrlyBlogSectionProps> = ({ onNavigate, co
             </div>
 
             {/* Main content body */}
-            <div className="text-xs text-[#55506E] whitespace-pre-wrap leading-relaxed space-y-4 font-normal">
-              {selectedArticle.content}
-              <p className="pt-4 border-t border-[#EFEAE1] text-[10px] text-[#A39AB4] font-mono">
+            <div className="text-xs text-[#55506E] leading-relaxed space-y-4 font-normal">
+              {parseMarkdownToReact(selectedArticle.content)}
+              <p className="pt-4 border-t border-[#EFEAE1] text-[10px] text-[#A39AB4] font-mono text-left">
                 Artykuł udostępniony bezpłatnie w ramach bazy wiedzy HRly operations. Kopiowanie i dystrybucja bez podania źródła (hrly.pl) zastrzeżona przez HRLY Sp. z o.o.
               </p>
             </div>

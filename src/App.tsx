@@ -367,6 +367,40 @@ export default function App() {
   const { config, updateSection } = useSiteConfig();
   const [activeTab, setActiveTab] = useState<PageRoute>('home');
 
+  // Hash routing to allow direct URLs like /#admin, /#pricing, etc.
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace('#', '');
+      const validRoutes = ['home', 'features', 'pricing', 'about', 'blog', 'contact', 'admin'];
+      if (validRoutes.includes(hash)) {
+        setActiveTab(hash as PageRoute);
+      } else if (!hash) {
+        setActiveTab('home');
+      }
+    };
+
+    handleHashChange(); // Run on mount
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  // Sync activeTab changes to the URL hash
+  useEffect(() => {
+    const currentHash = window.location.hash.replace('#', '');
+    if (activeTab === 'home') {
+      if (window.location.hash) {
+        window.history.pushState('', document.title, window.location.pathname + window.location.search);
+      }
+    } else if (currentHash !== activeTab) {
+      window.location.hash = activeTab;
+    }
+  }, [activeTab]);
+
+  // Scroll to top on route change to keep UX pristine
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [activeTab]);
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [heroRole, setHeroRole] = useState<'director' | 'manager' | 'ceo'>('director');
   const [activeFeatureTab, setActiveFeatureTab] = useState<'cyclical' | 'pulse' | 'onboarding' | 'custom'>('cyclical');
