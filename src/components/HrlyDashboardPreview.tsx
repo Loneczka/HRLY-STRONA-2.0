@@ -3,7 +3,7 @@ import {
   Coins, Target, Award, Laptop, Heart, ShieldCheck, 
   TrendingUp, Zap, MessageSquareText, Fingerprint, Info,
   AlertTriangle, Lightbulb, CheckCircle2, ShieldAlert,
-  Sliders, ChevronRight, BarChart2, Star, BrainCircuit,
+  Sliders, ChevronRight, ChevronDown, BarChart2, Star, BrainCircuit,
   Download, Users, Briefcase, Sparkles, BookOpen, AlertCircle,
   PlayCircle
 } from 'lucide-react';
@@ -118,7 +118,28 @@ export const HrlyDashboardPreview: React.FC = () => {
               Obszary badania (Wybierz obszar, by zobaczyć szczegóły)
             </label>
             
-            <div className="space-y-2">
+            {/* Mobile Dropdown Selector */}
+            <div className="block lg:hidden">
+              <div className="relative">
+                <select
+                  value={selectedAreaId}
+                  onChange={(e) => setSelectedAreaId(Number(e.target.value))}
+                  className="w-full p-4 rounded-2xl border border-[#C4BBDE]/35 bg-white text-xs font-bold text-[#14183D] appearance-none cursor-pointer focus:outline-none focus:ring-1 focus:ring-[#3B2F8C] shadow-xs"
+                >
+                  {HR_AREAS.map((area) => (
+                    <option key={area.id} value={area.id}>
+                      {String(area.id).padStart(2, '0')} · {area.title} ({area.averageScore.toFixed(1)})
+                    </option>
+                  ))}
+                </select>
+                <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-gray-500">
+                  <ChevronDown className="w-4 h-4 text-[#3B2F8C]" />
+                </div>
+              </div>
+            </div>
+
+            {/* Desktop List of 11 Areas */}
+            <div className="hidden lg:block space-y-2">
               {HR_AREAS.map((area) => {
                 const isSelected = area.id === selectedAreaId;
                 const statusColors = getStatusColors(area.overallStatus);

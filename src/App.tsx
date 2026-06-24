@@ -6,15 +6,17 @@ import {
   Activity, ArrowUpRight, Award, ChevronRight, HelpCircle,
   FileSpreadsheet, FileQuestion, Users2, Landmark, Compass, Target,
   ChevronDown, ChevronUp, Coins, Laptop, Heart, Coffee, GraduationCap, Zap, Key,
-  User, Building
+  User, Building, MousePointerClick, Settings
 } from 'lucide-react';
 import { HrlyDashboardPreview } from './components/HrlyDashboardPreview';
 import { HrlyBlogSection } from './components/HrlyBlogSection';
 import { HrlyPricingCalculator } from './components/HrlyPricingCalculator';
 import { HrlyHeroGraphic } from './components/HrlyHeroGraphic';
 import { HrlyMethodologyVisual } from './components/HrlyMethodologyVisual';
+import { AdminPanel } from './components/AdminPanel';
+import { addLead } from './hooks/useSiteConfig';
 
-type PageRoute = 'home' | 'features' | 'pricing' | 'about' | 'blog' | 'contact';
+type PageRoute = 'home' | 'features' | 'pricing' | 'about' | 'blog' | 'contact' | 'admin';
 
 const RESEARCH_AREAS = [
   {
@@ -405,19 +407,36 @@ export default function App() {
   const [demoDate, setDemoDate] = useState("");
   const [demoEmail, setDemoEmail] = useState("");
   const [demoSuccess, setDemoSuccess] = useState(false);
+  const [isDashboardModalOpen, setIsDashboardModalOpen] = useState(false);
 
-  // State to trigger the popup for interactive research dashboard
-  const [isDashboardOpen, setIsDashboardOpen] = useState(false);
 
   const handleContactSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!contactConsent) return;
+    // Save lead to localStorage for admin panel inbox
+    addLead({
+      name: contactName,
+      email: contactEmail,
+      company: contactCompany,
+      subject: contactSubject,
+      message: contactMessage,
+      type: 'contact',
+    });
     setContactSuccess(true);
-    // Reset state after slight delay or on close
   };
 
   const handleDemoSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    // Save demo request to localStorage for admin panel inbox
+    addLead({
+      name: demoEmail,
+      email: demoEmail,
+      company: '',
+      subject: 'Prośba o demo',
+      message: demoDate ? `Preferowany termin: ${demoDate}` : 'Brak podanego terminu',
+      type: 'demo',
+      demoDate: demoDate,
+    });
     setDemoSuccess(true);
   };
 
@@ -437,11 +456,16 @@ export default function App() {
     setDemoDialogOpen(false);
   };
 
+  // Admin panel - full screen takeover
+  if (activeTab === 'admin') {
+    return <AdminPanel onBack={() => setActiveTab('home')} />;
+  }
+
   return (
     <div className="min-h-screen bg-[#FBFAF8] text-[#14183D] flex flex-col font-sans antialiased selection:bg-[#F4A574]/30 selection:text-[#14183D]">
       
       {/* Top Elegant Sticky Navigation Header */}
-      <header className="w-full bg-[#FFFFFF]/90 backdrop-blur-md border-b border-[#EFEAE1] sticky top-0 z-[9900] px-4 sm:px-6 py-4 shadow-sm">
+      <header className="w-full bg-[#FFFFFF]/80 backdrop-blur-md border-b border-[#EFEAE1]/60 sticky top-0 z-[9900] px-4 sm:px-6 py-3 shadow-xs">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           
           {/* Logo Brand Mark */}
@@ -450,7 +474,7 @@ export default function App() {
             className="flex items-center gap-3 focus:outline-none text-left cursor-pointer group"
           >
             <svg 
-              className="w-11 h-11 transition-transform duration-300 group-hover:scale-105" 
+              className="w-9 h-9 transition-transform duration-300 group-hover:scale-105" 
               viewBox="0 0 100 100" 
               xmlns="http://www.w3.org/2000/svg"
               aria-label="HRly logo"
@@ -460,34 +484,24 @@ export default function App() {
               {/* Middle concentric ring */}
               <circle cx="50" cy="50" r="29" stroke="#CBD5E1" strokeWidth="2.4" fill="none" />
               {/* Inner concentric ring */}
-              <circle cx="50" cy="50" r="17" stroke="#94A3B8" strokeWidth="3" fill="none" />
+              <circle cx="50" cy="50" r="17" stroke="#3B2F8C" strokeWidth="3" fill="none" />
               {/* Center dot */}
-              <circle cx="50" cy="50" r="5.5" fill="#14183D" />
+              <circle cx="50" cy="50" r="5.5" fill="#3B2F8C" />
             </svg>
             <div>
-              <h1 className="font-display font-extrabold text-[#14183D] text-[24px] leading-none tracking-tighter lowercase">
+              <h1 className="font-display font-extrabold text-[#14183D] text-[20px] leading-none tracking-tighter lowercase">
                 hrly
               </h1>
             </div>
           </button>
 
           {/* Desktop Navigation Link Tabs */}
-          <nav className="hidden lg:flex items-center gap-1 bg-[#F4F1EC] p-1.5 rounded-xl border border-[#EFEAE1]/60">
-            <button
-              onClick={() => setActiveTab('home')}
-              className={`px-4 py-2 rounded-lg text-xs font-bold tracking-tight transition-all cursor-pointer ${
-                activeTab === 'home'
-                  ? 'bg-white text-[#3B2F8C] shadow-sm'
-                  : 'text-[#55506E] hover:text-[#14183D]'
-              }`}
-            >
-              Strona główna
-            </button>
+          <nav className="hidden lg:flex items-center gap-1 bg-[#F4F1EC]/60 p-1 rounded-xl border border-[#EFEAE1]/40">
             <button
               onClick={() => setActiveTab('features')}
-              className={`px-4 py-2 rounded-lg text-xs font-bold tracking-tight transition-all cursor-pointer ${
+              className={`px-4 py-1.5 rounded-lg text-xs font-semibold tracking-tight transition-all cursor-pointer ${
                 activeTab === 'features'
-                  ? 'bg-white text-[#3B2F8C] shadow-sm'
+                  ? 'bg-white text-[#3B2F8C] shadow-xs'
                   : 'text-[#55506E] hover:text-[#14183D]'
               }`}
             >
@@ -495,39 +509,29 @@ export default function App() {
             </button>
             <button
               onClick={() => setActiveTab('pricing')}
-              className={`px-4 py-2 rounded-lg text-xs font-bold tracking-tight transition-all cursor-pointer ${
+              className={`px-4 py-1.5 rounded-lg text-xs font-semibold tracking-tight transition-all cursor-pointer ${
                 activeTab === 'pricing'
-                  ? 'bg-white text-[#3B2F8C] shadow-sm'
+                  ? 'bg-white text-[#3B2F8C] shadow-xs'
                   : 'text-[#55506E] hover:text-[#14183D]'
               }`}
             >
               Cennik
             </button>
             <button
-              onClick={() => setActiveTab('about')}
-              className={`px-4 py-2 rounded-lg text-xs font-bold tracking-tight transition-all cursor-pointer ${
-                activeTab === 'about'
-                  ? 'bg-white text-[#3B2F8C] shadow-sm'
-                  : 'text-[#55506E] hover:text-[#14183D]'
-              }`}
-            >
-              O nas
-            </button>
-            <button
               onClick={() => setActiveTab('blog')}
-              className={`px-4 py-2 rounded-lg text-xs font-bold tracking-tight transition-all cursor-pointer ${
+              className={`px-4 py-1.5 rounded-lg text-xs font-semibold tracking-tight transition-all cursor-pointer ${
                 activeTab === 'blog'
-                  ? 'bg-white text-[#3B2F8C] shadow-sm'
+                  ? 'bg-white text-[#3B2F8C] shadow-xs'
                   : 'text-[#55506E] hover:text-[#14183D]'
               }`}
             >
-              Blog / Baza Wiedzy
+              Baza wiedzy
             </button>
             <button
               onClick={() => setActiveTab('contact')}
-              className={`px-4 py-2 rounded-lg text-xs font-bold tracking-tight transition-all cursor-pointer ${
+              className={`px-4 py-1.5 rounded-lg text-xs font-semibold tracking-tight transition-all cursor-pointer ${
                 activeTab === 'contact'
-                  ? 'bg-white text-[#3B2F8C] shadow-sm'
+                  ? 'bg-white text-[#3B2F8C] shadow-xs'
                   : 'text-[#55506E] hover:text-[#14183D]'
               }`}
             >
@@ -543,6 +547,14 @@ export default function App() {
             >
               Załóż darmowe konto
               <ArrowRight className="w-3.5 h-3.5 text-[#F4A574]" />
+            </button>
+            {/* Secret admin trigger — hidden in plain sight */}
+            <button
+              onClick={() => setActiveTab('admin')}
+              title="Panel administracyjny"
+              className="p-1.5 text-[#C4BBDE]/40 hover:text-[#3B2F8C] transition-colors cursor-pointer"
+            >
+              <Settings className="w-3.5 h-3.5" />
             </button>
           </div>
 
@@ -564,42 +576,30 @@ export default function App() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden bg-white border-b border-[#EFEAE1] overflow-hidden sticky top-[73px] z-[9800]"
+            className="lg:hidden bg-white border-b border-[#EFEAE1]/60 overflow-hidden sticky top-[61px] z-[9800]"
           >
             <nav className="flex flex-col p-4 space-y-2">
               <button 
-                onClick={() => { setActiveTab('home'); setMobileMenuOpen(false); }}
-                className={`p-3 text-left text-xs font-bold rounded-lg cursor-pointer ${activeTab === 'home' ? 'bg-[#3B2F8C] text-white' : 'text-[#55506E]'}`}
-              >
-                Strona główna
-              </button>
-              <button 
                 onClick={() => { setActiveTab('features'); setMobileMenuOpen(false); }}
-                className={`p-3 text-left text-xs font-bold rounded-lg cursor-pointer ${activeTab === 'features' ? 'bg-[#3B2F8C] text-white' : 'text-[#55506E]'}`}
+                className={`p-3 text-left text-xs font-semibold rounded-lg cursor-pointer ${activeTab === 'features' ? 'bg-[#3B2F8C] text-white' : 'text-[#55506E]'}`}
               >
                 Funkcje
               </button>
               <button 
                 onClick={() => { setActiveTab('pricing'); setMobileMenuOpen(false); }}
-                className={`p-3 text-left text-xs font-bold rounded-lg cursor-pointer ${activeTab === 'pricing' ? 'bg-[#3B2F8C] text-white' : 'text-[#55506E]'}`}
+                className={`p-3 text-left text-xs font-semibold rounded-lg cursor-pointer ${activeTab === 'pricing' ? 'bg-[#3B2F8C] text-white' : 'text-[#55506E]'}`}
               >
                 Cennik
               </button>
               <button 
-                onClick={() => { setActiveTab('about'); setMobileMenuOpen(false); }}
-                className={`p-3 text-left text-xs font-bold rounded-lg cursor-pointer ${activeTab === 'about' ? 'bg-[#3B2F8C] text-white' : 'text-[#55506E]'}`}
-              >
-                O nas
-              </button>
-              <button 
                 onClick={() => { setActiveTab('blog'); setMobileMenuOpen(false); }}
-                className={`p-3 text-left text-xs font-bold rounded-lg cursor-pointer ${activeTab === 'blog' ? 'bg-[#3B2F8C] text-white' : 'text-[#55506E]'}`}
+                className={`p-3 text-left text-xs font-semibold rounded-lg cursor-pointer ${activeTab === 'blog' ? 'bg-[#3B2F8C] text-white' : 'text-[#55506E]'}`}
               >
-                Blog / Baza wiedzy
+                Baza wiedzy
               </button>
               <button 
                 onClick={() => { setActiveTab('contact'); setMobileMenuOpen(false); }}
-                className={`p-3 text-left text-xs font-bold rounded-lg cursor-pointer ${activeTab === 'contact' ? 'bg-[#3B2F8C] text-white' : 'text-[#55506E]'}`}
+                className={`p-3 text-left text-xs font-semibold rounded-lg cursor-pointer ${activeTab === 'contact' ? 'bg-[#3B2F8C] text-white' : 'text-[#55506E]'}`}
               >
                 Kontakt
               </button>
@@ -618,7 +618,7 @@ export default function App() {
       </AnimatePresence>
 
       {/* Main Dynamic Workspace / View Manager */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-12">
+      <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-24">
         <AnimatePresence mode="wait">
           
           {/* ================= STRONA GŁÓWNA (ROUTE = HOME) ================= */}
@@ -629,160 +629,34 @@ export default function App() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -15 }}
               transition={{ duration: 0.3 }}
-              className="space-y-16"
+              className="space-y-24"
             >
               
               {/* Premium Hero Section */}
-              <section className="relative rounded-[32px] border border-[#C4BBDE]/55 bg-gradient-to-tr from-[#F4F1EC] via-[#FBFAF8] to-[#FFFFFF] p-6 sm:p-10 lg:p-14 flex flex-col items-center justify-between gap-12 overflow-hidden shadow-xl md:shadow-2xl grid-pattern">
+              <section className="relative rounded-[32px] border border-[#C4BBDE]/35 bg-gradient-to-tr from-[#F4F1EC] via-[#FBFAF8] to-[#FFFFFF] p-6 sm:p-10 lg:p-14 flex flex-col items-center justify-between gap-12 overflow-hidden shadow-xl md:shadow-2xl">
                 
                 {/* Glowing aesthetic blurs */}
-                <div className="absolute top-0 right-0 w-[420px] h-[420px] bg-[#F4A574]/15 rounded-full blur-3xl pointer-events-none -mr-32 -mt-32" />
-                <div className="absolute bottom-0 left-0 w-[420px] h-[420px] bg-[#E3DEEE]/40 rounded-full blur-3xl pointer-events-none -ml-32 -mb-32" />
+                <div className="absolute top-0 right-0 w-[420px] h-[420px] bg-[#F4A574]/10 rounded-full blur-3xl pointer-events-none -mr-32 -mt-32" />
+                <div className="absolute bottom-0 left-0 w-[420px] h-[420px] bg-[#E3DEEE]/30 rounded-full blur-3xl pointer-events-none -ml-32 -mb-32" />
                 
                 <div className="w-full flex flex-col lg:flex-row items-center justify-between gap-10 relative z-10">
                   <div className="space-y-6 max-w-xl text-center lg:text-left flex flex-col items-center lg:items-start">
                     
                     {/* Badge */}
-                    <div className="inline-flex items-center gap-2 bg-[#E3DEEE]/85 text-[#3B2F8C] px-3.5 py-1.5 rounded-full border border-[#C4BBDE]/60 text-[10px] font-bold uppercase tracking-wider shadow-xs">
+                    <div className="inline-flex items-center gap-2 bg-[#E3DEEE]/60 text-[#3B2F8C] px-3.5 py-1.5 rounded-full border border-[#C4BBDE]/40 text-[10px] font-bold uppercase tracking-wider shadow-xs">
                       <Sparkles className="w-3.5 h-3.5 text-[#F4A574]" />
                       01 · ANALITYKA I REKOMENDACJE HR W KILKA MINUT
                     </div>
 
-                    {/* Interactive Role Selector Toggles */}
-                    <div className="flex flex-wrap gap-1 p-1 bg-[#EFEAE1]/80 rounded-2xl border border-[#C4BBDE]/35 shadow-inner">
-                      {[
-                        { id: 'director', label: 'Dla Dyrektorów HR' },
-                        { id: 'manager', label: 'Dla Menedżerów' },
-                        { id: 'ceo', label: 'Dla Zarządu & CEO' }
-                      ].map((roleItem) => (
-                        <button
-                          key={roleItem.id}
-                          onClick={() => setHeroRole(roleItem.id as 'director' | 'manager' | 'ceo')}
-                          className={`px-3.5 py-1.5 rounded-xl text-[11px] font-bold tracking-tight transition-all cursor-pointer ${
-                            heroRole === roleItem.id
-                              ? 'bg-[#3B2F8C] text-white shadow-sm'
-                              : 'text-[#55506E] hover:text-[#14183D] hover:bg-white/40'
-                          }`}
-                        >
-                          {roleItem.label}
-                        </button>
-                      ))}
-                    </div>
-
-                    {/* Dynamic Headline depending on Role */}
-                    <div className="min-h-[140px] sm:min-h-[160px] lg:min-h-[180px] flex flex-col justify-center">
-                      <AnimatePresence mode="wait">
-                        {heroRole === 'director' && (
-                          <motion.div
-                            key="director-headline"
-                            initial={{ opacity: 0, y: 8 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -8 }}
-                            transition={{ duration: 0.2 }}
-                            className="space-y-4"
-                          >
-                            <h2 className="font-display font-black text-2xl sm:text-4xl lg:text-[42px] text-[#14183D] tracking-tight leading-[1.1] uppercase">
-                              Skróć analizę HR <br />z tygodni do{" "}
-                              <span className="relative inline-block normal-case">
-                                <span className="font-script italic font-medium text-[#3B2F8C] text-[1.12em] tracking-normal lowercase relative z-10 select-none">
-                                  kilku minut
-                                </span>
-                                <svg 
-                                  className="absolute -bottom-1.5 left-0 w-full h-[8px] text-[#F4A574] opacity-80 pointer-events-none" 
-                                  viewBox="0 0 100 10" 
-                                  preserveAspectRatio="none"
-                                >
-                                  <path 
-                                    d="M 3,6 Q 50,9 97,4" 
-                                    fill="none" 
-                                    stroke="currentColor" 
-                                    strokeWidth="3.5" 
-                                    strokeLinecap="round" 
-                                  />
-                                </svg>
-                              </span>
-                              .
-                            </h2>
-                            <p className="text-xs sm:text-sm text-[#55506E] leading-relaxed">
-                              HRly zbiera wyniki badań, automatycznie diagnozuje 58 czynników w 11 obszarach i od ręki generuje gotowe raporty. Oszczędź dziesiątki godzin pracy w każdym kwartale.
-                            </p>
-                          </motion.div>
-                        )}
-
-                        {heroRole === 'manager' && (
-                          <motion.div
-                            key="manager-headline"
-                            initial={{ opacity: 0, y: 8 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -8 }}
-                            transition={{ duration: 0.2 }}
-                            className="space-y-4"
-                          >
-                            <h2 className="font-display font-black text-2xl sm:text-4xl lg:text-[42px] text-[#14183D] tracking-tight leading-[1.1] uppercase">
-                              Zrozum emocje i <br />potrzeby{" "}
-                              <span className="relative inline-block normal-case">
-                                <span className="font-script italic font-medium text-[#3B2F8C] text-[1.12em] tracking-normal lowercase relative z-10 select-none">
-                                  swojego zespołu
-                                </span>
-                                <svg 
-                                  className="absolute -bottom-1.5 left-0 w-full h-[8px] text-[#F4A574] opacity-80 pointer-events-none" 
-                                  viewBox="0 0 100 10" 
-                                  preserveAspectRatio="none"
-                                >
-                                  <path 
-                                    d="M 3,6 Q 50,9 97,4" 
-                                    fill="none" 
-                                    stroke="currentColor" 
-                                    strokeWidth="3.5" 
-                                    strokeLinecap="round" 
-                                  />
-                                </svg>
-                              </span>
-                              .
-                            </h2>
-                            <p className="text-xs sm:text-sm text-[#55506E] leading-relaxed">
-                              Zidentyfikuj przyczyny wypalenia, popraw atmosferę i podnoś zaangażowanie dzięki gotowym, spersonalizowanym rekomendacjom i checklistom dla liderów.
-                            </p>
-                          </motion.div>
-                        )}
-
-                        {heroRole === 'ceo' && (
-                          <motion.div
-                            key="ceo-headline"
-                            initial={{ opacity: 0, y: 8 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -8 }}
-                            transition={{ duration: 0.2 }}
-                            className="space-y-4"
-                          >
-                            <h2 className="font-display font-black text-2xl sm:text-4xl lg:text-[42px] text-[#14183D] tracking-tight leading-[1.1] uppercase">
-                              Zredukuj rotację i <br />zabezpiecz{" "}
-                              <span className="relative inline-block normal-case">
-                                <span className="font-script italic font-medium text-[#3B2F8C] text-[1.12em] tracking-normal lowercase relative z-10 select-none">
-                                  kluczowy talent
-                                </span>
-                                <svg 
-                                  className="absolute -bottom-1.5 left-0 w-full h-[8px] text-[#F4A574] opacity-80 pointer-events-none" 
-                                  viewBox="0 0 100 10" 
-                                  preserveAspectRatio="none"
-                                >
-                                  <path 
-                                    d="M 3,6 Q 50,9 97,4" 
-                                    fill="none" 
-                                    stroke="currentColor" 
-                                    strokeWidth="3.5" 
-                                    strokeLinecap="round" 
-                                  />
-                                </svg>
-                              </span>
-                              .
-                            </h2>
-                            <p className="text-xs sm:text-sm text-[#55506E] leading-relaxed">
-                              Przełóż zadowolenie pracowników na twarde wskaźniki biznesowe i mierzalne oszczędności finansowe. Zyskaj pełen obraz kondycji organizacji.
-                            </p>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
+                    {/* Headline & Description */}
+                    <div className="space-y-4">
+                      <h2 className="font-display font-extrabold text-3xl sm:text-5xl lg:text-[44px] text-[#14183D] tracking-tight leading-[1.1] uppercase">
+                        Decyzje HR oparte <br />na danych, <br />
+                        <span className="text-[#3B2F8C] normal-case italic font-light">a nie na domysłach.</span>
+                      </h2>
+                      <p className="text-xs sm:text-sm text-[#55506E] leading-relaxed max-w-lg">
+                        Automatyczna platforma HR Analytics, która bada nastroje zespołu, predykcyjnie wykrywa ryzyka odejść i dostarcza menedżerom gotowe plany działań oraz checklisty w kilka minut.
+                      </p>
                     </div>
 
                     {/* Action buttons */}
@@ -791,31 +665,31 @@ export default function App() {
                         onClick={() => setActiveTab('pricing')}
                         className="w-full sm:w-auto py-3.5 px-6 bg-[#3B2F8C] hover:bg-[#231B5E] text-white rounded-xl text-xs font-bold tracking-tight shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer hover:scale-[1.02]"
                       >
-                        Załóż darmowe konto
+                        Wypróbuj bezpłatnie
                         <ArrowRight className="w-4 h-4 text-[#F4A574]" />
                       </button>
                       
-                      <a
-                        href="#interactive-demo"
-                        className="w-full sm:w-auto py-3.5 px-6 bg-white hover:bg-[#F4F1EC] text-[#3B2F8C] border border-[#C4BBDE] rounded-xl text-xs font-bold tracking-tight text-center transition-colors block cursor-pointer hover:scale-[1.02]"
+                      <button
+                        onClick={() => setIsDashboardModalOpen(true)}
+                        className="w-full sm:w-auto py-3.5 px-6 bg-white hover:bg-[#F4F1EC] text-[#3B2F8C] border border-[#C4BBDE] rounded-xl text-xs font-bold tracking-tight text-center transition-all cursor-pointer hover:scale-[1.02]"
                       >
-                        Jak to działa →
-                      </a>
+                        Obejrzyj demo interaktywne
+                      </button>
                     </div>
 
                     {/* Trust small indicators */}
-                    <div className="flex flex-wrap items-center justify-center lg:justify-start gap-x-5 gap-y-2 pt-4 border-t border-[#EFEAE1] text-[11px] text-[#A39AB4] font-mono w-full">
+                    <div className="flex flex-wrap items-center justify-center lg:justify-start gap-x-5 gap-y-2 pt-4 border-t border-[#EFEAE1] text-[10px] text-[#A39AB4] font-mono w-full">
                       <span className="flex items-center gap-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#F4A574]" />
-                        14 dni za darmo
+                        <span className="text-emerald-500 font-bold">✓</span>
+                        14 dni testu bez karty
                       </span>
                       <span className="flex items-center gap-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#F4A574]" />
-                        Bez podpinania karty
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#F4A574]" />
+                        <span className="text-emerald-500 font-bold">✓</span>
                         Pełna zgodność z RODO
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <span className="text-emerald-500 font-bold">✓</span>
+                        Wdrożenie w 15 minut
                       </span>
                     </div>
                   </div>
@@ -826,95 +700,57 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* Social Proof Brand Logobar */}
-                <div className="pt-6 border-t border-[#EFEAE1] w-full relative z-10">
-                  <p className="text-[10px] uppercase font-mono font-bold tracking-widest text-[#A39AB4] text-center lg:text-left mb-3">
-                    Zaufali nam liderzy nowoczesnych organizacji w Polsce:
-                  </p>
-                  <div className="flex flex-wrap items-center justify-center lg:justify-start gap-x-8 gap-y-3 opacity-65 grayscale hover:opacity-95 transition-opacity">
-                    {[
-                      { name: "RETAIL TECH", icon: "🛒" },
-                      { name: "FINTECH LEADERS", icon: "💳" },
-                      { name: "SAAS ENTERPRISE", icon: "⚡" },
-                      { name: "E-COMMERCE HUB", icon: "📦" },
-                      { name: "LOGISTICS PRO", icon: "🚛" }
-                    ].map((brand, bIdx) => (
-                      <div key={bIdx} className="flex items-center gap-1.5 text-xs font-display font-black text-[#14183D] tracking-wider uppercase">
-                        <span className="text-sm grayscale-0">{brand.icon}</span>
-                        <span className="text-[10px] tracking-widest font-mono text-[#55506E]">{brand.name}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
               </section>
 
-              {/* SECTION: Interactive Dashboard preview explorer */}
-              <section className="space-y-6">
-                <div className="text-center max-w-2xl mx-auto space-y-2">
-                  <span className="text-[10px] text-[#F4A574] font-mono font-bold uppercase tracking-widest bg-[#F4F1EC] px-3 py-1 rounded-full border border-[#EFEAE1]">
-                    Eksploruj dynamicznie
+              {/* SECTION: Interactive Demo Trigger Banner */}
+              <section className="bg-white border border-[#EFEAE1]/80 rounded-[32px] p-8 sm:p-12 text-center relative overflow-hidden shadow-xs">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-[#3B2F8C]/5 rounded-full blur-3xl pointer-events-none" />
+                <div className="max-w-2xl mx-auto space-y-6 relative z-10">
+                  <span className="inline-flex items-center gap-1.5 bg-[#E3DEEE]/60 text-[#3B2F8C] px-3 py-1.5 rounded-full border border-[#C4BBDE]/35 text-[10px] font-bold uppercase tracking-wider leading-none shadow-xs">
+                    Pulpit demonstracyjny
                   </span>
-                  <h3 className="font-display font-extrabold text-2xl sm:text-3xl text-[#14183D] tracking-tight uppercase">
-                    Twój interaktywny pulpit badawczy
+                  <h3 className="font-display font-extrabold text-2xl sm:text-4xl text-[#14183D] tracking-tight uppercase leading-none">
+                    Przetestuj interaktywny pulpit HRly
                   </h3>
-                  <p className="text-xs sm:text-sm text-[#55506E]">
-                    Zobacz jak platforma diagnozuje słabsze punkty oraz dostarcza gotowe scenariusze rekomendacji.
+                  <p className="text-xs sm:text-sm text-[#55506E] leading-relaxed max-w-lg mx-auto">
+                    Przekonaj się, jak w prosty sposób diagnozujemy 58 czynników zaangażowania i automatycznie dostarczamy menedżerom gotowe plany działań.
                   </p>
-                </div>
-
-                {/* Elegant visual trigger card with animated pointing arrow */}
-                <div 
-                  onClick={() => setIsDashboardOpen(true)}
-                  className="max-w-4xl mx-auto bg-gradient-to-br from-[#14183D] to-[#252A60] rounded-[32px] p-8 md:p-12 text-white relative overflow-hidden shadow-xl border border-white/10 group cursor-pointer hover:shadow-2xl hover:scale-[1.01] transition-all duration-300"
-                >
-                  {/* Backdrop decorative shapes */}
-                  <div className="absolute top-0 right-0 w-80 h-80 bg-[#3B2F8C]/40 rounded-full blur-3xl pointer-events-none" />
-                  <div className="absolute -bottom-10 -left-10 w-60 h-60 bg-[#F4A574]/10 rounded-full blur-2xl pointer-events-none" />
-                  
-                  <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
-                    <div className="space-y-4 max-w-md text-left">
-                      <span className="inline-flex items-center gap-1.5 bg-[#F4A574]/10 text-[#F4A574] px-3 py-1.5 rounded-full border border-[#F4A574]/20 text-[10px] font-bold uppercase tracking-wider">
-                        <Sparkles className="w-3.5 h-3.5 animate-pulse" /> Interaktywny Demonstrator
-                      </span>
-                      <h4 className="font-sans font-black text-2xl sm:text-3xl text-white tracking-tight leading-none uppercase">
-                        Przetestuj pełen pulpit badawczy
-                      </h4>
-                      <p className="text-xs text-gray-300 leading-relaxed">
-                        Uruchom demo i przekonaj się, jak precyzyjnie diagnozujemy 11 kluczowych obszarów organizacji (w tym poczucie sensu, dopasowanie ról czy relacje) oraz jak automatycznie generujemy gotowe, mierzalne plany działań dla liderów.
-                      </p>
-                    </div>
-
-                    {/* Animated arrow & trigger button container */}
-                    <div className="flex flex-col sm:flex-row items-center gap-4 md:gap-6 shrink-0 w-full sm:w-auto">
-                      {/* Animated pointing arrow on the left */}
-                      <motion.div 
-                        animate={{ x: [0, 8, 0] }}
-                        transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
-                        className="hidden md:flex items-center gap-2 text-[#F4A574]"
+                  <div className="flex flex-col items-center justify-center pt-4 relative">
+                    <div className="relative group">
+                      {/* Vibrant pulsing background glow */}
+                      <div className="absolute -inset-1.5 bg-gradient-to-r from-[#F4A574] to-[#ffaa75] rounded-2xl blur-md opacity-75 group-hover:opacity-100 transition duration-300 animate-pulse" />
+                      
+                      <button
+                        onClick={() => setIsDashboardModalOpen(true)}
+                        className="relative py-4 px-9 text-xs sm:text-sm bg-gradient-to-r from-[#F4A574] to-[#fca570] hover:from-[#e29362] hover:to-[#e98a51] text-[#14183D] font-display font-black uppercase tracking-wider rounded-xl shadow-lg transition-all hover:scale-[1.03] active:scale-[0.98] duration-200 cursor-pointer flex items-center gap-2.5 z-10"
                       >
-                        <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#F4A574]">Zobacz HRly w akcji</span>
-                        <ArrowRight className="w-5 h-5 text-[#F4A574] stroke-[2.5]" />
-                      </motion.div>
-
-                      {/* Main interactive button */}
-                      <button className="w-full sm:w-auto py-4 px-8 bg-[#F4A574] hover:bg-[#E08F5A] text-white rounded-xl text-xs font-display font-extrabold uppercase tracking-wider shadow-md shadow-[#F4A574]/20 flex items-center justify-center gap-2.5 transition-all active:scale-[0.98] duration-200 cursor-pointer">
-                        Otwórz pulpit badawczy
-                        <ArrowUpRight className="w-4 h-4" />
+                        Otwórz pulpit demonstracyjny
+                        <ArrowUpRight className="w-4.5 h-4.5 text-[#14183D] stroke-[2.5]" />
                       </button>
-                    </div>
-                  </div>
 
-                  {/* Decorative faint mini UI outline just to hint at the complexity inside */}
-                  <div className="mt-8 border-t border-white/10 pt-6 opacity-35 group-hover:opacity-50 transition-opacity duration-300 hidden sm:block">
-                    <div className="flex items-center justify-between text-[10px] font-mono text-gray-400">
-                      <span>PULPIT BADANIA ZAANGAŻOWANIA · AKTUALNY WIDOK OPERACYJNY</span>
-                      <div className="flex gap-4">
-                        <span>● 11 Obszarów Badawczych</span>
-                        <span>● Gotowe Scenariusze Rekomendacji</span>
-                        <span>● Real-time Raporty</span>
-                      </div>
+                      {/* Small floating pointer icon to suggest clicking */}
+                      <motion.div
+                        className="absolute -right-4 -bottom-4 bg-[#14183D] border border-white/20 text-white w-7 h-7 rounded-full flex items-center justify-center shadow-lg pointer-events-none z-20"
+                        animate={{
+                          y: [0, -4, 0],
+                          x: [0, -4, 0],
+                          scale: [1, 0.9, 1]
+                        }}
+                        transition={{
+                          duration: 2.2,
+                          repeat: Infinity,
+                          ease: "easeInOut"
+                        }}
+                      >
+                        <MousePointerClick className="w-3.5 h-3.5 text-[#F4A574] animate-pulse" />
+                      </motion.div>
                     </div>
+                    
+                    {/* Interactive hint text below the button */}
+                    <span className="text-[10px] text-[#A39AB4] font-mono mt-4 flex items-center gap-1.5 uppercase tracking-wider">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
+                      Kliknij, aby przetestować na żywo
+                    </span>
                   </div>
                 </div>
               </section>
@@ -961,179 +797,110 @@ export default function App() {
               </section>
 
               {/* SECTION: Wyzwania, które rozwiązujemy (03) */}
-              <section className="space-y-6">
-                <div className="text-center max-w-2xl mx-auto space-y-1.5">
-                  <span className="text-[10px] font-mono font-bold uppercase text-[#3B2F8C] bg-[#E3DEEE] px-2.5 py-1 rounded-full">
-                    03 · Wyzwania, które rozwiązujemy
-                  </span>
-                  <h3 className="font-display font-black text-2xl sm:text-3xl text-[#14183D] tracking-tight uppercase leading-none">
-                    Dlaczego tradycyjny HR zawodzi?
-                  </h3>
-                  <p className="text-xs sm:text-sm text-[#55506E] leading-relaxed">
-                    HRly to odpowiedź na codzienne zagubienie w tabelkach. Zamieniamy suche dane ankietowe w gotowe, mierzalne rozwiązania biznesowe.
-                  </p>
-                </div>
+              <section className="space-y-12">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                  
+                  {/* Left Column: Heading */}
+                  <div className="lg:col-span-5 space-y-4">
+                    <span className="text-[10px] font-mono font-bold uppercase text-[#3B2F8C] bg-[#E3DEEE]/60 px-2.5 py-1 rounded-full border border-[#C4BBDE]/30">
+                      03 · Wyzwania, które rozwiązujemy
+                    </span>
+                    <h3 className="font-display font-extrabold text-2xl sm:text-4xl text-[#14183D] tracking-tight uppercase leading-[1.15]">
+                      Tradycyjne ankiety HR generują wykresy, a nie rozwiązania.
+                    </h3>
+                    <p className="text-xs sm:text-sm text-[#55506E] leading-relaxed">
+                      Większość firm bada pracowników raz w roku, otrzymując przestarzałe statystyki. HRly zamienia surowe dane w dynamiczne scenariusze działań dla liderów w czasie rzeczywistym.
+                    </p>
+                  </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {/* Card 1: Wysoka rotacja (spans 2 columns) */}
-                  <motion.div 
-                    initial={{ opacity: 0, y: 24 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-80px" }}
-                    transition={{ duration: 0.6, delay: 0.0, ease: "easeOut" }}
-                    whileHover={{ y: -4 }}
-                    className="bg-[#14183D] text-white p-6 md:p-10 rounded-[32px] md:col-span-2 space-y-5 flex flex-col justify-between shadow-sm relative overflow-hidden group transition-all duration-300"
-                  >
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-2xl pointer-events-none" />
-                    <div className="space-y-4">
-                      <div className="w-12 h-12 rounded-2xl bg-[#F4A574]/15 text-[#F4A574] flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
-                        <Users className="w-6 h-6" />
+                  {/* Right Column: 3 Vertical Problems Grid */}
+                  <div className="lg:col-span-7 space-y-4">
+                    
+                    {/* Problem 1: Rotacja */}
+                    <div className="bg-[#14183D] text-white p-6 rounded-2xl border border-white/5 shadow-md flex items-start gap-4 hover:translate-y-[-2px] transition-transform duration-200">
+                      <div className="p-2 bg-[#F4A574]/20 text-[#F4A574] rounded-lg shrink-0 mt-0.5">
+                        <Users className="w-5 h-5" />
                       </div>
-                      <div className="space-y-2">
-                        <h4 className="font-sans font-black text-lg md:text-xl text-white tracking-tight">
-                          Wysoka rotacja
-                        </h4>
-                        <p className="text-xs sm:text-sm text-gray-300 leading-relaxed max-w-xl">
-                          Tracisz kluczowych ludzi i nie wiesz dlaczego. Koszty rekrutacji rosną, a wiedza odchodzi z firmy.
+                      <div className="space-y-1">
+                        <h4 className="font-sans font-bold text-sm text-white uppercase tracking-wider">Cicha rezygnacja i kosztowna rotacja</h4>
+                        <p className="text-xs text-gray-300 leading-relaxed">
+                          Wypalenie i rotacja talentów kosztuje firmy średnio 240 000 zł rocznie. Zazwyczaj dowiadujesz się o problemie dopiero wtedy, gdy wypowiedzenie ląduje na biurku.
                         </p>
                       </div>
                     </div>
-                  </motion.div>
 
-                  {/* Card 2: Brak danych */}
-                  <motion.div 
-                    initial={{ opacity: 0, y: 24 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-80px" }}
-                    transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
-                    whileHover={{ y: -4 }}
-                    className="bg-white border border-[#EFEAE1]/70 p-6 md:p-10 rounded-[32px] space-y-5 flex flex-col justify-between shadow-sm hover:border-[#C4BBDE]/50 transition-all duration-300 group"
-                  >
-                    <div className="space-y-4">
-                      <div className="w-12 h-12 rounded-2xl bg-[#F4F1EC] text-[#3B2F8C] flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
-                        <Download className="w-5 h-5" />
-                      </div>
-                      <div className="space-y-2">
-                        <h4 className="font-sans font-black text-lg md:text-xl text-[#14183D] tracking-tight">
-                          Brak danych
-                        </h4>
-                        <p className="text-xs sm:text-sm text-[#55506E] leading-relaxed">
-                          Zarząd chce liczb, ale nikt nie dał Ci narzędzi, żeby je zebrać.
-                        </p>
-                      </div>
-                    </div>
-                  </motion.div>
-
-                  {/* Card 3: Brak czasu */}
-                  <motion.div 
-                    initial={{ opacity: 0, y: 24 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-80px" }}
-                    transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
-                    whileHover={{ y: -4 }}
-                    className="bg-white border border-[#EFEAE1]/70 p-6 md:p-10 rounded-[32px] space-y-5 flex flex-col justify-between shadow-sm hover:border-[#C4BBDE]/50 transition-all duration-300 group"
-                  >
-                    <div className="space-y-4">
-                      <div className="w-12 h-12 rounded-2xl bg-[#F4F1EC] text-[#3B2F8C] flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
+                    {/* Problem 2: Brak danych i czasu */}
+                    <div className="bg-white border border-[#EFEAE1]/80 p-6 rounded-2xl shadow-xs flex items-start gap-4 hover:border-[#C4BBDE]/50 hover:translate-y-[-2px] transition-transform duration-200">
+                      <div className="p-2 bg-indigo-50 text-[#3B2F8C] rounded-lg shrink-0 mt-0.5">
                         <Clock className="w-5 h-5" />
                       </div>
-                      <div className="space-y-2">
-                        <h4 className="font-sans font-black text-lg md:text-xl text-[#14183D] tracking-tight">
-                          Brak czasu
-                        </h4>
-                        <p className="text-xs sm:text-sm text-[#55506E] leading-relaxed">
-                          Na analizy brakuje tygodni, a budżet zależy od Twojej prezentacji.
+                      <div className="space-y-1">
+                        <h4 className="font-sans font-bold text-sm text-[#14183D] uppercase tracking-wider">Marnowanie czasu na tabelki</h4>
+                        <p className="text-xs text-[#55506E] leading-relaxed">
+                          Działy HR marnują tygodnie na przepisywanie arkuszy Excel. Zarząd oczekuje twardych decyzji biznesowych i wskaźników ROI, a Ty dysponujesz jedynie przeczuciem.
                         </p>
                       </div>
                     </div>
-                  </motion.div>
 
-                  {/* Card 4: Intuicja zamiast danych */}
-                  <motion.div 
-                    initial={{ opacity: 0, y: 24 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-80px" }}
-                    transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
-                    whileHover={{ y: -4 }}
-                    className="bg-white border border-[#EFEAE1]/70 p-6 md:p-10 rounded-[32px] space-y-5 flex flex-col justify-between shadow-sm hover:border-[#C4BBDE]/50 transition-all duration-300 group"
-                  >
-                    <div className="space-y-4">
-                      <div className="w-12 h-12 rounded-2xl bg-[#F4F1EC] text-[#3B2F8C] flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
+                    {/* Problem 3: Brak wdrożenia */}
+                    <div className="bg-white border border-[#EFEAE1]/80 p-6 rounded-2xl shadow-xs flex items-start gap-4 hover:border-[#C4BBDE]/50 hover:translate-y-[-2px] transition-transform duration-200">
+                      <div className="p-2 bg-indigo-50 text-[#3B2F8C] rounded-lg shrink-0 mt-0.5">
                         <HelpCircle className="w-5 h-5" />
                       </div>
-                      <div className="space-y-2">
-                        <h4 className="font-sans font-black text-lg md:text-xl text-[#14183D] tracking-tight">
-                          Intuicja zamiast danych
-                        </h4>
-                        <p className="text-xs sm:text-sm text-[#55506E] leading-relaxed">
-                          Zgadywanie w biznesie zawsze kończy się kosztem.
+                      <div className="space-y-1">
+                        <h4 className="font-sans font-bold text-sm text-[#14183D] uppercase tracking-wider">Menedżerowie bez wsparcia</h4>
+                        <p className="text-xs text-[#55506E] leading-relaxed">
+                          Liderzy potrzebują konkretnych instrukcji, a nie kolejnej tabelki z wynikami zaangażowania. Brakuje narzędzi łączących ankiety z codziennymi rozmowami 1-on-1.
                         </p>
                       </div>
                     </div>
-                  </motion.div>
 
-                  {/* Card 5: Brak gotowych rozwiązań */}
-                  <motion.div 
-                    initial={{ opacity: 0, y: 24 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-80px" }}
-                    transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}
-                    whileHover={{ y: -4 }}
-                    className="bg-white border border-[#EFEAE1]/70 p-6 md:p-10 rounded-[32px] space-y-5 flex flex-col justify-between shadow-sm hover:border-[#C4BBDE]/50 transition-all duration-300 group"
-                  >
-                    <div className="space-y-4">
-                      <div className="w-12 h-12 rounded-2xl bg-[#F4F1EC] text-[#3B2F8C] flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
-                        <CheckCircle2 className="w-5 h-5" />
-                      </div>
-                      <div className="space-y-2">
-                        <h4 className="font-sans font-black text-lg md:text-xl text-[#14183D] tracking-tight">
-                          Brak gotowych rozwiązań
-                        </h4>
-                        <p className="text-xs sm:text-sm text-[#55506E] leading-relaxed">
-                          Menedżerowie chcą konkretów - nie kolejnego raportu, ale gotowej odpowiedzi: co zrobić, żeby poprawić wyniki zespołu.
-                        </p>
-                      </div>
-                    </div>
-                  </motion.div>
+                  </div>
+
                 </div>
               </section>
 
               {/* SECTION: Co otrzymujesz (04) */}
-              <section className="bg-[#FBFAF8] border border-[#EFEAE1] rounded-3xl p-8 sm:p-12 relative overflow-hidden">
+              <section className="bg-white border border-[#EFEAE1] rounded-[32px] p-8 sm:p-12 relative overflow-hidden shadow-xs">
                 <div className="absolute top-0 right-0 w-80 h-80 bg-[#3B2F8C]/5 rounded-full blur-3xl pointer-events-none" />
                 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                  <div className="lg:col-span-5 space-y-4">
-                    <span className="text-[10px] font-mono font-bold uppercase text-[#3B2F8C] bg-[#E3DEEE] px-2.5 py-1 rounded-full">
+                  <div className="lg:col-span-5 space-y-5">
+                    <span className="inline-flex items-center gap-1.5 bg-[#E3DEEE]/60 text-[#3B2F8C] px-3 py-1.5 rounded-full border border-[#C4BBDE]/35 text-[10px] font-bold uppercase tracking-wider leading-none">
                       04 · CO OTRZYMUJESZ
                     </span>
-                    <h3 className="font-display font-black text-2xl sm:text-3xl text-[#14183D] tracking-tight uppercase leading-none">
+                    <h3 className="font-display font-extrabold text-2xl sm:text-4xl text-[#14183D] tracking-tight uppercase leading-none">
                       Wzmocnij swoją pozycję. Mów językiem biznesu.
                     </h3>
-                    <p className="text-xs text-[#55506E] leading-relaxed">
-                      Zmień postrzeganie HR w swojej firmie. Pokaż zarządowi jasne dowody rynkowe i poprowadź organizację do mierzalnego wzrostu stabilności.
+                    <p className="text-xs sm:text-sm text-[#55506E] leading-relaxed">
+                      Zmień postrzeganie HR w firmie. Pokaż zarządowi twarde wskaźniki i poprowadź organizację do stabilnego wzrostu zaangażowania.
                     </p>
 
-                    <div className="bg-white border border-[#EFEAE1] p-4 rounded-xl space-y-2">
+                    <div className="bg-[#FBFAF8] border border-[rgba(15,17,41,0.05)] shadow-[0_8px_30px_rgb(0,0,0,0.02)] p-5 rounded-2xl space-y-2 hover:border-[#C4BBDE]/40 transition-colors">
                       <span className="text-[10px] uppercase font-mono font-bold text-[#A39AB4] block">Kluczowy wyróżnik</span>
-                      <p className="text-xs text-[#14183D] font-bold">
-                        Język biznesu — pokazujemy wpływ zaangażowania pracowników bezpośrednio na ubytek lub przyrost wyników finansowych przedsiębiorstwa.
+                      <p className="text-xs text-[#14183D] font-bold leading-relaxed">
+                        Język biznesu — przekładamy zaangażowanie na finanse, pokazując szacowany ubytek lub zysk dla budżetu firmy.
                       </p>
                     </div>
                   </div>
 
-                  <div className="lg:col-span-7 space-y-3 font-normal text-xs">
+                  <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {[
-                      { title: "Raporty w kilka minut", desc: "Całkowicie bez żmudnych wielodniowych analiz i manualnych obliczeń formularzy ankietowych." },
-                      { title: "Gotowe rekomendacje strategii", desc: "Zawsze wskazujemy nie tylko to „co jest źle”, ale precyzyjnie „co zrobić, gdzie i jak”." },
-                      { title: "Pełny kontekst mikroorganizacji", desc: "Diagnozujemy nastroje w poszczególnych komórkach, wskazując różnice kultur między działami." },
-                      { title: "Narzędzia operacyjne dla menedżerów", desc: "Liderzy średniego szczebla otrzymują przetestowane scenariusze rozmów 1-on-1 i checklisty wsparcia." }
+                      { title: "Raporty w kilka minut", desc: "Natychmiastowe wyniki bez żmudnych analiz i ręcznego liczenia arkuszy Excel." },
+                      { title: "Plan naprawczy AI", desc: "Nie tylko diagnozujemy problem, ale podajemy gotowy plan działań." },
+                      { title: "Kontekst zespołów", desc: "Diagnoza nastrojów w konkretnych działach, bez uogólnień dla całej firmy." },
+                      { title: "Wsparcie liderów", desc: "Scenariusze rozmów 1-on-1 i checklisty dla każdego menedżera." }
                     ].map((item, idx) => (
-                      <div key={idx} className="bg-white border border-[#EFEAE1]/70 p-4 rounded-xl flex items-start gap-3 hover:border-[#C4BBDE] transition-colors">
-                        <CheckCircle2 className="w-5 h-5 text-[#F4A574] shrink-0 mt-0.5" />
-                        <div>
-                          <h4 className="font-bold text-xs text-[#14183D] uppercase tracking-tight">{item.title}</h4>
-                          <p className="text-[11px] text-[#55506E] leading-relaxed">{item.desc}</p>
+                      <div 
+                        key={idx} 
+                        className="bg-[#FBFAF8] rounded-2xl p-5 border border-[rgba(15,17,41,0.05)] shadow-[0_8px_30px_rgb(0,0,0,0.02)] flex flex-col justify-between gap-4 hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:border-[#C4BBDE]/50 hover:translate-y-[-2px] transition-all duration-300"
+                      >
+                        <div className="p-2 bg-[#E3DEEE]/60 text-[#3B2F8C] rounded-xl w-fit border border-[#C4BBDE]/30">
+                          <CheckCircle2 className="w-4 h-4 text-[#3B2F8C]" />
+                        </div>
+                        <div className="space-y-1">
+                          <h4 className="font-display font-extrabold text-xs text-[#14183D] tracking-tight uppercase">{item.title}</h4>
+                          <p className="text-[11px] text-[#55506E] leading-relaxed font-normal">{item.desc}</p>
                         </div>
                       </div>
                     ))}
@@ -1141,70 +908,144 @@ export default function App() {
                 </div>
               </section>
 
-              {/* SECTION: Metodologia (05) */}
-              <section className="bg-gradient-to-br from-[#14183D] to-[#252A60] text-white rounded-[32px] p-8 sm:p-12 md:p-16 relative overflow-hidden border border-white/10 shadow-2xl">
-                <div className="absolute top-0 right-0 w-96 h-96 bg-[#3B2F8C]/30 rounded-full blur-3xl pointer-events-none" />
-                <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-[#F4A574]/10 rounded-full blur-3xl pointer-events-none" />
-                
-                <div className="relative z-10 space-y-12">
-                  {/* Top Header Grid */}
-                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start pb-8 border-b border-white/10">
-                    <div className="lg:col-span-7 space-y-4">
-                      <span className="inline-flex items-center gap-1.5 bg-[#F4A574]/10 text-[#F4A574] px-3 py-1.5 rounded-full border border-[#F4A574]/20 text-[10px] font-bold uppercase tracking-wider">
-                        05 · METODOLOGIA BADANIA
+              {/* SECTION: Metodologia / 11 obszarów (05) - DARK MARQUEE LAYOUT */}
+              <div className="bg-[#14183D] border border-[#3B2F8C]/30 p-6 sm:p-10 lg:p-12 rounded-[32px] overflow-hidden relative bg-[radial-gradient(#3B2F8C_1px,transparent_1px)] [background-size:24px_24px]">
+
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+                  
+                  {/* Left Column: Purpose-built copy + indicators + CTA */}
+                  <div className="lg:col-span-5 space-y-6 sm:space-y-8">
+                    <div className="space-y-3.5">
+                      <span className="text-[10px] font-mono text-[#F4A574] uppercase font-bold tracking-wider block">
+                        Metodologia Badania Satysfakcji i eNPS
                       </span>
-                      <h3 className="font-display font-black text-2xl sm:text-4xl text-white tracking-tight uppercase leading-none">
-                        Z teorii pracy do konkretnych pytań i decyzji.
+                      <h3 className="font-sans font-black text-2xl sm:text-3xl lg:text-4xl text-white uppercase tracking-tight leading-[1.1]">
+                        Badanie <span className="text-[#F4A574]">11 obszarów</span>, które budują silną organizację.
                       </h3>
-                      <p className="text-xs sm:text-sm text-gray-300 leading-relaxed max-w-2xl">
-                        HRly łączy najważniejsze teorie pracy, zaangażowania i motywacji ludzkiej w jeden komplementarny, przejrzysty framework badawczy. Nasz wynik to zintegrowany, w pełni obiektywny obraz zespołu, który pozwala błyskawicznie sprawdzić, co naprawdę czują Twoi ludzie.
+                      <p className="text-xs sm:text-sm text-gray-300 leading-relaxed max-w-xl pt-2">
+                        Nasz system analityczny pokrywa pełny przekrój doświadczenia zawodowego pracowników. Zamiast chaotycznych, pojedynczych ankiet, HRly bada 58 precyzyjnie dobranych czynników. Każde badanie automatycznie zasila centralny dashboard, pozwalając liderom natychmiast wychwycić rodzące się problemy.
                       </p>
                     </div>
 
-                    <div className="lg:col-span-5 grid grid-cols-3 gap-3 w-full">
-                      <div className="p-4 bg-white/5 border border-white/10 rounded-2xl space-y-1 text-center">
-                        <span className="font-sans font-black text-lg sm:text-2xl text-[#F4A574] block">58</span>
-                        <p className="text-[9px] text-gray-400 uppercase font-mono tracking-tight font-bold">Czynników</p>
+                    {/* Grid of 4 key attributes inspired by the screenshot's subtext layout */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5 border-t border-[#3B2F8C]/40 pt-6">
+                      <div>
+                        <h4 className="font-sans font-black text-xs text-[#FBFAF8] uppercase tracking-wider">
+                          Naukowa struktura
+                        </h4>
+                        <p className="text-[11px] text-gray-400 leading-normal mt-1">
+                          Metodologia oparta o standardy psychologii pracy, eNPS oraz kluczowe mierniki zaangażowania Gallupa.
+                        </p>
                       </div>
-                      <div className="p-4 bg-white/5 border border-white/10 rounded-2xl space-y-1 text-center">
-                        <span className="font-sans font-black text-lg sm:text-2xl text-[#F4A574] block">11</span>
-                        <p className="text-[9px] text-gray-400 uppercase font-mono tracking-tight font-bold">Obszarów</p>
+
+                      <div>
+                        <h4 className="font-sans font-black text-xs text-[#FBFAF8] uppercase tracking-wider">
+                          Mierzalny wpływ
+                        </h4>
+                        <p className="text-[11px] text-gray-400 leading-normal mt-1">
+                          Każdy zbadany czynnik jest powiązany z symulowanym kosztem rotacji oraz wskaźnikami produktywności.
+                        </p>
                       </div>
-                      <div className="p-4 bg-white/5 border border-white/10 rounded-2xl space-y-1 text-center">
-                        <span className="font-sans font-black text-lg sm:text-2xl text-[#F4A574] block">11</span>
-                        <p className="text-[9px] text-gray-400 uppercase font-mono tracking-tight font-bold">Teorii</p>
+
+                      <div>
+                        <h4 className="font-sans font-black text-xs text-[#FBFAF8] uppercase tracking-wider">
+                          AI Action Plan
+                        </h4>
+                        <p className="text-[11px] text-gray-400 leading-normal mt-1">
+                          Menedżerowie nie otrzymują wyłącznie suchych liczb – system generuje natychmiastowe wskazówki operacyjne.
+                        </p>
                       </div>
+
+                      <div>
+                        <h4 className="font-sans font-black text-xs text-[#FBFAF8] uppercase tracking-wider">
+                          Szybka konfiguracja
+                        </h4>
+                        <p className="text-[11px] text-gray-400 leading-normal mt-1">
+                          Gotowe szablony badań pulse-check, kwartalnych i rocznych uruchomisz w mniej niż minutę.
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* CTA Button */}
+                    <div className="pt-2">
+                      <button
+                        onClick={() => setActiveTab('pricing')}
+                        className="px-6 py-3 bg-white hover:bg-[#F4A574] text-[#14183D] hover:text-white text-[11px] font-mono font-bold uppercase rounded-full transition-all flex items-center gap-2 shadow-sm hover:shadow-md cursor-pointer select-none"
+                      >
+                        Zobacz naszą ofertę
+                        <ArrowRight className="w-3.5 h-3.5 text-[#F4A574]" />
+                      </button>
                     </div>
                   </div>
 
-                  {/* Full width interactive selector & visualizer */}
-                  <div className="w-full">
-                    <HrlyMethodologyVisual />
+                  {/* Right Column: Auto-sliding column of cards (Continuous marquee) */}
+                  <div className="lg:col-span-7 relative h-[520px] sm:h-[580px] overflow-hidden">
+                    
+                    {/* Decorative subtle top/bottom fade overlays to blend the scrolling seamlessly */}
+                    <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-[#14183D] via-[#14183D]/85 to-transparent z-10 pointer-events-none" />
+                    <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#14183D] via-[#14183D]/85 to-transparent z-10 pointer-events-none" />
+
+                    {/* Marquee Container with duplicate list to loop perfectly */}
+                    <div className="absolute w-full px-2 sm:px-4 py-6 flex flex-col gap-4 animate-marquee-scroll-up hover:[animation-play-state:paused]">
+                      {[...RESEARCH_AREAS, ...RESEARCH_AREAS].map((area, idx) => {
+                        const AreaIcon = getAreaIcon(area.num);
+                        return (
+                          <div 
+                            key={idx}
+                            className="bg-[#1D2254] border border-[#3B2F8C]/30 hover:border-[#F4A574]/50 p-4.5 rounded-2xl shadow-xs hover:shadow-lg transition-all duration-300 flex items-center gap-4 select-none relative group"
+                          >
+                            {/* Accent indicator bar on the left */}
+                            <div className="absolute left-0 top-1/4 bottom-1/4 w-1 bg-transparent group-hover:bg-[#F4A574] rounded-r transition-all" />
+
+                            {/* Icon container with soft colored background to mimic the screenshot's premium feel */}
+                            <div className="p-3 bg-[#14183D] border border-[#3B2F8C]/30 rounded-xl text-[#F4A574] shadow-xs group-hover:scale-105 transition-transform shrink-0">
+                              <AreaIcon className="w-5 h-5" />
+                            </div>
+
+                            {/* Card text content */}
+                            <div className="space-y-1 flex-1 min-w-0">
+                              <h4 className="font-sans font-extrabold text-sm text-[#FBFAF8] uppercase tracking-tight truncate">
+                                {area.title}
+                              </h4>
+
+                              {/* Styled arrow sub-impact line matching screenshot */}
+                              <div className="flex items-start gap-1.5 text-xs text-gray-300 leading-snug">
+                                <span className="text-[#F4A574] font-black shrink-0">↳</span>
+                                <span className="text-[11px] font-sans font-medium text-gray-300/90">
+                                  {getScreenshotImpactText(area.num)}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
+
                 </div>
-              </section>
+              </div>
 
               {/* SECTION: Jak to działa (06) */}
-              <section className="space-y-10 py-4" id="interactive-demo">
+              <section className="space-y-10 py-4" id="how-it-works">
                 <div className="text-center max-w-3xl mx-auto space-y-4">
-                  <span className="inline-flex items-center gap-1 bg-[#E3DEEE] text-[#3B2F8C] px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider">
+                  <span className="inline-flex items-center gap-1.5 bg-[#E3DEEE]/60 text-[#3B2F8C] px-3 py-1.5 rounded-full border border-[#C4BBDE]/35 text-[10px] font-bold uppercase tracking-wider shadow-xs leading-none">
                     06 · JAK TO DZIAŁA
                   </span>
                   <h3 className="font-display font-black text-2xl sm:text-4xl text-[#14183D] tracking-tight uppercase leading-none">
                     Prosta ścieżka do dojrzałego HR
                   </h3>
                   <p className="text-xs sm:text-sm text-[#55506E] leading-relaxed max-w-2xl mx-auto">
-                    Zmień oblicze swojej firmy w 3 prostych bazowych krokach. Bez instalowania skomplikowanego kodu, bez potrzeby posiadania sztabu analityków rynkowych.
+                    Wdróż badanie zaangażowania w 3 prostych krokach. Bez instalowania skomplikowanego kodu i bez konieczności zatrudniania analityków.
                   </p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
                   {[
-                    { num: "01", title: "Zbierz dane", desc: "Skorzystaj z gotowych szablonów ankiet zaprojektowanych przez psychologów pracy lub stwórz własne pytania za pomocą elastycznego kreatora." },
-                    { num: "02", title: "Inteligentna analiza", desc: "Nasz automat natychmiast klastruje i analizuje 58 kluczowych czynników w 11 obszarach, zdejmując z Twojej głowy pracę statystyczną." },
-                    { num: "03", title: "Plan działania", desc: "Zarząd i menedżerowie otrzymują automatyczny, spersonalizowany raport zawierający gotowe narzędzia komunikacyjne, checklisty oraz rekomendacje." }
+                    { num: "01", title: "Wyślij ankietę", desc: "Wybierz gotowy kwestionariusz Pulse-Check zaprojektowany przez psychologów pracy i roześlij go w kilka sekund." },
+                    { num: "02", title: "Odbierz analizę", desc: "System automatycznie przetwarza wyniki, grupuje je w 11 kluczowych obszarów i precyzyjnie wskazuje słabe punkty." },
+                    { num: "03", title: "Działaj z planem", desc: "Zarząd i menedżerowie otrzymują automatyczne plany działań, checklisty i scenariusze gotowe do natychmiastowego wdrożenia." }
                   ].map((step, sIdx) => (
-                    <div key={sIdx} className="bg-[#FBFAF8] border border-[#EFEAE1] hover:border-[#C4BBDE] p-6 rounded-2xl space-y-4 transition-all hover:shadow-md relative overflow-hidden group">
+                    <div key={sIdx} className="bg-white border border-[rgba(15,17,41,0.05)] shadow-[0_8px_30px_rgb(0,0,0,0.02)] p-6 rounded-2xl space-y-4 transition-all hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:border-[#C4BBDE]/50 hover:translate-y-[-2px] relative overflow-hidden group">
                       <div className="absolute top-0 right-0 w-24 h-24 bg-[#F4A574]/5 rounded-full blur-xl pointer-events-none group-hover:bg-[#3B2F8C]/5 transition-colors" />
                       
                       <div className="w-10 h-10 rounded-xl bg-[#3B2F8C] text-white flex items-center justify-center font-mono font-black text-sm shadow-sm">
@@ -1212,7 +1053,7 @@ export default function App() {
                       </div>
                       
                       <div className="space-y-2">
-                        <h4 className="font-sans font-black text-sm text-[#14183D] uppercase tracking-tight">{step.title}</h4>
+                        <h4 className="font-display font-extrabold text-sm text-[#14183D] uppercase tracking-tight">{step.title}</h4>
                         <p className="text-xs text-[#55506E] leading-relaxed font-normal">{step.desc}</p>
                       </div>
                     </div>
@@ -1221,35 +1062,48 @@ export default function App() {
               </section>
 
               {/* SECTION: CTA Końcowe (07) */}
-              <section className="bg-[#F4F1EC] border border-[#C4BBDE]/50 rounded-3xl p-8 sm:p-12 text-center space-y-6 relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-32 h-32 bg-[#F4A574]/10 rounded-full blur-2xl pointer-events-none" />
-                <div className="absolute bottom-0 right-0 w-32 h-32 bg-[#3B2F8C]/10 rounded-full blur-2xl pointer-events-none" />
+              <section className="relative rounded-[32px] border border-[#F4A574]/20 bg-[#14183D] p-8 sm:p-12 text-center overflow-hidden shadow-2xl">
+                {/* Glowing radial circles */}
+                <div className="absolute -top-12 -left-12 w-64 h-64 bg-[#3B2F8C]/40 rounded-full blur-3xl pointer-events-none" />
+                <div className="absolute -bottom-12 -right-12 w-64 h-64 bg-[#F4A574]/15 rounded-full blur-3xl pointer-events-none" />
                 
-                <div className="max-w-2xl mx-auto space-y-4 relative z-10">
-                  <span className="text-[11px] font-mono font-bold uppercase text-[#3B2F8C]">
+                <div className="max-w-2xl mx-auto space-y-6 relative z-10">
+                  <span className="inline-flex items-center gap-1.5 bg-[#F4A574]/10 text-[#F4A574] px-3.5 py-1.5 rounded-full border border-[#F4A574]/20 text-[10px] font-bold uppercase tracking-wider">
                     07 · GOTOWI NA ZMIANĘ?
                   </span>
                   
-                  <h3 className="font-display font-black text-2xl sm:text-3xl text-[#14183D] tracking-tight uppercase leading-none">
-                    Zacznij podejmować trafne decyzje HR już dziś.
+                  <h3 className="font-display font-extrabold text-2xl sm:text-4xl text-white tracking-tight uppercase leading-tight">
+                    Zbuduj zaangażowany zespół w 15 minut.
                   </h3>
 
-                  <p className="text-xs sm:text-sm text-[#55506E] leading-relaxed">
-                    Analiza 58 czynników HR, intuicyjne dashboardy, gotowe rekomendacje i praktyczne plany ułatwiające pracę menedżerów — wszystko w kilka minut. Bez analityka. Prosto do biznesowego celu.
+                  <p className="text-xs sm:text-sm text-gray-300 leading-relaxed max-w-lg mx-auto">
+                    Rozpocznij darmowy test. Pierwsze badanie, diagnozę i plan działań dla menedżerów otrzymasz jeszcze dzisiaj.
                   </p>
 
-                  <div className="flex justify-center pt-2">
+                  <div className="flex flex-col items-center justify-center gap-4 pt-2">
                     <button
                       onClick={() => { setActiveTab('pricing'); }}
-                      className="py-4 px-8 text-xs bg-[#3B2F8C] hover:bg-[#231B5E] text-white font-display font-extrabold uppercase tracking-wider rounded-xl shadow-md transition-all active:scale-[0.98] duration-200 cursor-pointer"
+                      className="py-4 px-8 text-xs bg-[#F4A574] hover:bg-[#e0915f] text-[#14183D] font-display font-extrabold uppercase tracking-wider rounded-xl shadow-lg transition-all hover:scale-[1.03] active:scale-[0.98] duration-200 cursor-pointer"
                     >
-                      Załóż darmowe konto
+                      Zacznij bezpłatny test
                     </button>
+                    
+                    {/* Security credentials in white/gray */}
+                    <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-[10px] text-gray-400 font-mono">
+                      <span className="flex items-center gap-1">
+                        <span className="text-[#F4A574] font-bold">✓</span>
+                        14 dni testu bez zobowiązań
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <span className="text-[#F4A574] font-bold">✓</span>
+                        Brak wymaganej karty płatniczej
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <span className="text-[#F4A574] font-bold">✓</span>
+                        Pełne bezpieczeństwo RODO
+                      </span>
+                    </div>
                   </div>
-
-                  <p className="text-[10px] text-[#A39AB4] italic font-medium">
-                    Inteligentna platforma analityki HR, która błyskawicznie zamienia surowe dane ankietowe w strategiczne decyzje biznesowe i realny zysk.
-                  </p>
                 </div>
               </section>
 
@@ -1464,132 +1318,70 @@ export default function App() {
                 </div>
               </div>
 
-              {/* 11 areas overview block - BEAUTIFUL AUTO-SCROLLING LAYOUT INSPIRED BY ATTACHED SCREENSHOT */}
-              <div className="bg-[#14183D] border border-[#3B2F8C]/30 p-6 sm:p-10 lg:p-12 rounded-[32px] overflow-hidden relative bg-[radial-gradient(#3B2F8C_1px,transparent_1px)] [background-size:24px_24px]">
-                {/* Custom styling for the seamless infinite vertical marquee */}
-                <style>{`
-                  @keyframes marquee-scroll-up {
-                    0% { transform: translateY(0); }
-                    100% { transform: translateY(-50%); }
-                  }
-                  .animate-marquee-scroll-up {
-                    animation: marquee-scroll-up 130s linear infinite;
-                  }
-                `}</style>
-
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-                  
-                  {/* Left Column: Purpose-built copy + indicators + CTA */}
-                  <div className="lg:col-span-5 space-y-6 sm:space-y-8">
-                    <div className="space-y-3.5">
-                      <span className="text-[10px] font-mono text-[#F4A574] uppercase font-bold tracking-wider block">
-                        Metodologia Badania Satysfakcji i eNPS
-                      </span>
-                      <h3 className="font-sans font-black text-2xl sm:text-3xl lg:text-4xl text-white uppercase tracking-tight leading-[1.1]">
-                        Badanie <span className="text-[#F4A574]">11 obszarów</span>, które budują silną organizację.
-                      </h3>
-                      <p className="text-xs sm:text-sm text-gray-300 leading-relaxed max-w-xl pt-2">
-                        Nasz system analityczny pokrywa pełny przekrój doświadczenia zawodowego pracowników. Zamiast chaotycznych, pojedynczych ankiet, HRly bada 58 precyzyjnie dobranych czynników. Każde badanie automatycznie zasila centralny dashboard, pozwalając liderom natychmiast wychwycić rodzące się problemy.
-                      </p>
-                    </div>
-
-                    {/* Grid of 4 key attributes inspired by the screenshot's subtext layout */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5 border-t border-[#3B2F8C]/40 pt-6">
-                      <div>
-                        <h4 className="font-sans font-black text-xs text-[#FBFAF8] uppercase tracking-wider">
-                          Naukowa struktura
-                        </h4>
-                        <p className="text-[11px] text-gray-400 leading-normal mt-1">
-                          Metodologia oparta o standardy psychologii pracy, eNPS oraz kluczowe mierniki zaangażowania Gallupa.
-                        </p>
-                      </div>
-
-                      <div>
-                        <h4 className="font-sans font-black text-xs text-[#FBFAF8] uppercase tracking-wider">
-                          Mierzalny wpływ
-                        </h4>
-                        <p className="text-[11px] text-gray-400 leading-normal mt-1">
-                          Każdy zbadany czynnik jest powiązany z symulowanym kosztem rotacji oraz wskaźnikami produktywności.
-                        </p>
-                      </div>
-
-                      <div>
-                        <h4 className="font-sans font-black text-xs text-[#FBFAF8] uppercase tracking-wider">
-                          AI Action Plan
-                        </h4>
-                        <p className="text-[11px] text-gray-400 leading-normal mt-1">
-                          Menedżerowie nie otrzymują wyłącznie suchych liczb – system generuje natychmiastowe wskazówki operacyjne.
-                        </p>
-                      </div>
-
-                      <div>
-                        <h4 className="font-sans font-black text-xs text-[#FBFAF8] uppercase tracking-wider">
-                          Szybka konfiguracja
-                        </h4>
-                        <p className="text-[11px] text-gray-400 leading-normal mt-1">
-                          Gotowe szablony badań pulse-check, kwartalnych i rocznych uruchomisz w mniej niż minutę.
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* CTA Button */}
-                    <div className="pt-2">
-                      <button
-                        onClick={() => setActiveTab('pricing')}
-                        className="px-6 py-3 bg-white hover:bg-[#F4A574] text-[#14183D] hover:text-white text-[11px] font-mono font-bold uppercase rounded-full transition-all flex items-center gap-2 shadow-sm hover:shadow-md cursor-pointer select-none"
-                      >
-                        Zobacz naszą ofertę
-                        <ArrowRight className="w-3.5 h-3.5 text-[#F4A574]" />
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Right Column: Auto-sliding column of cards (Continuous marquee) */}
-                  <div className="lg:col-span-7 relative h-[520px] sm:h-[580px] overflow-hidden">
-                    
-                    {/* Decorative subtle top/bottom fade overlays to blend the scrolling seamlessly */}
-                    <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-[#14183D] via-[#14183D]/85 to-transparent z-10 pointer-events-none" />
-                    <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#14183D] via-[#14183D]/85 to-transparent z-10 pointer-events-none" />
-
-                    {/* Marquee Container with duplicate list to loop perfectly */}
-                    <div className="absolute w-full px-2 sm:px-4 py-6 flex flex-col gap-4 animate-marquee-scroll-up hover:[animation-play-state:paused]">
-                      {[...RESEARCH_AREAS, ...RESEARCH_AREAS].map((area, idx) => {
-                        const AreaIcon = getAreaIcon(area.num);
-                        return (
-                          <div 
-                            key={idx}
-                            className="bg-[#1D2254] border border-[#3B2F8C]/30 hover:border-[#F4A574]/50 p-4.5 rounded-2xl shadow-xs hover:shadow-lg transition-all duration-300 flex items-center gap-4 select-none relative group"
-                          >
-                            {/* Accent indicator bar on the left */}
-                            <div className="absolute left-0 top-1/4 bottom-1/4 w-1 bg-transparent group-hover:bg-[#F4A574] rounded-r transition-all" />
-
-                            {/* Icon container with soft colored background to mimic the screenshot's premium feel */}
-                            <div className="p-3 bg-[#14183D] border border-[#3B2F8C]/30 rounded-xl text-[#F4A574] shadow-xs group-hover:scale-105 transition-transform shrink-0">
-                              <AreaIcon className="w-5 h-5" />
-                            </div>
-
-                            {/* Card text content */}
-                            <div className="space-y-1 flex-1 min-w-0">
-                              <h4 className="font-sans font-extrabold text-sm text-[#FBFAF8] uppercase tracking-tight truncate">
-                                {area.title}
-                              </h4>
-
-                              {/* Styled arrow sub-impact line matching screenshot */}
-                              <div className="flex items-start gap-1.5 text-xs text-gray-300 leading-snug">
-                                <span className="text-[#F4A574] font-black shrink-0">↳</span>
-                                <span className="text-[11px] font-sans font-medium text-gray-300/90">
-                                  {getScreenshotImpactText(area.num)}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                </div>
+              {/* Naukowa metodologia badawcza - 11 teorii */}
+              <div className="space-y-4">
+                <h3 className="text-xs uppercase font-extrabold tracking-wider text-[#A39AB4] font-mono border-b border-[#EFEAE1] pb-2">
+                  Fundamenty naukowe platformy
+                </h3>
+                <HrlyMethodologyVisual />
               </div>
+
+              {/* 11 areas overview block - GRID LAYOUT */}
+              <section className="bg-[#F4F1EC]/40 border border-[#EFEAE1] p-6 sm:p-10 lg:p-12 rounded-[32px] relative overflow-hidden space-y-10">
+                {/* Decors */}
+                <div className="absolute top-0 right-0 w-80 h-80 bg-[#3B2F8C]/5 rounded-full blur-3xl pointer-events-none" />
+                <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#F4A574]/5 rounded-full blur-3xl pointer-events-none" />
+
+                {/* Header Info */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-end border-b border-[#EFEAE1] pb-8 relative z-10">
+                  <div className="lg:col-span-8 space-y-3">
+                    <span className="inline-flex items-center gap-1.5 bg-[#E3DEEE]/85 text-[#3B2F8C] px-3.5 py-1.5 rounded-full border border-[#C4BBDE]/35 text-[10px] font-bold uppercase tracking-wider leading-none shadow-xs">
+                      05 · Metodologia Badania Satysfakcji i eNPS
+                    </span>
+                    <h3 className="font-display font-black text-2xl sm:text-4xl text-[#14183D] tracking-tight uppercase leading-[1.05]">
+                      Badanie <span className="text-[#3B2F8C]">11 obszarów</span>, które budują silną organizację.
+                    </h3>
+                  </div>
+                  <div className="lg:col-span-4">
+                    <p className="text-xs text-[#55506E] leading-relaxed">
+                      Nasz system analityczny pokrywa pełny przekrój doświadczenia zawodowego pracowników. Zamiast chaotycznych ankiet, HRly bada 58 precyzyjnie dobranych czynników naukowych.
+                    </p>
+                  </div>
+                </div>
+
+                {/* 11 Areas Cards Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10">
+                  {RESEARCH_AREAS.map((area, idx) => {
+                    return (
+                      <div 
+                        key={idx}
+                        className="bg-white border border-[#EFEAE1]/90 rounded-2xl p-5 sm:p-6 shadow-xs hover:shadow-md hover:border-[#C4BBDE] transition-all flex flex-col justify-between"
+                      >
+                        {/* Top Info */}
+                        <div className="space-y-2">
+                          <span className="text-[9px] font-mono font-bold tracking-widest text-[#A39AB4] uppercase block">
+                            Obszar {area.num}
+                          </span>
+                          <h4 className="font-display font-black text-base text-[#14183D] uppercase tracking-tight leading-tight">
+                            {area.title}
+                          </h4>
+                          <p className="text-[11.5px] text-[#55506E] leading-relaxed min-h-[36px]">
+                            {area.question}
+                          </p>
+                        </div>
+
+                        {/* Bottom Impact Box (Beige box with Left Border) */}
+                        <div className="mt-4 bg-[#FBFAF8] border-l-2 border-[#3B2F8C] p-3.5 rounded-r-xl rounded-l-xs text-[11px] text-[#14183D] leading-relaxed">
+                          <span className="font-bold text-[#3B2F8C] block mb-0.5 uppercase tracking-wide text-[9px] font-mono">Wpływ:</span>
+                          <span className="text-slate-700 font-sans font-medium">
+                            {getScreenshotImpactText(area.num)}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </section>
 
 
 
@@ -1788,7 +1580,10 @@ export default function App() {
                         Napisz do nas
                       </button>
                       <button
-                        onClick={() => setIsDashboardOpen(true)}
+                        onClick={() => {
+                          setActiveTab('home');
+                          setIsDashboardModalOpen(true);
+                        }}
                         className="py-3 px-5 bg-white border border-[#C4BBDE] hover:bg-[#F4F1EC] text-[#3B2F8C] text-xs font-display font-extrabold uppercase tracking-wider rounded-xl transition-all active:scale-[0.98] duration-200 cursor-pointer shadow-sm"
                       >
                         Uruchom demo
@@ -2382,65 +2177,39 @@ export default function App() {
         </div>
       )}
 
-      {/* ================= INTERACTIVE RESEARCH DASHBOARD LIGHTBOX MODAL ================= */}
+      {/* ================= INTERACTIVE DASHBOARD MODAL DIALOG (Lightbox) ================= */}
       <AnimatePresence>
-        {isDashboardOpen && (
-          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 md:p-10">
-            {/* Dark blur backdrop */}
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsDashboardOpen(false)}
-              className="fixed inset-0 bg-[#14183D]/80 backdrop-blur-md cursor-pointer"
-            />
-
-            {/* Modal Body Container */}
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.95, y: 30 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 30 }}
-              transition={{ type: "spring", damping: 25, stiffness: 180 }}
-              className="relative bg-[#FBFAF8] w-full max-w-6xl max-h-[90vh] overflow-y-auto rounded-[32px] shadow-2xl border border-[#EFEAE1]/80 z-10 flex flex-col custom-scrollbar"
+        {isDashboardModalOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[99999] flex items-center justify-center bg-[#14183D]/80 backdrop-blur-md p-4 sm:p-6 md:p-10"
+            onClick={() => setIsDashboardModalOpen(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, y: 15, opacity: 0 }}
+              animate={{ scale: 1, y: 0, opacity: 1 }}
+              exit={{ scale: 0.95, y: 15, opacity: 0 }}
+              transition={{ type: "spring", duration: 0.5, bounce: 0.2 }}
+              className="relative bg-[#FBFAF8] w-full max-w-6xl max-h-[90vh] rounded-[32px] shadow-2xl border border-[#C4BBDE]/35 overflow-y-auto p-4 sm:p-6"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Header inside Modal with close action */}
-              <div className="sticky top-0 bg-[#FBFAF8] z-30 px-6 py-4 border-b border-[#EFEAE1] flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#F4A574]" />
-                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#3B2F8C]">Interaktywne Demo HRly</span>
-                </div>
-                <button 
-                  onClick={() => setIsDashboardOpen(false)}
-                  className="p-2 bg-[#14183D]/5 hover:bg-[#14183D]/10 text-[#14183D] rounded-full transition-all cursor-pointer flex items-center justify-center"
-                  title="Zamknij pulpit"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
+              {/* Close Button */}
+              <button
+                onClick={() => setIsDashboardModalOpen(false)}
+                className="absolute top-5 right-5 p-2 rounded-full bg-white hover:bg-[#F4F1EC] text-[#14183D] border border-[#EFEAE1]/80 hover:border-gray-300 transition-colors shadow-xs z-50 cursor-pointer"
+                aria-label="Zamknij"
+              >
+                <X className="w-5 h-5" />
+              </button>
 
-              {/* Render Dashboard Component */}
-              <div className="p-4 sm:p-6">
+              {/* Inside content */}
+              <div className="pt-8">
                 <HrlyDashboardPreview />
               </div>
-
-              {/* Subtle Footer inside Modal */}
-              <div className="bg-[#F4F1EC]/40 px-6 py-4.5 border-t border-[#EFEAE1] flex flex-col sm:flex-row items-center justify-between gap-4">
-                <p className="text-[11px] text-[#55506E] text-center sm:text-left">
-                  To jest rzeczywisty podgląd działania modułu analitycznego HRly. Chcesz dostosować ankiety do swojej firmy?
-                </p>
-                <button 
-                  onClick={() => {
-                    setIsDashboardOpen(false);
-                    setActiveTab('pricing');
-                  }}
-                  className="px-5 py-2.5 bg-[#3B2F8C] hover:bg-[#231B5E] text-white text-xs font-bold rounded-xl transition-colors cursor-pointer"
-                >
-                  Załóż darmowe konto
-                </button>
-              </div>
             </motion.div>
-          </div>
+          </motion.div>
         )}
       </AnimatePresence>
 

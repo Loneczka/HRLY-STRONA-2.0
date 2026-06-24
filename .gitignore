@@ -6,3 +6,4 @@ coverage/
 *.log
 .env*
 !.env.example
+hrly_strona_old/

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800&family=Fraunces:ital,opsz,wght@1,9..144,300..900&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
 
 @theme {
@@ -19,10 +19,9 @@
   --color-warning-orange: #B45309;
   --color-danger-red: #B91C1C;
   
-  --font-sans: 'Poppins', ui-sans-serif, system-ui, sans-serif;
-  --font-display: 'Montserrat', sans-serif;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Plus Jakarta Sans', sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
-  --font-script: 'Fraunces', serif;
 }
 
 @keyframes float {
@@ -131,6 +130,15 @@
 
 .traveling-dot {
   animation: travelDotAnim 2.8s linear infinite;
+}
+
+@keyframes marquee-scroll-up {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-50%); }
+}
+
+.animate-marquee-scroll-up {
+  animation: marquee-scroll-up 130s linear infinite;
 }
 
 
