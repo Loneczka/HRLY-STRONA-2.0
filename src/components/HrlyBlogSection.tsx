@@ -334,10 +334,12 @@ export const HrlyBlogSection: React.FC<HrlyBlogSectionProps> = ({ onNavigate, co
                   <div>
                     {/* Beautiful cover image with zoom effect on hover */}
                     <div className="aspect-[16/9] w-full overflow-hidden bg-[#F4F1EC] relative border-b border-[#EFEAE1]/60">
-                      <img 
-                        src={getArticleImage(article)} 
-                        alt={article.title} 
+                      <img
+                        src={getArticleImage(article)}
+                        alt={article.title}
                         referrerPolicy="no-referrer"
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
                       />
                       <div className="absolute top-3 left-3">

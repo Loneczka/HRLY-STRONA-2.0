@@ -71,9 +71,9 @@ export const HrlyHeroGraphic: React.FC = () => {
               <span className="text-[9px] font-display font-extrabold text-[#3B2F8C] uppercase tracking-widest block mb-0.5">
                 Kondycja Zespołu
               </span>
-              <h5 className="text-base font-display font-bold text-[#14183D] tracking-tight">
+              <div className="text-base font-display font-bold text-[#14183D] tracking-tight">
                 Analityka Pulsu
-              </h5>
+              </div>
             </div>
 
             {/* Grid display with Animating Live Wave */}
@@ -199,7 +199,7 @@ export const HrlyHeroGraphic: React.FC = () => {
               <strong className="text-base font-bold text-[#14183D] mt-1 block leading-none">
                 stabilna
               </strong>
-              <span className="text-[9px] text-emerald-600 font-bold font-display mt-0.5 block leading-none">
+              <span className="text-[9px] text-emerald-700 font-bold font-display mt-0.5 block leading-none">
                 96.4% retencji
               </span>
             </div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Sparkles, ShieldCheck, Mail, ArrowRight, CheckCircle2, Download,
@@ -13,8 +13,11 @@ import { HrlyBlogSection } from './components/HrlyBlogSection';
 import { HrlyPricingCalculator } from './components/HrlyPricingCalculator';
 import { HrlyHeroGraphic } from './components/HrlyHeroGraphic';
 import { HrlyMethodologyVisual } from './components/HrlyMethodologyVisual';
-import { AdminPanel } from './components/AdminPanel';
 import { addLead, useSiteConfig } from './hooks/useSiteConfig';
+
+// Admin panel is heavy (pulls in @google/genai) and only used on the /admin tab,
+// so load it on demand to keep the public bundle small.
+const AdminPanel = lazy(() => import('./components/AdminPanel').then((m) => ({ default: m.AdminPanel })));
 
 type PageRoute = 'home' | 'features' | 'pricing' | 'about' | 'blog' | 'contact' | 'admin';
 
@@ -492,9 +495,17 @@ export default function App() {
     setDemoDialogOpen(false);
   };
 
-  // Admin panel - full screen takeover
+  // Admin panel - full screen takeover (lazy-loaded chunk)
   if (activeTab === 'admin') {
-    return <AdminPanel onBack={() => setActiveTab('home')} />;
+    return (
+      <Suspense fallback={
+        <div className="min-h-screen bg-[#FBFAF8] flex items-center justify-center text-[#55506E] text-sm font-semibold uppercase tracking-wider">
+          Ładowanie panelu…
+        </div>
+      }>
+        <AdminPanel onBack={() => setActiveTab('home')} />
+      </Suspense>
+    );
   }
 
   return (
@@ -595,8 +606,10 @@ export default function App() {
           </div>
 
           {/* Mobile menu hamburger toggle */}
-          <button 
+          <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label={mobileMenuOpen ? 'Zamknij menu' : 'Otwórz menu'}
+            aria-expanded={mobileMenuOpen}
             className="lg:hidden p-1.5 rounded-lg hover:bg-[#F4F1EC] text-[#14183D] cursor-pointer"
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -802,7 +815,7 @@ export default function App() {
                     </div>
                     
                     {/* Interactive hint text below the button */}
-                    <span className="text-[10px] text-[#A39AB4] font-mono mt-4 flex items-center gap-1.5 uppercase tracking-wider">
+                    <span className="text-[10px] text-[#55506E] font-mono mt-4 flex items-center gap-1.5 uppercase tracking-wider">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
                       Kliknij, aby przetestować na żywo
                     </span>
@@ -826,7 +839,7 @@ export default function App() {
 
                 <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-3 gap-4 font-normal">
                   <div className="p-5 rounded-2xl border border-[#EFEAE1] bg-[#FBFAF8]/40 space-y-3 hover:translate-y-[-2px] transition-transform">
-                    <span className="text-2xl font-black text-[#F4A574] font-mono">01</span>
+                    <span className="text-2xl font-black text-[#3B2F8C] font-mono">01</span>
                     <h4 className="font-bold text-sm text-[#14183D] uppercase tracking-tight">Wynik</h4>
                     <p className="text-xs text-[#55506E] leading-relaxed">
                       Raport od razu i precyzyjnie wskazuje obszary z najniższą oceną kapitału ludzkiego. Od razu widać, gdzie w zespole narasta napięcie.
@@ -2133,16 +2146,16 @@ export default function App() {
           <div className="md:col-span-5 grid grid-cols-2 gap-4 text-center md:text-left font-semibold text-[11px] text-gray-300">
             <div className="space-y-2">
               <span className="text-[10px] text-[#F4A574] font-mono uppercase font-bold tracking-wider block">Opcje menu</span>
-              <button onClick={() => setActiveTab('features')} className="block hover:text-[#F4A574] focus:outline-none w-full md:text-left transition-colors cursor-pointer">Funkcje</button>
-              <button onClick={() => setActiveTab('pricing')} className="block hover:text-[#F4A574] focus:outline-none w-full md:text-left transition-colors cursor-pointer">Cennik</button>
-              <button onClick={() => setActiveTab('about')} className="block hover:text-[#F4A574] focus:outline-none w-full md:text-left transition-colors cursor-pointer">O nas</button>
+              <button onClick={() => setActiveTab('features')} className="block py-1.5 hover:text-[#F4A574] focus:outline-none w-full md:text-left transition-colors cursor-pointer">Funkcje</button>
+              <button onClick={() => setActiveTab('pricing')} className="block py-1.5 hover:text-[#F4A574] focus:outline-none w-full md:text-left transition-colors cursor-pointer">Cennik</button>
+              <button onClick={() => setActiveTab('about')} className="block py-1.5 hover:text-[#F4A574] focus:outline-none w-full md:text-left transition-colors cursor-pointer">O nas</button>
             </div>
             <div className="space-y-2">
               <span className="text-[10px] text-[#F4A574] font-mono uppercase font-bold tracking-wider block">Baza wiedzy</span>
-              <button onClick={() => setActiveTab('blog')} className="block hover:text-[#F4A574] focus:outline-none w-full md:text-left transition-colors cursor-pointer">Blog / Baza wiedzy</button>
-              <button onClick={() => setActiveTab('contact')} className="block hover:text-[#F4A574] focus:outline-none w-full md:text-left transition-colors cursor-pointer">Kontakt z nami</button>
-              <a href="#privacy" className="block hover:text-[#F4A574] w-full md:text-left transition-colors cursor-not-allowed">Polityka prywatności</a>
-              <a href="#rules" className="block hover:text-[#F4A574] w-full md:text-left transition-colors cursor-not-allowed">Regulamin</a>
+              <button onClick={() => setActiveTab('blog')} className="block py-1.5 hover:text-[#F4A574] focus:outline-none w-full md:text-left transition-colors cursor-pointer">Blog / Baza wiedzy</button>
+              <button onClick={() => setActiveTab('contact')} className="block py-1.5 hover:text-[#F4A574] focus:outline-none w-full md:text-left transition-colors cursor-pointer">Kontakt z nami</button>
+              <a href="#privacy" className="block py-1.5 hover:text-[#F4A574] w-full md:text-left transition-colors cursor-not-allowed">Polityka prywatności</a>
+              <a href="#rules" className="block py-1.5 hover:text-[#F4A574] w-full md:text-left transition-colors cursor-not-allowed">Regulamin</a>
             </div>
           </div>
 
