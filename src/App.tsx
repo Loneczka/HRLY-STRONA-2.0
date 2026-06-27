@@ -779,7 +779,7 @@ export default function App() {
                         onClick={() => setIsDashboardModalOpen(true)}
                         className="relative py-4 px-9 text-xs sm:text-sm bg-gradient-to-r from-[#F4A574] to-[#fca570] hover:from-[#e29362] hover:to-[#e98a51] text-[#14183D] font-display font-black uppercase tracking-wider rounded-xl shadow-lg transition-all hover:scale-[1.03] active:scale-[0.98] duration-200 cursor-pointer flex items-center gap-2.5 z-10"
                       >
-                        Otwórz pulpit demonstracyjny
+                        Otwórz przykładowy raport
                         <ArrowUpRight className="w-4.5 h-4.5 text-[#14183D] stroke-[2.5]" />
                       </button>
 
@@ -942,7 +942,7 @@ export default function App() {
                   <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {[
                       { title: "Raporty w kilka minut", desc: "Natychmiastowe wyniki bez żmudnych analiz i ręcznego liczenia arkuszy Excel." },
-                      { title: "Plan naprawczy AI", desc: "Nie tylko diagnozujemy problem, ale podajemy gotowy plan działań." },
+                      { title: "Plan naprawczy", desc: "Nie tylko diagnozujemy problem, ale podajemy gotowy plan działań." },
                       { title: "Kontekst zespołów", desc: "Diagnoza nastrojów w konkretnych działach, bez uogólnień dla całej firmy." },
                       { title: "Wsparcie liderów", desc: "Scenariusze rozmów 1-on-1 i checklisty dla każdego menedżera." }
                     ].map((item, idx) => (
@@ -1004,7 +1004,7 @@ export default function App() {
 
                       <div>
                         <h4 className="font-sans font-black text-xs text-[#FBFAF8] uppercase tracking-wider">
-                          AI Action Plan
+                          Action Plan
                         </h4>
                         <p className="text-[11px] text-gray-400 leading-normal mt-1">
                           Menedżerowie nie otrzymują wyłącznie suchych liczb – system generuje natychmiastowe wskazówki operacyjne.
@@ -1281,7 +1281,7 @@ export default function App() {
                         <span className="text-[9px] font-mono text-white/70 font-bold uppercase">Rekomendacje</span>
                       </div>
                       <h4 className="font-sans font-black text-[11px] text-white uppercase leading-tight">
-                        AI Action Plan
+                        Action Plan
                       </h4>
                       <p className="text-[9px] text-[#E3DEEE] leading-normal mt-1 italic">
                         "Wprowadź Dzień Skupienia bez spotkań w środę"

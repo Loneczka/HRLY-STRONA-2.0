@@ -86,6 +86,13 @@ export interface ContactLead {
   starred: boolean;
 }
 
+export interface NewsletterSubscriber {
+  id: string;
+  email: string;
+  subscribedAt: string;
+  source: string;
+}
+
 export interface SiteConfig {
   global: GlobalConfig;
   hero: HeroConfig;
@@ -95,6 +102,7 @@ export interface SiteConfig {
   pricing: PricingPlan[];
   blogPosts: BlogPost[];
   leads: ContactLead[];
+  subscribers: NewsletterSubscriber[];
 }
 
 // ============================================================
@@ -172,6 +180,7 @@ export const DEFAULT_CONFIG: SiteConfig = {
   ],
   blogPosts: [],
   leads: [],
+  subscribers: [],
 };
 
 // ============================================================
@@ -193,6 +202,7 @@ export function loadConfig(): SiteConfig {
       pricing: parsed.pricing ?? DEFAULT_CONFIG.pricing,
       blogPosts: parsed.blogPosts ?? DEFAULT_CONFIG.blogPosts,
       leads: parsed.leads ?? DEFAULT_CONFIG.leads,
+      subscribers: parsed.subscribers ?? DEFAULT_CONFIG.subscribers,
     };
   } catch {
     return DEFAULT_CONFIG;
@@ -214,6 +224,23 @@ export function addLead(lead: Omit<ContactLead, 'id' | 'receivedAt' | 'read' | '
   };
   config.leads = [newLead, ...config.leads];
   saveConfig(config);
+}
+
+// Returns false if the e-mail is already subscribed (case-insensitive)
+export function addSubscriber(email: string, source = 'Newsletter Bazy wiedzy'): boolean {
+  const config = loadConfig();
+  const normalized = email.trim().toLowerCase();
+  if (!normalized) return false;
+  if (config.subscribers.some((s) => s.email.toLowerCase() === normalized)) return false;
+  const newSubscriber: NewsletterSubscriber = {
+    id: `sub_${Date.now()}`,
+    email: email.trim(),
+    subscribedAt: new Date().toISOString(),
+    source,
+  };
+  config.subscribers = [newSubscriber, ...config.subscribers];
+  saveConfig(config);
+  return true;
 }
 
 // ============================================================

@@ -16,6 +16,7 @@ import {
   saveConfig,
   type BlogPost,
   type ContactLead,
+  type NewsletterSubscriber,
   type SiteConfig,
 } from '../hooks/useSiteConfig';
 
@@ -34,6 +35,48 @@ function slugify(text: string): string {
     .replace(/ś/g, 's').replace(/ź|ż/g, 'z')
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '');
+}
+
+function decodeEntities(s: string): string {
+  return s
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#0?39;|&#x27;|&apos;/g, "'")
+    .replace(/&#8211;|&ndash;/g, '–')
+    .replace(/&#8212;|&mdash;/g, '—')
+    .replace(/&#8217;|&rsquo;/g, '’')
+    .replace(/&#8220;|&ldquo;/g, '“')
+    .replace(/&#8221;|&rdquo;/g, '”')
+    .replace(/&hellip;/g, '…');
+}
+
+function stripHtml(html: string): string {
+  return decodeEntities(html.replace(/<[^>]+>/g, '')).replace(/\s+/g, ' ').trim();
+}
+
+// Lightweight WordPress HTML → Markdown so imported posts render in our markdown pipeline
+function htmlToMarkdown(html: string): string {
+  let md = html;
+  md = md.replace(/<(script|style)[\s\S]*?<\/\1>/gi, '');
+  md = md.replace(/<h2[^>]*>([\s\S]*?)<\/h2>/gi, (_m, t) => `\n\n## ${stripHtml(t)}\n\n`);
+  md = md.replace(/<h[13-6][^>]*>([\s\S]*?)<\/h[13-6]>/gi, (_m, t) => `\n\n### ${stripHtml(t)}\n\n`);
+  md = md.replace(/<(strong|b)[^>]*>([\s\S]*?)<\/\1>/gi, (_m, _tag, t) => `**${stripHtml(t)}**`);
+  md = md.replace(/<(em|i)[^>]*>([\s\S]*?)<\/\1>/gi, (_m, _tag, t) => `*${stripHtml(t)}*`);
+  md = md.replace(/<a[^>]*href="([^"]*)"[^>]*>([\s\S]*?)<\/a>/gi, (_m, href, t) => `[${stripHtml(t)}](${href})`);
+  md = md.replace(/<img[^>]*?alt="([^"]*)"[^>]*?src="([^"]*)"[^>]*>/gi, (_m, alt, src) => `\n\n![${alt}](${src})\n\n`);
+  md = md.replace(/<img[^>]*?src="([^"]*)"[^>]*>/gi, (_m, src) => `\n\n![](${src})\n\n`);
+  md = md.replace(/<blockquote[^>]*>([\s\S]*?)<\/blockquote>/gi, (_m, t) => `\n\n> ${stripHtml(t)}\n\n`);
+  md = md.replace(/<li[^>]*>([\s\S]*?)<\/li>/gi, (_m, t) => `\n- ${stripHtml(t)}`);
+  md = md.replace(/<\/(ul|ol)>/gi, '\n\n');
+  md = md.replace(/<p[^>]*>([\s\S]*?)<\/p>/gi, (_m, t) => `\n\n${stripHtml(t)}\n\n`);
+  md = md.replace(/<br\s*\/?>/gi, '\n');
+  md = md.replace(/<[^>]+>/g, '');
+  md = decodeEntities(md);
+  md = md.replace(/\n{3,}/g, '\n\n').trim();
+  return md;
 }
 
 function formatDate(iso: string) {
@@ -151,13 +194,14 @@ function AdminLogin({ onLogin }: { onLogin: () => void }) {
 // ─────────────────────────────────────────────
 // Sidebar (Light Theme Editorial style)
 // ─────────────────────────────────────────────
-type AdminSection = 'dashboard' | 'cms' | 'blog' | 'leads' | 'analytics' | 'settings';
+type AdminSection = 'dashboard' | 'cms' | 'blog' | 'leads' | 'newsletter' | 'analytics' | 'settings';
 
 const NAV_ITEMS: { id: AdminSection; label: string; icon: React.ReactNode; badge?: number }[] = [
   { id: 'dashboard', label: 'Pulpit główny', icon: <LayoutDashboard size={18} /> },
   { id: 'cms', label: 'Treść stron', icon: <FileText size={18} /> },
   { id: 'blog', label: 'Artykuły & AI', icon: <Sparkles size={18} /> },
   { id: 'leads', label: 'Skrzynka zapytań', icon: <Inbox size={18} /> },
+  { id: 'newsletter', label: 'Newsletter', icon: <Mail size={18} /> },
   { id: 'analytics', label: 'Analityka ruchu', icon: <BarChart3 size={18} /> },
   { id: 'settings', label: 'Ustawienia systemu', icon: <Settings size={18} /> },
 ];
@@ -517,8 +561,13 @@ function AdminCMSEditor({ config, updateSection }: { config: SiteConfig; updateS
 const BLOG_CATEGORIES = ['HR Analityka', 'Zarządzanie Zespołem', 'Employee Experience', 'eNPS & Zaangażowanie', 'Rekrutacja', 'Wellbeing', 'Przywództwo', 'Technologia HR'];
 
 function AdminBlogEditor({ config, updateSection }: { config: SiteConfig; updateSection: (k: keyof SiteConfig, v: SiteConfig[keyof SiteConfig]) => void }) {
-  const [view, setView] = useState<'list' | 'edit' | 'ai'>('list');
+  const [view, setView] = useState<'list' | 'edit' | 'ai' | 'wp'>('list');
   const [editPost, setEditPost] = useState<BlogPost | null>(null);
+  const [wpUrl, setWpUrl] = useState('');
+  const [wpLoading, setWpLoading] = useState(false);
+  const [wpError, setWpError] = useState('');
+  const [wpFetched, setWpFetched] = useState<BlogPost[]>([]);
+  const [wpSelected, setWpSelected] = useState<Record<string, boolean>>({});
   const [aiTopic, setAiTopic] = useState('');
   const [aiKeywords, setAiKeywords] = useState('');
   const [aiCategory, setAiCategory] = useState(BLOG_CATEGORIES[0]);
@@ -570,20 +619,32 @@ function AdminBlogEditor({ config, updateSection }: { config: SiteConfig; update
     setAiError('');
     setAiResult(null);
 
-    const prompt = `Jesteś ekspertem HR i copywriterem SEO. Napisz profesjonalny wpis blogowy dla platformy HRly (polskojęzycznej platformy analityki HR) na następujący temat:
+    const prompt = `Jesteś ekspertem HR oraz copywriterem specjalizującym się w SEO (Search Engine Optimization) i GEO (Generative Engine Optimization). Napisz profesjonalny wpis blogowy dla platformy HRly (polskojęzycznej platformy analityki HR) na następujący temat. Skorzystaj z wyszukiwarki internetowej, aby oprzeć tekst na aktualnych danych i trendach.
 
 TEMAT: ${aiTopic}
 KATEGORIA: ${aiCategory}
 SŁOWA KLUCZOWE SEO: ${aiKeywords || 'HR, zaangażowanie pracowników, analityka HR, eNPS'}
 
-WYMAGANIA:
+WYMAGANIA OGÓLNE:
 - Język: Polski, profesjonalny, angażujący
 - Długość: ok. 800-1200 słów
 - Format: Markdown (użyj ## dla nagłówków, **pogrubienie**, listy z -)
-- SEO: naturalnie wpleć słowa kluczowe, używaj nagłówków H2/H3
 - Struktura: Wstęp (hak), 3-4 główne sekcje z H2, praktyczne przykłady, podsumowanie z CTA do HRly
 - Ton: Ekspercki, ale przystępny
 - Na końcu dodaj 3-5 tagów oddzielonych przecinkami
+
+ZASADY SEO (wyszukiwarki Google/Bing):
+- Naturalnie wpleć słowa kluczowe w tytuł, pierwszy akapit, nagłówki H2/H3 i treść (bez upychania)
+- Używaj jasnej hierarchii nagłówków H2/H3 i opisowych śródtytułów
+- Zadbaj o frazy długiego ogona (long-tail) i intencję wyszukiwania użytkownika
+- Meta title (max 60 znaków) i meta description (max 160 znaków) z głównym słowem kluczowym
+
+ZASADY GEO (optymalizacja pod silniki generatywne: ChatGPT, Gemini, Perplexity, AI Overviews):
+- Pisz w sposób cytowalny: konkretne, samodzielne stwierdzenia i definicje, które AI może zacytować
+- Podawaj konkretne dane, liczby, statystyki i daty (z aktualnych źródeł z wyszukiwania) oraz wskazuj źródła w treści
+- Dodaj sekcję FAQ (## Najczęściej zadawane pytania) z 2-3 pytaniami i zwięzłymi, bezpośrednimi odpowiedziami
+- Odpowiadaj wprost na pytania w pierwszym zdaniu sekcji (struktura odpowiedź-najpierw), potem rozwijaj
+- Buduj autorytet tematyczny (E-E-A-T): doświadczenie, ekspertyza, wiarygodność
 
 Zwróć wynik w formacie JSON:
 {
@@ -646,6 +707,66 @@ Zwróć wynik w formacie JSON:
     setView('edit');
   };
 
+  // ── WordPress import (public WP REST API) ──────────────────────
+  const fetchFromWordPress = async () => {
+    const raw = wpUrl.trim().replace(/\/+$/, '');
+    if (!raw) { setWpError('Podaj adres strony WordPress (np. https://twojadomena.pl)'); return; }
+    const base = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
+    setWpLoading(true);
+    setWpError('');
+    setWpFetched([]);
+    setWpSelected({});
+    try {
+      const endpoint = `${base}/wp-json/wp/v2/posts?per_page=30&_embed`;
+      const res = await fetch(endpoint, { headers: { Accept: 'application/json' } });
+      if (!res.ok) throw new Error(`Serwer odpowiedział kodem ${res.status}. Sprawdź adres i czy REST API jest publiczne.`);
+      const data = await res.json();
+      if (!Array.isArray(data) || data.length === 0) throw new Error('Nie znaleziono żadnych wpisów pod tym adresem.');
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const mapped: BlogPost[] = data.map((wp: any) => {
+        const title = stripHtml(wp.title?.rendered || 'Wpis bez tytułu');
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const terms: any[] = wp._embedded?.['wp:term']?.flat?.() || [];
+        const category = terms.find((t) => t?.taxonomy === 'category')?.name || BLOG_CATEGORIES[0];
+        const tags = terms.filter((t) => t?.taxonomy === 'post_tag').map((t) => t.name).slice(0, 6);
+        const featured = wp._embedded?.['wp:featuredmedia']?.[0]?.source_url || '';
+        return {
+          id: `wp_${wp.id}_${Date.now()}`,
+          title,
+          slug: wp.slug || slugify(title),
+          excerpt: stripHtml(wp.excerpt?.rendered || '').slice(0, 200),
+          content: htmlToMarkdown(wp.content?.rendered || ''),
+          category,
+          tags,
+          author: 'HRly Team',
+          publishedAt: wp.date ? new Date(wp.date).toISOString() : new Date().toISOString(),
+          status: 'draft' as const,
+          seoTitle: title.slice(0, 60),
+          seoDescription: stripHtml(wp.excerpt?.rendered || '').slice(0, 160),
+          imageUrl: featured || undefined,
+        };
+      });
+      setWpFetched(mapped);
+      setWpSelected(Object.fromEntries(mapped.map((p) => [p.id, true])));
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Nieznany błąd';
+      setWpError(`Import nie powiódł się: ${msg}`);
+    } finally {
+      setWpLoading(false);
+    }
+  };
+
+  const importSelectedWp = () => {
+    const toImport = wpFetched.filter((p) => wpSelected[p.id]);
+    if (toImport.length === 0) { showToast('Zaznacz przynajmniej jeden wpis', 'error'); return; }
+    savePosts([...toImport, ...posts]);
+    showToast(`Zaimportowano ${toImport.length} ${toImport.length === 1 ? 'wpis' : 'wpisów'} jako szkice`);
+    setWpFetched([]);
+    setWpSelected({});
+    setWpUrl('');
+    setView('list');
+  };
+
   if (view === 'edit' && editPost) {
     return (
       <BlogPostEditor
@@ -653,6 +774,105 @@ Zwróć wynik w formacie JSON:
         onSave={savePost}
         onBack={() => setView('list')}
       />
+    );
+  }
+
+  if (view === 'wp') {
+    const selectedCount = wpFetched.filter((p) => wpSelected[p.id]).length;
+    return (
+      <div className="space-y-6">
+        {toast && <Toast msg={toast.msg} type={toast.type} />}
+        <div className="flex items-center gap-4 text-left">
+          <button onClick={() => setView('list')} className="text-[#55506E] hover:text-[#14183D] cursor-pointer">
+            <ArrowLeft size={20} />
+          </button>
+          <div>
+            <h2 className="text-2xl font-display font-black text-[#14183D] uppercase tracking-tight">Import z WordPress</h2>
+            <p className="text-[#55506E] text-xs font-semibold uppercase tracking-wider mt-1">Pobierz istniejące wpisy przez publiczne REST API</p>
+          </div>
+        </div>
+
+        <div className="bg-white border border-[#EFEAE1] rounded-2xl p-6 space-y-5 shadow-sm">
+          <div className="flex items-start gap-4 p-4.5 bg-[#3B2F8C]/5 border border-[#C4BBDE]/35 rounded-xl">
+            <Globe size={20} className="text-[#3B2F8C] flex-shrink-0 mt-0.5" />
+            <div className="text-left">
+              <p className="text-[#3B2F8C] text-xs font-bold uppercase tracking-wider">Jak to działa</p>
+              <p className="text-[#55506E] text-[11px] mt-0.5 leading-relaxed">
+                Podaj adres swojej strony WordPress. System pobierze publicznie dostępne wpisy (do 30 najnowszych) wraz z treścią, kategoriami, tagami i obrazkiem wyróżniającym — <strong>nie wymaga logowania</strong>, o ile REST API (<code className="font-mono">/wp-json</code>) jest publiczne. Wpisy trafią jako szkice do zatwierdzenia.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-end">
+            <div className="flex-1 space-y-1 text-left">
+              <label className="block text-[10px] font-bold text-[#A39AB4] uppercase tracking-wider">Adres strony WordPress</label>
+              <input
+                value={wpUrl}
+                onChange={(e) => setWpUrl(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') fetchFromWordPress(); }}
+                placeholder="np. https://blog.hrly.pl"
+                className="w-full bg-white border border-[#C4BBDE]/55 rounded-xl px-4 py-3 text-[#14183D] text-sm outline-none focus:border-[#3B2F8C] transition-all font-mono"
+              />
+            </div>
+            <button
+              onClick={fetchFromWordPress}
+              disabled={wpLoading}
+              className="flex items-center justify-center gap-2 bg-[#3B2F8C] hover:bg-[#231B5E] text-white px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer shadow-md"
+            >
+              {wpLoading ? (<><RefreshCw size={14} className="animate-spin" /> Pobieram...</>) : (<><Download size={14} className="text-[#F4A574]" /> Pobierz wpisy</>)}
+            </button>
+          </div>
+
+          {wpError && (
+            <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-xl text-left">
+              <AlertCircle size={16} className="text-red-600 flex-shrink-0 mt-0.5" />
+              <p className="text-red-700 text-xs font-semibold">{wpError}</p>
+            </div>
+          )}
+        </div>
+
+        {wpFetched.length > 0 && (
+          <div className="bg-white border border-[#EFEAE1] rounded-2xl p-6 space-y-4 shadow-sm animate-fade-in">
+            <div className="flex items-center justify-between border-b border-[#EFEAE1] pb-3 flex-wrap gap-3">
+              <h3 className="text-[#14183D] font-display font-extrabold text-sm uppercase tracking-tight flex items-center gap-2">
+                <CheckCircle size={18} className="text-emerald-600" /> Znaleziono {wpFetched.length} wpisów · zaznaczono {selectedCount}
+              </h3>
+              <div className="flex gap-2">
+                <button onClick={() => setWpSelected(Object.fromEntries(wpFetched.map((p) => [p.id, true])))} className="text-[10px] font-bold uppercase tracking-wider text-[#3B2F8C] hover:underline cursor-pointer">Zaznacz wszystkie</button>
+                <span className="text-[#C4BBDE]">·</span>
+                <button onClick={() => setWpSelected({})} className="text-[10px] font-bold uppercase tracking-wider text-[#55506E] hover:underline cursor-pointer">Odznacz wszystkie</button>
+              </div>
+            </div>
+
+            <div className="space-y-2 max-h-[440px] overflow-y-auto pr-1">
+              {wpFetched.map((p) => (
+                <label key={p.id} className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${wpSelected[p.id] ? 'bg-[#3B2F8C]/5 border-[#C4BBDE]/40' : 'bg-white border-[#EFEAE1] hover:bg-[#FBFAF8]'}`}>
+                  <input
+                    type="checkbox"
+                    checked={!!wpSelected[p.id]}
+                    onChange={(e) => setWpSelected((prev) => ({ ...prev, [p.id]: e.target.checked }))}
+                    className="w-4 h-4 rounded border-[#C4BBDE]/55 accent-[#3B2F8C] flex-shrink-0"
+                  />
+                  <div className="w-12 h-12 rounded-lg overflow-hidden bg-[#FBFAF8] flex-shrink-0 border border-[#EFEAE1]">
+                    <img src={p.imageUrl || 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=100&q=80'} alt="" className="w-full h-full object-cover" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-[#14183D] text-xs font-bold truncate">{p.title}</div>
+                    <div className="text-[#55506E] text-[10px] truncate">{p.category} · {formatDate(p.publishedAt)}</div>
+                  </div>
+                </label>
+              ))}
+            </div>
+
+            <button
+              onClick={importSelectedWp}
+              className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all cursor-pointer shadow-sm"
+            >
+              <Download size={14} /> Importuj zaznaczone ({selectedCount}) jako szkice
+            </button>
+          </div>
+        )}
+      </div>
     );
   }
 
@@ -774,12 +994,18 @@ Zwróć wynik w formacie JSON:
           <h2 className="text-2xl font-display font-black text-[#14183D] uppercase tracking-tight">Artykuły & AI</h2>
           <p className="text-[#55506E] text-xs font-semibold uppercase tracking-wider mt-1">{posts.length} {posts.length === 1 ? 'wpis' : 'wpisów'} w bazie</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           <button
             onClick={() => setView('ai')}
             className="flex items-center gap-2 bg-[#3B2F8C] hover:bg-[#231B5E] text-white px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all cursor-pointer shadow-md"
           >
             <Sparkles size={14} className="text-[#F4A574]" /> Pisz z AI
+          </button>
+          <button
+            onClick={() => setView('wp')}
+            className="flex items-center gap-2 bg-white border border-[#EFEAE1] hover:bg-[#FBFAF8] text-[#3B2F8C] px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all cursor-pointer shadow-2xs"
+          >
+            <Download size={14} className="text-[#F4A574]" /> Import z WordPress
           </button>
           <button
             onClick={() => { setEditPost(newPost()); setView('edit'); }}
@@ -1343,6 +1569,121 @@ function AdminLeadsInbox({ config, updateSection }: { config: SiteConfig; update
 }
 
 // ─────────────────────────────────────────────
+// Newsletter Subscribers (Light Theme)
+// ─────────────────────────────────────────────
+function AdminNewsletter({ config, updateSection }: { config: SiteConfig; updateSection: (k: keyof SiteConfig, v: SiteConfig[keyof SiteConfig]) => void }) {
+  const [search, setSearch] = useState('');
+  const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' } | null>(null);
+
+  const showToast = (msg: string, type: 'success' | 'error' = 'success') => {
+    setToast({ msg, type });
+    setTimeout(() => setToast(null), 3000);
+  };
+
+  const subscribers = config.subscribers || [];
+
+  const filtered = subscribers.filter((s) =>
+    !search || s.email.toLowerCase().includes(search.toLowerCase()) || (s.source || '').toLowerCase().includes(search.toLowerCase())
+  );
+
+  const deleteSubscriber = (id: string) => {
+    updateSection('subscribers', subscribers.filter((s) => s.id !== id));
+    showToast('Adres usunięty z listy');
+  };
+
+  const copyAll = async () => {
+    const emails = filtered.map((s) => s.email).join(', ');
+    if (!emails) { showToast('Brak adresów do skopiowania', 'error'); return; }
+    try {
+      await navigator.clipboard.writeText(emails);
+      showToast(`Skopiowano ${filtered.length} adresów do schowka`);
+    } catch {
+      showToast('Nie udało się skopiować do schowka', 'error');
+    }
+  };
+
+  const exportCsv = () => {
+    if (subscribers.length === 0) { showToast('Brak zapisów do eksportu', 'error'); return; }
+    const rows = [['email', 'data zapisu', 'źródło']];
+    subscribers.forEach((s) => rows.push([s.email, s.subscribedAt, s.source || '']));
+    const csv = rows.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
+    const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `hrly-newsletter-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('Lista zapisów została pobrana (.csv)!');
+  };
+
+  return (
+    <div className="space-y-6 text-left font-sans">
+      {toast && <Toast msg={toast.msg} type={toast.type} />}
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <div>
+          <h2 className="text-2xl font-display font-black text-[#14183D] uppercase tracking-tight">Zapisy do newslettera</h2>
+          <p className="text-[#55506E] text-xs font-semibold uppercase tracking-wider mt-1">{subscribers.length} {subscribers.length === 1 ? 'adres e-mail' : 'adresów e-mail'} w bazie</p>
+        </div>
+        <div className="flex gap-2">
+          <button onClick={copyAll} className="flex items-center gap-2 bg-white border border-[#C4BBDE]/55 hover:bg-[#FBFAF8] text-[#3B2F8C] px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all cursor-pointer shadow-2xs">
+            <Copy size={14} className="text-[#F4A574]" /> Kopiuj adresy
+          </button>
+          <button onClick={exportCsv} className="flex items-center gap-2 bg-[#3B2F8C] hover:bg-[#231B5E] text-white px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all cursor-pointer shadow-md">
+            <Download size={14} className="text-[#F4A574]" /> Eksportuj (.csv)
+          </button>
+        </div>
+      </div>
+
+      <div className="relative">
+        <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#A39AB4]" />
+        <input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Szukaj po adresie e-mail lub źródle zapisu..."
+          className="w-full bg-white border border-[#C4BBDE]/55 rounded-xl pl-10 pr-4 py-3 text-[#14183D] text-sm outline-none focus:border-[#3B2F8C] shadow-2xs"
+        />
+      </div>
+
+      {filtered.length === 0 ? (
+        <div className="bg-white border border-[#EFEAE1] rounded-2xl p-12 text-center shadow-xs">
+          <Mail size={32} className="text-[#A39AB4] mx-auto mb-3" />
+          <p className="text-[#55506E] text-xs font-medium">
+            {subscribers.length === 0 ? 'Nikt nie zapisał się jeszcze na newsletter.' : 'Brak wyników dla podanego zapytania.'}
+          </p>
+        </div>
+      ) : (
+        <div className="bg-white border border-[#EFEAE1] rounded-2xl overflow-hidden shadow-xs">
+          <div className="hidden sm:grid grid-cols-[1fr_180px_140px_44px] gap-4 px-5 py-3 bg-[#FBFAF8] border-b border-[#EFEAE1] text-[9px] font-bold text-[#A39AB4] uppercase tracking-wider">
+            <span>Adres e-mail</span>
+            <span>Źródło zapisu</span>
+            <span>Data</span>
+            <span></span>
+          </div>
+          <div className="divide-y divide-[#EFEAE1]">
+            {filtered.map((s) => (
+              <div key={s.id} className="grid grid-cols-1 sm:grid-cols-[1fr_180px_140px_44px] gap-2 sm:gap-4 px-5 py-3.5 items-center hover:bg-[#FBFAF8] transition-colors">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="w-8 h-8 rounded-full bg-[#3B2F8C]/10 flex items-center justify-center flex-shrink-0">
+                    <Mail size={13} className="text-[#3B2F8C]" />
+                  </div>
+                  <a href={`mailto:${s.email}`} className="text-[#14183D] text-xs font-bold truncate hover:text-[#3B2F8C] transition-colors">{s.email}</a>
+                </div>
+                <span className="text-[#55506E] text-[11px] font-medium truncate">{s.source || '—'}</span>
+                <span className="text-[#A39AB4] text-[10px] font-mono">{formatDate(s.subscribedAt)}</span>
+                <button onClick={() => deleteSubscriber(s.id)} className="p-2 text-[#55506E] hover:text-red-600 hover:bg-red-50 rounded-xl transition-all cursor-pointer justify-self-start sm:justify-self-center" title="Usuń adres">
+                  <Trash2 size={15} />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────
 // Analytics (Umami embed - Light Theme style)
 // ─────────────────────────────────────────────
 function AdminAnalytics({ config }: { config: SiteConfig }) {
@@ -1675,6 +2016,7 @@ export function AdminPanel({ onBack }: { onBack: () => void }) {
           {section === 'cms' && <AdminCMSEditor config={config} updateSection={updateSectionTyped} />}
           {section === 'blog' && <AdminBlogEditor config={config} updateSection={updateSectionTyped} />}
           {section === 'leads' && <AdminLeadsInbox config={config} updateSection={updateSectionTyped} />}
+          {section === 'newsletter' && <AdminNewsletter config={config} updateSection={updateSectionTyped} />}
           {section === 'analytics' && <AdminAnalytics config={config} />}
           {section === 'settings' && <AdminSettings config={config} updateSection={updateSectionTyped} />}
         </div>
