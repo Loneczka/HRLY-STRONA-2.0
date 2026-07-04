@@ -80,7 +80,7 @@ export const HrlyPricingCalculator: React.FC<HrlyPricingCalculatorProps> = ({ on
               <span className="font-mono text-xl font-black text-[#14183D]">
                 {employeeCount >= 300 ? '250+' : `${employeeCount} osób`}
               </span>
-              <span className="text-[10px] text-[#A39AB4] block leading-none mt-1">pracowników na etacie / B2B</span>
+              <span className="text-[10px] text-[#6A5E8C] block leading-none mt-1">pracowników na etacie / B2B</span>
             </div>
           </div>
 
@@ -94,7 +94,7 @@ export const HrlyPricingCalculator: React.FC<HrlyPricingCalculatorProps> = ({ on
               onChange={(e) => setEmployeeCount(Number(e.target.value))}
               className="w-full h-2.5 bg-[#EFEAE1] rounded-lg appearance-none cursor-pointer accent-[#3B2F8C]"
             />
-            <div className="flex justify-between text-[9px] text-[#A39AB4] font-mono leading-none pt-1">
+            <div className="flex justify-between text-[9px] text-[#6A5E8C] font-mono leading-none pt-1">
               <span>Do 20 (Lite)</span>
               <span>21-100 (Standard)</span>
               <span>101-250 (Premium)</span>
@@ -163,14 +163,14 @@ export const HrlyPricingCalculator: React.FC<HrlyPricingCalculatorProps> = ({ on
               <div className="p-5.5 space-y-4">
                 <div className="space-y-1">
                   <h4 className="font-sans font-black text-base text-[#14183D] tracking-tight">{plan.name}</h4>
-                  <p className="text-[10px] text-[#A39AB4] font-medium leading-none">{plan.forWhom}</p>
+                  <p className="text-[10px] text-[#6A5E8C] font-medium leading-none">{plan.forWhom}</p>
                 </div>
 
                 <div className="pt-2 border-b border-[#EFEAE1] pb-3">
                   <div className="flex flex-col gap-1">
                     {plan.originalPrice && (
                       <div className="flex items-center gap-1.5">
-                        <span className="text-[11px] text-[#A39AB4] line-through font-mono font-medium leading-none">
+                        <span className="text-[11px] text-[#6A5E8C] line-through font-mono font-medium leading-none">
                           {plan.originalPrice}
                         </span>
                         <span className="text-[9px] font-mono font-bold text-[#F4A574] bg-[#F4A574]/10 px-1.5 py-0.5 rounded uppercase tracking-wider leading-none">
@@ -242,7 +242,7 @@ export const HrlyPricingCalculator: React.FC<HrlyPricingCalculatorProps> = ({ on
                   <h3 className="font-display font-extrabold text-base text-[#14183D] tracking-tight">
                     Inicjujesz pakiet: <span className="text-[#3B2F8C]">{activePlan.name}</span>
                   </h3>
-                  <p className="text-[11px] text-[#A39AB4] leading-relaxed">
+                  <p className="text-[11px] text-[#6A5E8C] leading-relaxed">
                     Wspierasz budowanie zaangażowanych zespołów. Wpisz szczegóły konta testowego, by wejść do konfiguratora.
                   </p>
                 </div>
@@ -283,7 +283,7 @@ export const HrlyPricingCalculator: React.FC<HrlyPricingCalculatorProps> = ({ on
                         onChange={(e) => setRgCompany(e.target.value)}
                         className="w-full text-xs bg-[#FBFAF8] border border-[#EFEAE1] rounded-lg pl-9 pr-3 p-2.5 text-[#14183D] focus:border-[#3B2F8C] focus:outline-none"
                       />
-                      <Building2 className="w-4 h-4 text-[#A39AB4] absolute left-3 top-3.5" />
+                      <Building2 className="w-4 h-4 text-[#6A5E8C] absolute left-3 top-3.5" />
                     </div>
                   </div>
 

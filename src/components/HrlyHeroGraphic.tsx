@@ -160,7 +160,7 @@ export const HrlyHeroGraphic: React.FC = () => {
             }}
           >
             <div className="flex justify-between items-center">
-              <span className="text-[8px] font-bold tracking-widest text-[#A39AB4] font-display uppercase">
+              <span className="text-[8px] font-bold tracking-widest text-[#6A5E8C] font-display uppercase">
                 Zaufanie w firmie
               </span>
               <Heart className="w-3 h-3 text-[#FF5A79] fill-[#FF5A79] animate-pulse" />
@@ -193,13 +193,13 @@ export const HrlyHeroGraphic: React.FC = () => {
             }}
           >
             <div className="space-y-0.5">
-              <span className="text-[8px] font-bold tracking-widest text-[#A39AB4] font-display uppercase block">
+              <span className="text-[8px] font-bold tracking-widest text-[#6A5E8C] font-display uppercase block">
                 Retencja kadry
               </span>
               <strong className="text-base font-bold text-[#14183D] mt-1 block leading-none">
                 stabilna
               </strong>
-              <span className="text-[9px] text-emerald-700 font-bold font-display mt-0.5 block leading-none">
+              <span className="text-[9px] text-emerald-800 font-bold font-display mt-0.5 block leading-none">
                 96.4% retencji
               </span>
             </div>

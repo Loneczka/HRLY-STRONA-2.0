@@ -6,14 +6,15 @@ import {
   Activity, ArrowUpRight, Award, ChevronRight, HelpCircle,
   FileSpreadsheet, FileQuestion, Users2, Landmark, Compass, Target,
   ChevronDown, ChevronUp, Coins, Laptop, Heart, Coffee, GraduationCap, Zap, Key,
-  User, Building, MousePointerClick, Settings
+  User, Building, MousePointerClick
 } from 'lucide-react';
-import { HrlyDashboardPreview } from './components/HrlyDashboardPreview';
-import { HrlyBlogSection } from './components/HrlyBlogSection';
-import { HrlyPricingCalculator } from './components/HrlyPricingCalculator';
 import { HrlyHeroGraphic } from './components/HrlyHeroGraphic';
-import { HrlyMethodologyVisual } from './components/HrlyMethodologyVisual';
 import { addLead, useSiteConfig } from './hooks/useSiteConfig';
+
+const HrlyDashboardPreview = lazy(() => import('./components/HrlyDashboardPreview').then(m => ({ default: m.HrlyDashboardPreview })));
+const HrlyBlogSection = lazy(() => import('./components/HrlyBlogSection').then(m => ({ default: m.HrlyBlogSection })));
+const HrlyPricingCalculator = lazy(() => import('./components/HrlyPricingCalculator').then(m => ({ default: m.HrlyPricingCalculator })));
+const HrlyMethodologyVisual = lazy(() => import('./components/HrlyMethodologyVisual').then(m => ({ default: m.HrlyMethodologyVisual })));
 
 // Admin panel is heavy (pulls in @google/genai) and only used on the /admin tab,
 // so load it on demand to keep the public bundle small.
@@ -499,8 +500,11 @@ export default function App() {
   if (activeTab === 'admin') {
     return (
       <Suspense fallback={
-        <div className="min-h-screen bg-[#FBFAF8] flex items-center justify-center text-[#55506E] text-sm font-semibold uppercase tracking-wider">
-          Ładowanie panelu…
+        <div className="min-h-screen bg-[#FBFAF8] flex flex-col items-center justify-center">
+          <div className="flex flex-col items-center gap-3">
+            <div className="w-10 h-10 border-4 border-[#3B2F8C] border-t-transparent rounded-full animate-spin"></div>
+            <p className="text-sm font-medium text-[#55506E] animate-pulse">Ładowanie panelu administracyjnego...</p>
+          </div>
         </div>
       }>
         <AdminPanel onBack={() => setActiveTab('home')} />
@@ -595,22 +599,14 @@ export default function App() {
               Załóż darmowe konto
               <ArrowRight className="w-3.5 h-3.5 text-[#F4A574]" />
             </button>
-            {/* Secret admin trigger — hidden in plain sight */}
-            <button
-              onClick={() => setActiveTab('admin')}
-              title="Panel administracyjny"
-              className="p-1.5 text-[#C4BBDE]/40 hover:text-[#3B2F8C] transition-colors cursor-pointer"
-            >
-              <Settings className="w-3.5 h-3.5" />
-            </button>
           </div>
 
           {/* Mobile menu hamburger toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label={mobileMenuOpen ? 'Zamknij menu' : 'Otwórz menu'}
             aria-expanded={mobileMenuOpen}
             className="lg:hidden p-1.5 rounded-lg hover:bg-[#F4F1EC] text-[#14183D] cursor-pointer"
+            aria-label={mobileMenuOpen ? "Zamknij menu nawigacyjne" : "Otwórz menu nawigacyjne"}
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -731,7 +727,7 @@ export default function App() {
                     </div>
 
                     {/* Trust small indicators */}
-                    <div className="flex flex-wrap items-center justify-center lg:justify-start gap-x-5 gap-y-2 pt-4 border-t border-[#EFEAE1] text-[10px] text-[#A39AB4] font-mono w-full">
+                    <div className="flex flex-wrap items-center justify-center lg:justify-start gap-x-5 gap-y-2 pt-4 border-t border-[#EFEAE1] text-[10px] text-[#6A5E8C] font-mono w-full">
                       <span className="flex items-center gap-1">
                         <span className="text-emerald-500 font-bold">✓</span>
                         14 dni testu bez karty
@@ -757,15 +753,15 @@ export default function App() {
                 <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-6 pt-8 border-t border-[#EFEAE1]/60 mt-8 relative z-10">
                   <div className="bg-white/80 border border-[#EFEAE1]/75 p-5 rounded-2xl shadow-2xs text-center hover:border-[#C4BBDE]/55 transition-all">
                     <div className="text-3xl font-extrabold text-[#3B2F8C] font-mono leading-none">{config.stats.stat1Value || "58"}</div>
-                    <div className="text-[10px] text-[#A39AB4] font-mono uppercase font-bold tracking-wider mt-2">{config.stats.stat1Label || "Analizowanych czynników"}</div>
+                    <div className="text-[10px] text-[#6A5E8C] font-mono uppercase font-bold tracking-wider mt-2">{config.stats.stat1Label || "Analizowanych czynników"}</div>
                   </div>
                   <div className="bg-white/80 border border-[#EFEAE1]/75 p-5 rounded-2xl shadow-2xs text-center hover:border-[#C4BBDE]/55 transition-all">
                     <div className="text-3xl font-extrabold text-[#F4A574] font-mono leading-none">{config.stats.stat2Value || "10×"}</div>
-                    <div className="text-[10px] text-[#A39AB4] font-mono uppercase font-bold tracking-wider mt-2">{config.stats.stat2Label || "Szybsze raportowanie"}</div>
+                    <div className="text-[10px] text-[#6A5E8C] font-mono uppercase font-bold tracking-wider mt-2">{config.stats.stat2Label || "Szybsze raportowanie"}</div>
                   </div>
                   <div className="bg-white/80 border border-[#EFEAE1]/75 p-5 rounded-2xl shadow-2xs text-center hover:border-[#C4BBDE]/55 transition-all">
                     <div className="text-3xl font-extrabold text-[#3B2F8C] font-mono leading-none">{config.stats.stat3Value || "+23%"}</div>
-                    <div className="text-[10px] text-[#A39AB4] font-mono uppercase font-bold tracking-wider mt-2">{config.stats.stat3Label || "Wzrost zaangażowania"}</div>
+                    <div className="text-[10px] text-[#6A5E8C] font-mono uppercase font-bold tracking-wider mt-2">{config.stats.stat3Label || "Wzrost zaangażowania"}</div>
                   </div>
                 </div>
               </section>
@@ -815,7 +811,7 @@ export default function App() {
                     </div>
                     
                     {/* Interactive hint text below the button */}
-                    <span className="text-[10px] text-[#55506E] font-mono mt-4 flex items-center gap-1.5 uppercase tracking-wider">
+                    <span className="text-[10px] text-[#6A5E8C] font-mono mt-4 flex items-center gap-1.5 uppercase tracking-wider">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
                       Kliknij, aby przetestować na żywo
                     </span>
@@ -839,7 +835,7 @@ export default function App() {
 
                 <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-3 gap-4 font-normal">
                   <div className="p-5 rounded-2xl border border-[#EFEAE1] bg-[#FBFAF8]/40 space-y-3 hover:translate-y-[-2px] transition-transform">
-                    <span className="text-2xl font-black text-[#3B2F8C] font-mono">01</span>
+                    <span className="text-2xl font-black text-[#C4672D] font-mono">01</span>
                     <h4 className="font-bold text-sm text-[#14183D] uppercase tracking-tight">Wynik</h4>
                     <p className="text-xs text-[#55506E] leading-relaxed">
                       Raport od razu i precyzyjnie wskazuje obszary z najniższą oceną kapitału ludzkiego. Od razu widać, gdzie w zespole narasta napięcie.
@@ -945,7 +941,7 @@ export default function App() {
                     </p>
 
                     <div className="bg-[#FBFAF8] border border-[rgba(15,17,41,0.05)] shadow-[0_8px_30px_rgb(0,0,0,0.02)] p-5 rounded-2xl space-y-2 hover:border-[#C4BBDE]/40 transition-colors">
-                      <span className="text-[10px] uppercase font-mono font-bold text-[#A39AB4] block">Kluczowy wyróżnik</span>
+                      <span className="text-[10px] uppercase font-mono font-bold text-[#6A5E8C] block">Kluczowy wyróżnik</span>
                       <p className="text-xs text-[#14183D] font-bold leading-relaxed">
                         Język biznesu — przekładamy zaangażowanie na finanse, pokazując szacowany ubytek lub zysk dla budżetu firmy.
                       </p>
@@ -1231,7 +1227,7 @@ export default function App() {
                     </p>
 
                     {/* Trust indicators */}
-                    <div className="flex flex-wrap items-center justify-center lg:justify-start gap-x-5 gap-y-2 pt-4 border-t border-[#EFEAE1] text-[11px] text-[#A39AB4] font-mono w-full">
+                    <div className="flex flex-wrap items-center justify-center lg:justify-start gap-x-5 gap-y-2 pt-4 border-t border-[#EFEAE1] text-[11px] text-[#6A5E8C] font-mono w-full">
                       <span className="flex items-center gap-1">
                         <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
                         Pełna swoboda konfiguracji
@@ -1264,7 +1260,7 @@ export default function App() {
                         <div className="p-1 rounded-lg bg-[#E3DEEE]/50 text-[#3B2F8C]">
                           <FileQuestion className="w-3.5 h-3.5" />
                         </div>
-                        <span className="text-[9px] font-mono text-[#A39AB4] font-bold uppercase">Gotowe Szablony</span>
+                        <span className="text-[9px] font-mono text-[#6A5E8C] font-bold uppercase">Gotowe Szablony</span>
                       </div>
                       <h4 className="font-sans font-black text-[11px] text-[#14183D] uppercase leading-tight">
                         Naukowa baza pytań
@@ -1315,7 +1311,7 @@ export default function App() {
                         <div className="p-1 rounded-lg bg-[#D1FAE5] text-[#047857]">
                           <Users2 className="w-3.5 h-3.5" />
                         </div>
-                        <span className="text-[9px] font-mono text-[#A39AB4] font-bold uppercase">Narzędzia Lidera</span>
+                        <span className="text-[9px] font-mono text-[#6A5E8C] font-bold uppercase">Narzędzia Lidera</span>
                       </div>
                       <h4 className="font-sans font-black text-[11px] text-[#14183D] uppercase leading-tight">
                         Wsparcie Managerów
@@ -1342,7 +1338,7 @@ export default function App() {
                         <div className="p-1 rounded-lg bg-[#B45309]/10 text-[#B45309]">
                           <Activity className="w-3.5 h-3.5" />
                         </div>
-                        <span className="text-[9px] font-mono text-[#A39AB4] font-bold uppercase">Raporty</span>
+                        <span className="text-[9px] font-mono text-[#6A5E8C] font-bold uppercase">Raporty</span>
                       </div>
                       <h4 className="font-sans font-black text-[11px] text-[#14183D] uppercase leading-tight">
                         Statystyki i trendy
@@ -1365,7 +1361,7 @@ export default function App() {
 
               {/* Kluczowe funkcje list copy */}
               <div className="space-y-6 pt-4">
-                <h3 className="text-xs uppercase font-extrabold tracking-wider text-[#A39AB4] font-mono border-b border-[#EFEAE1] pb-2">
+                <h3 className="text-xs uppercase font-extrabold tracking-wider text-[#6A5E8C] font-mono border-b border-[#EFEAE1] pb-2">
                   Kluczowe funkcje, które zmieniają sposób delegacji pracy
                 </h3>
 
@@ -1378,7 +1374,7 @@ export default function App() {
                     { num: "05", title: "Gotowe ankiety naukowe", desc: "Błyskawiczne uruchomienie standardowych badań: badanie miesięczne (17 pytań) • kwartalne (25 pytań) • roczne badanie głębokie (72 pytania)." }
                   ].map((feat, fidx) => (
                     <div key={fidx} className="bg-white border border-[#EFEAE1] p-6 rounded-2xl space-y-3 shadow-sm hover:border-[#C4BBDE] transition-colors relative">
-                      <span className="text-sm font-bold text-[#F4A574] font-mono block">/ {feat.num}</span>
+                      <span className="text-sm font-bold text-[#C4672D] font-mono block">/ {feat.num}</span>
                       <h4 className="font-sans font-black text-sm text-[#14183D] uppercase tracking-tight">{feat.title}</h4>
                       <p className="text-xs text-[#55506E] leading-relaxed">{feat.desc}</p>
                     </div>
@@ -1388,10 +1384,16 @@ export default function App() {
 
               {/* Naukowa metodologia badawcza - 11 teorii */}
               <div className="space-y-4">
-                <h3 className="text-xs uppercase font-extrabold tracking-wider text-[#A39AB4] font-mono border-b border-[#EFEAE1] pb-2">
+                <h3 className="text-xs uppercase font-extrabold tracking-wider text-[#6A5E8C] font-mono border-b border-[#EFEAE1] pb-2">
                   Fundamenty naukowe platformy
                 </h3>
-                <HrlyMethodologyVisual />
+                <Suspense fallback={
+                  <div className="h-48 flex flex-col items-center justify-center bg-white/50 rounded-2xl border border-[#EFEAE1]/60">
+                    <div className="w-8 h-8 border-3 border-[#3B2F8C] border-t-transparent rounded-full animate-spin"></div>
+                  </div>
+                }>
+                  <HrlyMethodologyVisual />
+                </Suspense>
               </div>
 
               {/* 11 areas overview block - GRID LAYOUT */}
@@ -1427,7 +1429,7 @@ export default function App() {
                       >
                         {/* Top Info */}
                         <div className="space-y-2">
-                          <span className="text-[9px] font-mono font-bold tracking-widest text-[#A39AB4] uppercase block">
+                          <span className="text-[9px] font-mono font-bold tracking-widest text-[#6A5E8C] uppercase block">
                             Obszar {area.num}
                           </span>
                           <h4 className="font-display font-black text-base text-[#14183D] uppercase tracking-tight leading-tight">
@@ -1524,7 +1526,7 @@ export default function App() {
                     </p>
 
                     {/* Trust indicators */}
-                    <div className="flex flex-wrap items-center justify-center lg:justify-start gap-x-5 gap-y-2 pt-4 border-t border-[#EFEAE1] text-[11px] text-[#A39AB4] font-mono w-full">
+                    <div className="flex flex-wrap items-center justify-center lg:justify-start gap-x-5 gap-y-2 pt-4 border-t border-[#EFEAE1] text-[11px] text-[#6A5E8C] font-mono w-full">
                       <span className="flex items-center gap-1">
                         <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
                         Elastyczna zmiana planu
@@ -1560,7 +1562,7 @@ export default function App() {
                         </p>
                       </div>
                       
-                      <div className="pt-3 border-t border-[#EFEAE1]/80 space-y-2 text-[10px] text-[#A39AB4] font-mono">
+                      <div className="pt-3 border-t border-[#EFEAE1]/80 space-y-2 text-[10px] text-[#6A5E8C] font-mono">
                         <div className="flex items-center gap-2">
                           <CheckCircle2 className="w-4 h-4 text-[#10B981] shrink-0" />
                           <span>Brak długoterminowych zobowiązań</span>
@@ -1576,7 +1578,14 @@ export default function App() {
               </div>
 
               {/* Calculator component containing standard plans cards and slider */}
-              <HrlyPricingCalculator onNavigate={setActiveTab} />
+              <Suspense fallback={
+                <div className="h-96 flex flex-col items-center justify-center bg-white border border-[#EFEAE1] rounded-2xl">
+                  <div className="w-10 h-10 border-4 border-[#3B2F8C] border-t-transparent rounded-full animate-spin"></div>
+                  <p className="text-xs text-[#55506E] mt-3 animate-pulse">Ładowanie kalkulatora cennika...</p>
+                </div>
+              }>
+                <HrlyPricingCalculator onNavigate={setActiveTab} />
+              </Suspense>
 
               {/* Contact Box copy from page 6 */}
               <section className="bg-white border border-[#EFEAE1] rounded-2xl p-6 sm:p-8 grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
@@ -1765,17 +1774,17 @@ export default function App() {
               {/* Statistics Pane Page 7 */}
               <div className="bg-white border border-[#EFEAE1] rounded-2xl p-6 text-center grid grid-cols-1 sm:grid-cols-3 gap-6 shadow-sm">
                 <div className="space-y-1">
-                  <span className="text-[10px] text-[#A39AB4] font-mono block uppercase">ZESPÓŁ</span>
+                  <span className="text-[10px] text-[#6A5E8C] font-mono block uppercase">ZESPÓŁ</span>
                   <strong className="text-2xl font-black text-[#14183D]">Ekspercki team</strong>
                   <p className="text-[11px] text-[#55506E]">Zróżnicowane kompetencje strategiczne</p>
                 </div>
                 <div className="border-t sm:border-t-0 sm:border-x border-[#EFEAE1] pt-4 sm:pt-0 space-y-1">
-                  <span className="text-[10px] text-[#A39AB4] font-mono block uppercase">DOŚWIADCZENIE HR</span>
+                  <span className="text-[10px] text-[#6A5E8C] font-mono block uppercase">DOŚWIADCZENIE HR</span>
                   <strong className="text-2xl font-black text-[#14183D]">30+ Lat w branży</strong>
                   <p className="text-[11px] text-[#55506E]">Doświadczenia na stanowiskach kadr</p>
                 </div>
                 <div className="border-t sm:border-t-0 pt-4 sm:pt-0 space-y-1">
-                  <span className="text-[10px] text-[#A39AB4] font-mono block uppercase">GŁÓWNY CEL</span>
+                  <span className="text-[10px] text-[#6A5E8C] font-mono block uppercase">GŁÓWNY CEL</span>
                   <strong className="text-2xl font-black text-[#14183D]">1 Misja: dane w działanie</strong>
                   <p className="text-[11px] text-[#55506E]">Eliminujemy puste statystyki bez pokrycia</p>
                 </div>
@@ -1783,7 +1792,7 @@ export default function App() {
 
               {/* Team Profile cards page 7 */}
               <div className="space-y-6 pt-4">
-                <h3 className="text-xs uppercase font-extrabold tracking-wider text-[#A39AB4] font-mono border-b border-[#EFEAE1] pb-2 text-center">
+                <h3 className="text-xs uppercase font-extrabold tracking-wider text-[#6A5E8C] font-mono border-b border-[#EFEAE1] pb-2 text-center">
                   Poznaj nasz zespół operacyjny
                 </h3>
 
@@ -1796,7 +1805,7 @@ export default function App() {
                     </div>
                     <div>
                       <h4 className="font-sans font-black text-sm text-[#14183D] leading-none">Monika Ćwikła</h4>
-                      <p className="text-[10px] text-[#F4A574] font-bold mt-1 uppercase font-mono">HR i Strategia</p>
+                      <p className="text-[10px] text-[#C4672D] font-bold mt-1 uppercase font-mono">HR i Strategia</p>
                     </div>
                     <p className="text-[11px] text-[#55506E] leading-relaxed">
                       Ponad 10 lat doświadczenia w HR, budowaniu i zarządzaniu zespołami. Łączy perspektywę HR i biznesu, dbając o to, żeby HRly dostarczało realną wartość managerom i organizacjom.
@@ -1810,7 +1819,7 @@ export default function App() {
                     </div>
                     <div>
                       <h4 className="font-sans font-black text-sm text-[#14183D] leading-none">Anna Kępczyńska</h4>
-                      <p className="text-[10px] text-[#F4A574] font-bold mt-1 uppercase font-mono">Psychologia i Management</p>
+                      <p className="text-[10px] text-[#C4672D] font-bold mt-1 uppercase font-mono">Psychologia i Management</p>
                     </div>
                     <p className="text-[11px] text-[#55506E] leading-relaxed">
                       Doświadczony psycholog i menedżer z wieloletnim doświadczeniem w konsultingu personalnym. Na co dzień odpowiada za przyjazny w odbiorze, głęboko empatyczny i strategicznie zrozumiały język ankiet oraz komunikacji z liderami.
@@ -1824,7 +1833,7 @@ export default function App() {
                     </div>
                     <div>
                       <h4 className="font-sans font-black text-sm text-[#14183D] leading-none">Jakub Zacios</h4>
-                      <p className="text-[10px] text-[#F4A574] font-bold mt-1 uppercase font-mono">Technologia i Analiza</p>
+                      <p className="text-[10px] text-[#C4672D] font-bold mt-1 uppercase font-mono">Technologia i Analiza</p>
                     </div>
                     <p className="text-[11px] text-[#55506E] leading-relaxed">
                       Zdolny architekt technologiczny, główny twórca nowatorskiego matematycznego silnika analitycznego oraz metodologii badania 58 czynników. Odpowiada za integrację z bazami danych i sprawne wyciąganie automatycznych raportów.
@@ -1837,7 +1846,7 @@ export default function App() {
               {/* Misja i Wizja blocks page 7 */}
               <div className="bg-gradient-to-br from-[#3B2F8C] to-[#231B5E] text-white p-6 sm:p-10 rounded-3xl grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-2">
-                  <span className="text-[10px] font-mono font-bold text-[#F4A574] block uppercase">GŁÓWNA MISJA SPÓŁKI</span>
+                  <span className="text-[10px] font-mono font-bold text-[#C4672D] block uppercase">GŁÓWNA MISJA SPÓŁKI</span>
                   <h4 className="font-sans font-black text-sm tracking-tight text-white uppercase">Pomagamy firmom podejmować trafne decyzje</h4>
                   <p className="text-[#F4F1EC] leading-relaxed text-[11px]">
                     Pomagamy firmom i zarządom podejmować trafne, merytoryczne decyzje biznesowe oparte o rzeczywiste, zweryfikowane dane — tak, aby budowanie i rozwijanie wyjątkowych zespołów stało się dokładną nauką, a nie losową sztuką.
@@ -1845,7 +1854,7 @@ export default function App() {
                 </div>
 
                 <div className="space-y-2 border-t md:border-t-0 md:border-l border-white/10 pt-4 md:pt-0 md:pl-8">
-                  <span className="text-[10px] font-mono font-bold text-[#F4A574] block uppercase">SPÓJNA WIZJA ŚWIATA</span>
+                  <span className="text-[10px] font-mono font-bold text-[#C4672D] block uppercase">SPÓJNA WIZJA ŚWIATA</span>
                   <h4 className="font-sans font-black text-sm tracking-tight text-white uppercase">Gdzie HR mówi uniwersalnym językiem biznesu</h4>
                   <p className="text-[#F4F1EC] leading-relaxed text-[11px]">
                     Świat, w którym dział personalny mówi zrozumiałym, twardym językiem finansów i biznesu, a każda nowoczesna organizacja ma swobodny dostęp do narzędzi budujących zaangażowane, produktywne i zdrowe zespoły.
@@ -1865,7 +1874,14 @@ export default function App() {
               exit={{ opacity: 0, y: -15 }}
               transition={{ duration: 0.3 }}
             >
-              <HrlyBlogSection config={config} />
+              <Suspense fallback={
+                <div className="min-h-[50vh] flex flex-col items-center justify-center bg-[#FBFAF8]">
+                  <div className="w-10 h-10 border-4 border-[#3B2F8C] border-t-transparent rounded-full animate-spin"></div>
+                  <p className="text-xs text-[#55506E] mt-3 animate-pulse">Ładowanie artykułów blogowych...</p>
+                </div>
+              }>
+                <HrlyBlogSection config={config} />
+              </Suspense>
             </motion.div>
           )}
 
@@ -1882,13 +1898,13 @@ export default function App() {
               
               {/* Left Column: Coordinates details with Trust cards */}
               <div className="lg:col-span-5 bg-gradient-to-b from-[#FBFAF8] to-[#FFFFFF] border border-[#EFEAE1]/85 rounded-[28px] p-6 sm:p-8 flex flex-col justify-between space-y-8 shadow-xs relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-[#F4A574]/5 rounded-full blur-2xl pointer-events-none" />
+                <div className="absolute top-0 right-0 w-32 h-32 bg-[#C4672D]/5 rounded-full blur-2xl pointer-events-none" />
                 <div className="absolute bottom-0 left-0 w-32 h-32 bg-[#3B2F8C]/4 rounded-full blur-2xl pointer-events-none" />
                 
                 <div className="space-y-6 relative z-10">
                   <div className="space-y-3">
                     <span className="inline-flex items-center gap-1.5 text-[9px] sm:text-[10px] tracking-widest font-extrabold uppercase bg-[#E3DEEE] text-[#3B2F8C] px-3.5 py-1.5 rounded-full border border-[#C4BBDE]/40 shadow-2xs leading-none">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#F4A574]" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#C4672D]" />
                       BEZPOŚREDNI KONTAKT
                     </span>
                     <h2 className="font-display font-black text-2xl sm:text-3xl text-[#14183D] uppercase tracking-tight">
@@ -1904,10 +1920,10 @@ export default function App() {
                     
                     <a href="mailto:kontakt@hrly.pl" className="bg-white border border-[#EFEAE1]/60 rounded-xl p-4 flex gap-3.5 items-center hover:border-[#C4BBDE] hover:shadow-2xs transition-all group cursor-pointer block">
                       <div className="w-10 h-10 rounded-xl bg-[#3B2F8C]/10 text-[#3B2F8C] flex items-center justify-center shrink-0 group-hover:bg-[#3B2F8C] group-hover:text-white transition-colors duration-300">
-                        <Mail className="w-5 h-5 text-[#F4A574]" />
+                        <Mail className="w-5 h-5 text-[#C4672D]" />
                       </div>
                       <div>
-                        <span className="text-[9px] text-[#A39AB4] font-mono block uppercase font-bold tracking-wider">Napisz e-mail</span>
+                        <span className="text-[9px] text-[#6A5E8C] font-mono block uppercase font-bold tracking-wider">Napisz e-mail</span>
                         <strong className="text-xs text-[#14183D] group-hover:text-[#3B2F8C] transition-colors">kontakt@hrly.pl</strong>
                       </div>
                     </a>
@@ -1917,7 +1933,7 @@ export default function App() {
                         <Clock className="w-5 h-5" />
                       </div>
                       <div>
-                        <span className="text-[9px] text-[#A39AB4] font-mono block uppercase font-bold tracking-wider">Czas odpowiedzi</span>
+                        <span className="text-[9px] text-[#6A5E8C] font-mono block uppercase font-bold tracking-wider">Czas odpowiedzi</span>
                         <strong className="text-xs text-[#14183D]">Maksymalnie 24 godziny</strong>
                       </div>
                     </div>
@@ -1927,7 +1943,7 @@ export default function App() {
                         <MapPin className="w-5 h-5" />
                       </div>
                       <div>
-                        <span className="text-[9px] text-[#A39AB4] font-mono block uppercase font-bold tracking-wider">Lokalizacja spółki</span>
+                        <span className="text-[9px] text-[#6A5E8C] font-mono block uppercase font-bold tracking-wider">Lokalizacja spółki</span>
                         <strong className="text-xs text-[#14183D]">Warszawa, Polska</strong>
                       </div>
                     </div>
@@ -1939,15 +1955,15 @@ export default function App() {
                   <div className="grid grid-cols-2 gap-3">
                     <div className="bg-white/50 border border-[#EFEAE1]/55 rounded-lg p-3 text-center">
                       <span className="text-[14px] font-black text-[#3B2F8C] block">100%</span>
-                      <span className="text-[9px] uppercase font-bold text-[#A39AB4] font-mono">Poufność danych</span>
+                      <span className="text-[9px] uppercase font-bold text-[#6A5E8C] font-mono">Poufność danych</span>
                     </div>
                     <div className="bg-white/50 border border-[#EFEAE1]/55 rounded-lg p-3 text-center">
                       <span className="text-[14px] font-black text-[#3B2F8C] block">RODO</span>
-                      <span className="text-[9px] uppercase font-bold text-[#A39AB4] font-mono">Zgodność prawna</span>
+                      <span className="text-[9px] uppercase font-bold text-[#6A5E8C] font-mono">Zgodność prawna</span>
                     </div>
                   </div>
 
-                  <p className="text-[9.5px] text-[#A39AB4] leading-relaxed text-center font-medium">
+                  <p className="text-[9.5px] text-[#6A5E8C] leading-relaxed text-center font-medium">
                     Właścicielem platformy i praw autorskich do kwestionariuszy jest podmiot prawny: <strong className="text-[#55506E]">HRLY Sp. z o.o.</strong> z siedzibą w Warszawie.
                   </p>
                 </div>
@@ -1983,7 +1999,7 @@ export default function App() {
                             onChange={(e) => setContactName(e.target.value)}
                             className="w-full text-xs bg-[#FBFAF8] border border-[#EFEAE1] rounded-xl pl-9 pr-3 py-2.5 text-[#14183D] focus:border-[#3B2F8C] focus:bg-white focus:outline-none placeholder-[#A39AB4]/60 transition-all shadow-2xs"
                           />
-                          <User className="w-4 h-4 text-[#A39AB4] absolute left-3 top-3" />
+                          <User className="w-4 h-4 text-[#6A5E8C] absolute left-3 top-3" />
                         </div>
                       </div>
 
@@ -1998,7 +2014,7 @@ export default function App() {
                             onChange={(e) => setContactEmail(e.target.value)}
                             className="w-full text-xs bg-[#FBFAF8] border border-[#EFEAE1] rounded-xl pl-9 pr-3 py-2.5 text-[#14183D] focus:border-[#3B2F8C] focus:bg-white focus:outline-none placeholder-[#A39AB4]/60 transition-all shadow-2xs"
                           />
-                          <Mail className="w-4 h-4 text-[#A39AB4] absolute left-3 top-3" />
+                          <Mail className="w-4 h-4 text-[#6A5E8C] absolute left-3 top-3" />
                         </div>
                       </div>
 
@@ -2016,7 +2032,7 @@ export default function App() {
                             onChange={(e) => setContactCompany(e.target.value)}
                             className="w-full text-xs bg-[#FBFAF8] border border-[#EFEAE1] rounded-xl pl-9 pr-3 py-2.5 text-[#14183D] focus:border-[#3B2F8C] focus:bg-white focus:outline-none placeholder-[#A39AB4]/60 transition-all shadow-2xs"
                           />
-                          <Building className="w-4 h-4 text-[#A39AB4] absolute left-3 top-3" />
+                          <Building className="w-4 h-4 text-[#6A5E8C] absolute left-3 top-3" />
                         </div>
                       </div>
 
@@ -2034,7 +2050,7 @@ export default function App() {
                             <option value="Inne">Inne zapytanie</option>
                           </select>
                           <ChevronDown className="w-4 h-4 text-[#55506E] absolute right-3 top-3 pointer-events-none" />
-                          <HelpCircle className="w-4 h-4 text-[#A39AB4] absolute left-3 top-3" />
+                          <HelpCircle className="w-4 h-4 text-[#6A5E8C] absolute left-3 top-3" />
                         </div>
                       </div>
 
@@ -2051,7 +2067,7 @@ export default function App() {
                           onChange={(e) => setContactMessage(e.target.value)}
                           className="w-full text-xs bg-[#FBFAF8] border border-[#EFEAE1] rounded-xl pl-9 pr-3 py-2.5 text-[#14183D] focus:border-[#3B2F8C] focus:bg-white focus:outline-none resize-none placeholder-[#A39AB4]/60 transition-all shadow-2xs"
                         />
-                        <MessageSquareText className="w-4 h-4 text-[#A39AB4] absolute left-3 top-3" />
+                        <MessageSquareText className="w-4 h-4 text-[#6A5E8C] absolute left-3 top-3" />
                       </div>
                     </div>
 
@@ -2144,18 +2160,18 @@ export default function App() {
 
           {/* Quick link matrices */}
           <div className="md:col-span-5 grid grid-cols-2 gap-4 text-center md:text-left font-semibold text-[11px] text-gray-300">
-            <div className="space-y-2">
-              <span className="text-[10px] text-[#F4A574] font-mono uppercase font-bold tracking-wider block">Opcje menu</span>
-              <button onClick={() => setActiveTab('features')} className="block py-1.5 hover:text-[#F4A574] focus:outline-none w-full md:text-left transition-colors cursor-pointer">Funkcje</button>
-              <button onClick={() => setActiveTab('pricing')} className="block py-1.5 hover:text-[#F4A574] focus:outline-none w-full md:text-left transition-colors cursor-pointer">Cennik</button>
-              <button onClick={() => setActiveTab('about')} className="block py-1.5 hover:text-[#F4A574] focus:outline-none w-full md:text-left transition-colors cursor-pointer">O nas</button>
+            <div className="space-y-1">
+              <span className="text-[10px] text-[#F4A574] font-mono uppercase font-bold tracking-wider block mb-1">Opcje menu</span>
+              <button onClick={() => setActiveTab('features')} className="block py-2 hover:text-[#F4A574] focus:outline-none w-full md:text-left transition-colors cursor-pointer">Funkcje</button>
+              <button onClick={() => setActiveTab('pricing')} className="block py-2 hover:text-[#F4A574] focus:outline-none w-full md:text-left transition-colors cursor-pointer">Cennik</button>
+              <button onClick={() => setActiveTab('about')} className="block py-2 hover:text-[#F4A574] focus:outline-none w-full md:text-left transition-colors cursor-pointer">O nas</button>
             </div>
-            <div className="space-y-2">
-              <span className="text-[10px] text-[#F4A574] font-mono uppercase font-bold tracking-wider block">Baza wiedzy</span>
-              <button onClick={() => setActiveTab('blog')} className="block py-1.5 hover:text-[#F4A574] focus:outline-none w-full md:text-left transition-colors cursor-pointer">Blog / Baza wiedzy</button>
-              <button onClick={() => setActiveTab('contact')} className="block py-1.5 hover:text-[#F4A574] focus:outline-none w-full md:text-left transition-colors cursor-pointer">Kontakt z nami</button>
-              <a href="#privacy" className="block py-1.5 hover:text-[#F4A574] w-full md:text-left transition-colors cursor-not-allowed">Polityka prywatności</a>
-              <a href="#rules" className="block py-1.5 hover:text-[#F4A574] w-full md:text-left transition-colors cursor-not-allowed">Regulamin</a>
+            <div className="space-y-1">
+              <span className="text-[10px] text-[#F4A574] font-mono uppercase font-bold tracking-wider block mb-1">Baza wiedzy</span>
+              <button onClick={() => setActiveTab('blog')} className="block py-2 hover:text-[#F4A574] focus:outline-none w-full md:text-left transition-colors cursor-pointer">Blog / Baza wiedzy</button>
+              <button onClick={() => setActiveTab('contact')} className="block py-2 hover:text-[#F4A574] focus:outline-none w-full md:text-left transition-colors cursor-pointer">Kontakt z nami</button>
+              <a href="#privacy" className="block py-2 hover:text-[#F4A574] w-full md:text-left transition-colors cursor-not-allowed">Polityka prywatności</a>
+              <a href="#rules" className="block py-2 hover:text-[#F4A574] w-full md:text-left transition-colors cursor-not-allowed">Regulamin</a>
             </div>
           </div>
 
@@ -2274,7 +2290,14 @@ export default function App() {
 
               {/* Inside content */}
               <div className="pt-8">
-                <HrlyDashboardPreview />
+                <Suspense fallback={
+                  <div className="h-[70vh] flex flex-col items-center justify-center bg-[#FBFAF8]">
+                    <div className="w-10 h-10 border-4 border-[#3B2F8C] border-t-transparent rounded-full animate-spin"></div>
+                    <p className="text-xs text-[#55506E] mt-3 animate-pulse">Generowanie podglądu interaktywnego panelu...</p>
+                  </div>
+                }>
+                  <HrlyDashboardPreview />
+                </Suspense>
               </div>
             </motion.div>
           </motion.div>

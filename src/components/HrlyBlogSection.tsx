@@ -241,7 +241,7 @@ export const HrlyBlogSection: React.FC<HrlyBlogSectionProps> = ({ onNavigate, co
                     <h3 className="font-display font-extrabold text-sm text-[#14183D] uppercase tracking-tight leading-none">
                       Newsletter HRly
                     </h3>
-                    <p className="text-[9.5px] text-[#A39AB4] font-mono uppercase font-bold tracking-wider mt-1">
+                    <p className="text-[9.5px] text-[#6A5E8C] font-mono uppercase font-bold tracking-wider mt-1">
                       Twarde dane i mądre rady
                     </p>
                   </div>
@@ -254,7 +254,7 @@ export const HrlyBlogSection: React.FC<HrlyBlogSectionProps> = ({ onNavigate, co
                 {!newsletterSubscribed ? (
                   <form onSubmit={handleNewsletterSubmit} className="space-y-3 pt-1">
                     <div>
-                      <label className="text-[9.5px] font-bold text-[#A39AB4] uppercase tracking-wider block mb-1">Twój e-mail</label>
+                      <label className="text-[9.5px] font-bold text-[#6A5E8C] uppercase tracking-wider block mb-1">Twój e-mail</label>
                       <input
                         type="email"
                         required
@@ -272,7 +272,7 @@ export const HrlyBlogSection: React.FC<HrlyBlogSectionProps> = ({ onNavigate, co
                       <span>Zapisz się bezpłatnie</span>
                       <Send className="w-3.5 h-3.5 text-[#F4A574]" />
                     </button>
-                    <p className="text-[9px] text-[#A39AB4] text-center leading-normal">
+                    <p className="text-[9px] text-[#6A5E8C] text-center leading-normal">
                       Bezpieczne przetwarzanie danych zgodnie z RODO.
                     </p>
                   </form>
@@ -303,7 +303,7 @@ export const HrlyBlogSection: React.FC<HrlyBlogSectionProps> = ({ onNavigate, co
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full text-xs bg-[#FBFAF8] border border-[#EFEAE1] rounded-xl pl-9 pr-3 py-2.5 text-[#14183D] focus:border-[#3B2F8C] focus:outline-none placeholder-[#A39AB4]/80 transition-all"
             />
-            <Search className="w-4 h-4 text-[#A39AB4] absolute left-3 top-3" />
+            <Search className="w-4 h-4 text-[#6A5E8C] absolute left-3 top-3" />
           </div>
           <div className="text-xs text-[#55506E] font-mono shrink-0">
             Pokazano: <strong>{filteredArticles.length}</strong> artykułów z <strong>{allArticles.length}</strong> ogółem
@@ -312,9 +312,9 @@ export const HrlyBlogSection: React.FC<HrlyBlogSectionProps> = ({ onNavigate, co
 
         {filteredArticles.length === 0 ? (
           <div className="text-center py-16 bg-[#FFFFFF] border border-dashed border-[#EFEAE1] rounded-2xl p-6">
-            <BookOpen className="w-10 h-10 text-[#A39AB4] mx-auto opacity-40 mb-3" />
+            <BookOpen className="w-10 h-10 text-[#6A5E8C] mx-auto opacity-40 mb-3" />
             <p className="text-sm text-[#14183D] font-bold">Brak pasujących artykułów</p>
-            <p className="text-xs text-[#A39AB4] mt-1 max-w-sm mx-auto">
+            <p className="text-xs text-[#6A5E8C] mt-1 max-w-sm mx-auto">
               Nie znaleźliśmy artykułów spełniających Twoje kryteria. Spróbuj wpisać inne słowo kluczowe.
             </p>
             <button
@@ -350,7 +350,7 @@ export const HrlyBlogSection: React.FC<HrlyBlogSectionProps> = ({ onNavigate, co
                     </div>
 
                     <div className="p-5 space-y-2.5">
-                      <div className="flex items-center gap-1.5 text-[10px] text-[#A39AB4] font-mono">
+                      <div className="flex items-center gap-1.5 text-[10px] text-[#6A5E8C] font-mono">
                         <Clock className="w-3.5 h-3.5 text-[#F4A574]" />
                         <span>{article.readTime}</span>
                       </div>
@@ -366,7 +366,7 @@ export const HrlyBlogSection: React.FC<HrlyBlogSectionProps> = ({ onNavigate, co
                   </div>
 
                   <div className="bg-[#FBFAF8] px-5 py-3 border-t border-[#EFEAE1]/70 flex items-center justify-between">
-                    <span className="text-[10px] text-[#A39AB4] font-mono flex items-center gap-1">
+                    <span className="text-[10px] text-[#6A5E8C] font-mono flex items-center gap-1">
                       <Calendar className="w-3.5 h-3.5" />
                       {article.publishDate}
                     </span>
@@ -386,7 +386,6 @@ export const HrlyBlogSection: React.FC<HrlyBlogSectionProps> = ({ onNavigate, co
           )}
 
       </div>
-
     </div>
   );
 };
