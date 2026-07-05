@@ -56,6 +56,26 @@ export interface PricingPlan {
   highlighted: boolean;
 }
 
+// Social media post attached to a blog article
+export type SocialPlatform = 'instagram' | 'facebook' | 'linkedin';
+export type SocialPostStatus = 'draft' | 'approved' | 'scheduled' | 'sent' | 'error';
+
+export interface SocialPost {
+  id: string;
+  platform: SocialPlatform;
+  content: string;
+  hashtags: string;
+  framework: string;
+  status: SocialPostStatus;
+  scheduledAt?: string;
+  sentAt?: string;
+  mediaUrls: string[];       // base64 images / file names attached by admin
+  mediaTypes: string[];      // 'image' | 'video' | 'pdf'
+  makeWebhookSent: boolean;
+  webhookError?: string;
+}
+
+// Blog article managed via CMS
 export interface BlogPost {
   id: string;
   title: string;
@@ -66,10 +86,13 @@ export interface BlogPost {
   tags: string[];
   author: string;
   publishedAt: string;
-  status: 'published' | 'draft';
+  scheduledAt?: string;
+  status: 'published' | 'draft' | 'scheduled';
   seoTitle: string;
   seoDescription: string;
   imageUrl?: string;
+  copywritingFramework: string;
+  socialPosts: SocialPost[];
 }
 
 export interface ContactLead {
@@ -93,6 +116,33 @@ export interface NewsletterSubscriber {
   source: string;
 }
 
+export interface HashtagSet {
+  id: string;
+  name: string;
+  tags: string;
+}
+
+// Social media integration settings
+export interface SocialConfig {
+  makeWebhookUrl: string;
+  instagramPageId: string;
+  facebookPageId: string;
+  linkedinPageId: string;
+  savedHashtags?: HashtagSet[];
+}
+
+// Standalone scheduled social posts (not tied to a blog post)
+export interface ScheduledEvent {
+  id: string;
+  type: 'blog' | 'social';
+  title: string;
+  blogPostId?: string;
+  socialPostId?: string;
+  platform?: SocialPlatform;
+  scheduledAt: string;
+  color: string;
+}
+
 export interface SiteConfig {
   global: GlobalConfig;
   hero: HeroConfig;
@@ -103,6 +153,7 @@ export interface SiteConfig {
   blogPosts: BlogPost[];
   leads: ContactLead[];
   subscribers: NewsletterSubscriber[];
+  social: SocialConfig;
 }
 
 // ============================================================
@@ -181,7 +232,80 @@ export const DEFAULT_CONFIG: SiteConfig = {
   blogPosts: [],
   leads: [],
   subscribers: [],
+  social: {
+    makeWebhookUrl: 'https://hook.eu2.make.com/9ms2ito1chs8w3sa3x7kkpqgb6ynzyr0',
+    instagramPageId: '',
+    facebookPageId: '',
+    linkedinPageId: '',
+    savedHashtags: [],
+  },
 };
+
+// ============================================================
+// Copywriting Frameworks
+// ============================================================
+export const COPYWRITING_FRAMEWORKS = [
+  {
+    id: 'co-star',
+    name: 'CO-STAR',
+    description: 'Context, Objective, Style, Tone, Audience, Response — content biznesowy, artykuły, posty',
+    icon: '⭐',
+  },
+  {
+    id: 'aida',
+    name: 'AIDA',
+    description: 'Attention, Interest, Desire, Action — reklamy, posty sprzedażowe',
+    icon: '🎯',
+  },
+  {
+    id: 'pas',
+    name: 'PAS',
+    description: 'Problem, Agitate, Solution — posty o wyzwaniach HR, podkręcanie bólu',
+    icon: '🔥',
+  },
+  {
+    id: 'bab',
+    name: 'BAB',
+    description: 'Before, After, Bridge — storytelling, case study',
+    icon: '🌉',
+  },
+  {
+    id: 'fab',
+    name: 'FAB',
+    description: 'Features, Advantages, Benefits — opisy SaaS/produktu',
+    icon: '💎',
+  },
+  {
+    id: 'rtf',
+    name: 'RTF',
+    description: 'Role, Task, Format — szybkie posty SM, proste zadania',
+    icon: '⚡',
+  },
+  {
+    id: 'crispe',
+    name: 'CRISPE',
+    description: 'Context, Role, Input, Steps, Parameters, Example — złożone analizy',
+    icon: '🔬',
+  },
+  {
+    id: '4p',
+    name: '4P / PPPP',
+    description: 'Picture, Promise, Proof, Push — oferty, landingi, CTA',
+    icon: '📣',
+  },
+  {
+    id: 'risen',
+    name: 'RISEN',
+    description: 'Role, Instructions, Steps, End goal, Narrowing — automatyzacje, agenty',
+    icon: '🤖',
+  },
+  {
+    id: 'storybrand',
+    name: 'StoryBrand',
+    description: 'Bohater, Problem, Przewodnik, Plan, Działanie — dłuższe oferty high-ticket',
+    icon: '📖',
+  },
+] as const;
 
 // ============================================================
 // Storage helpers
@@ -203,6 +327,7 @@ export function loadConfig(): SiteConfig {
       blogPosts: parsed.blogPosts ?? DEFAULT_CONFIG.blogPosts,
       leads: parsed.leads ?? DEFAULT_CONFIG.leads,
       subscribers: parsed.subscribers ?? DEFAULT_CONFIG.subscribers,
+      social: { ...DEFAULT_CONFIG.social, ...parsed.social },
     };
   } catch {
     return DEFAULT_CONFIG;
@@ -226,7 +351,6 @@ export function addLead(lead: Omit<ContactLead, 'id' | 'receivedAt' | 'read' | '
   saveConfig(config);
 }
 
-// Returns false if the e-mail is already subscribed (case-insensitive)
 export function addSubscriber(email: string, source = 'Newsletter Bazy wiedzy'): boolean {
   const config = loadConfig();
   const normalized = email.trim().toLowerCase();

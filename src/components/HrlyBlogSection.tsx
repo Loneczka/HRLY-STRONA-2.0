@@ -1,33 +1,25 @@
 import React, { useState, useMemo } from 'react';
-import { BLOG_ARTICLES, BlogArticle } from '../data/hrlyData';
 import {
   Search, BookOpen, Clock, Calendar, ChevronRight,
-  Send, CheckCircle, Mail
+  Send, CheckCircle, Mail, PenSquare
 } from 'lucide-react';
-import { SiteConfig, addSubscriber } from '../hooks/useSiteConfig';
+import { loadConfig, addSubscriber, type BlogPost } from '../hooks/useSiteConfig';
 
-// Exact categories from PDF Page 8 filter list
-const PDF_CATEGORIES = [
-  "Wszystkie", "Motywacja i zaangażowanie", "Analityka HR", "employee experience", 
-  "motywacja", "rozwój liderów", "wypalenie zawodowe", "Zarządzanie talentami", 
-  "rozwój kariery", "rozwój i szkolenia", "przyszłość pracy", "kultura organizacyjna"
+// ── Image fallback ────────────────────────────────────────────
+const FALLBACK_IMAGES = [
+  "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80",
+  "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&q=80",
+  "https://images.unsplash.com/photo-1552581230-c01bc9148c5b?auto=format&fit=crop&w=600&q=80",
+  "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=600&q=80",
+  "https://images.unsplash.com/photo-1531535934202-f022eed250c2?auto=format&fit=crop&w=600&q=80",
 ];
 
-const getArticleImage = (article: BlogArticle & { imageUrl?: string }) => {
-  if (article.imageUrl) return article.imageUrl;
-  const idStr = String(article.id);
-  const numericId = parseInt(idStr.replace(/\D/g, ''), 10) || 1;
-  switch (numericId % 5 + 1) {
-    case 1: return "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80"; // Teamwork
-    case 2: return "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&q=80"; // Charts/Data
-    case 3: return "https://images.unsplash.com/photo-1552581230-c01bc9148c5b?auto=format&fit=crop&w=600&q=80"; // Tough meeting
-    case 4: return "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=600&q=80"; // Planning/Talent
-    case 5: return "https://images.unsplash.com/photo-1531535934202-f022eed250c2?auto=format&fit=crop&w=600&q=80"; // Happiness/EX
-    default: return "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=600&q=80"; // Future of work
-  }
+const getArticleImage = (post: BlogPost, idx: number) => {
+  if (post.imageUrl) return post.imageUrl;
+  return FALLBACK_IMAGES[idx % FALLBACK_IMAGES.length];
 };
 
-// ── New-tab article rendering (standalone HTML document) ──────────
+// ── Markdown → HTML (for article new tab) ─────────────────────
 function escapeHtml(s: string): string {
   return s
     .replace(/&/g, '&amp;')
@@ -78,17 +70,17 @@ function markdownToHtml(md: string): string {
   return out.join('\n');
 }
 
-function openArticleInNewTab(article: any) {
+function openArticleInNewTab(post: BlogPost) {
   const win = window.open('', '_blank');
-  if (!win) return; // popup blocked
-  const title = escapeHtml(article.title || 'Artykuł HRly');
+  if (!win) return;
+  const title = escapeHtml(post.seoTitle || post.title);
   const html = `<!doctype html>
 <html lang="pl">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>${title} · HRly</title>
-<meta name="description" content="${escapeHtml(article.summary || '')}" />
+<meta name="description" content="${escapeHtml(post.seoDescription || post.excerpt)}" />
 <style>
   :root { color-scheme: light; }
   * { box-sizing: border-box; }
@@ -98,294 +90,309 @@ function openArticleInNewTab(article: any) {
   .cover { width: 100%; aspect-ratio: 21/9; object-fit: cover; border-radius: 18px; border: 1px solid #EFEAE1; margin: 8px 0 24px; }
   .meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; font-size: 12px; color: #A39AB4; margin-bottom: 12px; }
   .cat { text-transform: uppercase; font-weight: 700; letter-spacing: .12em; color: #3B2F8C; background: #E3DEEE; padding: 3px 10px; border-radius: 999px; font-size: 10px; }
-  h1 { font-size: clamp(26px, 5vw, 38px); line-height: 1.12; color: #14183D; letter-spacing: -0.02em; margin: 0 0 18px; }
-  .lead { background: rgba(244,241,236,.7); border-left: 4px solid #F4A574; padding: 14px 18px; border-radius: 0 12px 12px 0; font-weight: 700; color: #14183D; font-style: italic; margin: 0 0 28px; }
-  .content h2 { font-size: 22px; color: #14183D; margin: 34px 0 14px; padding-bottom: 8px; border-bottom: 1px solid #EFEAE1; }
-  .content h3 { font-size: 18px; color: #14183D; margin: 26px 0 10px; }
-  .content p { margin: 16px 0; }
-  .content ul { padding-left: 22px; margin: 16px 0; }
-  .content li { margin: 6px 0; }
-  .content blockquote { border-left: 4px solid #F4A574; background: rgba(244,241,236,.6); padding: 12px 18px; border-radius: 0 14px 14px 0; font-style: italic; margin: 20px 0; }
-  .content a { color: #3B2F8C; font-weight: 700; }
-  .content img { max-width: 100%; height: auto; border-radius: 14px; border: 1px solid #EFEAE1; margin: 20px auto; display: block; }
-  .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #EFEAE1; font-size: 11px; color: #A39AB4; }
-  .cta { display: inline-block; margin-top: 22px; background: #3B2F8C; color: #fff; text-decoration: none; font-weight: 700; padding: 12px 22px; border-radius: 12px; font-size: 14px; }
+  h1 { font-size: clamp(26px, 5vw, 38px); font-weight: 800; letter-spacing: -0.03em; color: #14183D; line-height: 1.2; margin: 0 0 16px; }
+  h2 { font-size: 22px; font-weight: 700; color: #14183D; margin: 36px 0 10px; }
+  h3 { font-size: 17px; font-weight: 600; color: #14183D; margin: 28px 0 8px; }
+  p { margin: 0 0 16px; }
+  ul { padding-left: 20px; margin: 0 0 16px; }
+  li { margin-bottom: 6px; }
+  blockquote { border-left: 4px solid #3B2F8C; margin: 24px 0; padding: 12px 20px; background: #F0EDFA; border-radius: 0 8px 8px 0; font-style: italic; }
+  img { max-width: 100%; border-radius: 12px; margin: 16px 0; }
+  a { color: #3B2F8C; }
+  strong { color: #14183D; }
+  .tag { display: inline-block; background: #E3DEEE; color: #3B2F8C; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 999px; margin: 2px; }
 </style>
 </head>
 <body>
-  <article class="wrap">
-    <a class="brand" href="https://hrly.pl/">hrly</a>
-    <img class="cover" src="${escapeHtml(getArticleImage(article))}" alt="${title}" referrerpolicy="no-referrer" />
-    <div class="meta">
-      <span class="cat">${escapeHtml(article.category || '')}</span>
-      <span>${escapeHtml(article.readTime || '')}</span>
-      <span>${escapeHtml(article.publishDate || '')}</span>
-    </div>
-    <h1>${title}</h1>
-    ${article.summary ? `<p class="lead">${escapeHtml(article.summary)}</p>` : ''}
-    <div class="content">${markdownToHtml(article.content || '')}</div>
-    <a class="cta" href="https://hrly.pl/#contact">Umów demo HRly →</a>
-    <p class="footer">Artykuł udostępniony bezpłatnie w ramach bazy wiedzy HRly. Kopiowanie i dystrybucja bez podania źródła (hrly.pl) zastrzeżona przez HRLY Sp. z o.o.</p>
-  </article>
+<div class="wrap">
+  <a class="brand" href="/" target="_self">hrly</a>
+  ${post.imageUrl ? `<img class="cover" src="${escapeHtml(post.imageUrl)}" alt="${escapeHtml(post.title)}" loading="eager" decoding="async" />` : ''}
+  <div class="meta">
+    <span class="cat">${escapeHtml(post.category)}</span>
+    <span>✍️ ${escapeHtml(post.author)}</span>
+    <span>📅 ${new Date(post.publishedAt).toLocaleDateString('pl-PL', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+  </div>
+  <h1>${escapeHtml(post.title)}</h1>
+  <p style="font-size:18px;color:#6B6484;margin-bottom:32px;">${escapeHtml(post.excerpt)}</p>
+  ${markdownToHtml(post.content)}
+  <div style="margin-top:32px;">
+    ${(post.tags || []).map((t) => `<span class="tag">#${escapeHtml(t)}</span>`).join('')}
+  </div>
+  <hr style="margin:40px 0;border:none;border-top:1px solid #EFEAE1;" />
+  <p style="font-size:13px;color:#A39AB4;">© ${new Date().getFullYear()} HRly. Wszelkie prawa zastrzeżone.</p>
+</div>
 </body>
 </html>`;
-  win.document.open();
   win.document.write(html);
   win.document.close();
 }
 
-export interface HrlyBlogSectionProps {
-  onNavigate?: (tab: string) => void;
-  config?: SiteConfig;
-}
+// ── Newsletter Component ──────────────────────────────────────
+function NewsletterBox() {
+  const [email, setEmail] = useState('');
+  const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-export const HrlyBlogSection: React.FC<HrlyBlogSectionProps> = ({ onNavigate, config }) => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("Wszystkie");
-
-  // Newsletter state
-  const [newsletterEmail, setNewsletterEmail] = useState("");
-  const [newsletterSubscribed, setNewsletterSubscribed] = useState(false);
-
-  const allArticles = useMemo(() => {
-    const dynamicArticles = (config?.blogPosts || [])
-      .filter(post => post.status === 'published')
-      .map(post => ({
-        id: post.id,
-        title: post.title,
-        category: post.category,
-        summary: post.excerpt || post.title,
-        content: post.content,
-        readTime: `${Math.ceil(post.content.split(/\s+/).length / 200) || 3} min czytania`,
-        publishDate: post.publishedAt ? post.publishedAt.split('T')[0] : new Date().toISOString().split('T')[0],
-        imageUrl: post.imageUrl
-      }));
-    return [...dynamicArticles, ...BLOG_ARTICLES];
-  }, [config?.blogPosts]);
-
-  const filteredArticles = useMemo(() => {
-    return allArticles.filter(article => {
-      const matchesSearch = 
-        article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        article.summary.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        article.content.toLowerCase().includes(searchQuery.toLowerCase());
-      
-      if (selectedCategory === "Wszystkie") {
-        return matchesSearch;
-      }
-      
-      const matchesCategory = 
-        article.category.toLowerCase().trim() === selectedCategory.toLowerCase().trim();
-      return matchesSearch && matchesCategory;
-    });
-  }, [allArticles, searchQuery, selectedCategory]);
-
-  const handleNewsletterSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (newsletterEmail.trim() === "") return;
-    // Persist the e-mail so it shows up in the CMS "Newsletter" tab
-    addSubscriber(newsletterEmail);
-    setNewsletterSubscribed(true);
-    setNewsletterEmail("");
+    if (!email.trim()) return;
+    setLoading(true);
+    await new Promise((r) => setTimeout(r, 600));
+    addSubscriber(email, 'Blog HRly');
+    setSent(true);
+    setLoading(false);
   };
 
   return (
-    <div className="space-y-8">
-      
-      {/* Premium Editorial Blog Hero */}
-      <div className="relative rounded-[32px] border border-[#C4BBDE]/55 bg-gradient-to-tr from-[#F4F1EC] via-[#FBFAF8] to-[#FFFFFF] p-6 sm:p-10 lg:p-12 overflow-hidden shadow-xl bg-[linear-gradient(to_right,rgba(196,187,222,0.1)_1px,transparent_1px),linear-gradient(to_bottom,rgba(196,187,222,0.1)_1px,transparent_1px)] bg-[size:24px_24px]">
-        {/* Dynamic Background Glowing Orbs */}
-        <div className="absolute top-0 right-0 w-[450px] h-[450px] bg-[#F4A574]/10 rounded-full blur-3xl pointer-events-none -mr-40 -mt-40" />
-        <div className="absolute bottom-0 left-1/3 w-[350px] h-[350px] bg-[#3B2F8C]/5 rounded-full blur-3xl pointer-events-none -mb-32" />
-        
-        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-          {/* Left Column: Inspiring copy */}
-          <div className="lg:col-span-7 space-y-5 text-left flex flex-col items-start">
-            <span className="inline-flex items-center gap-1.5 text-[9px] sm:text-[10px] tracking-widest font-extrabold uppercase bg-[#E3DEEE]/85 text-[#3B2F8C] px-3.5 py-1.5 rounded-full border border-[#C4BBDE]/60 shadow-xs leading-none">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#F4A574] animate-pulse" />
-              SZCZERA STRONA PRACY • WIEDZA
-            </span>
-            
-            <h1 className="font-display font-black text-3xl sm:text-4xl lg:text-[42px] leading-[1.08] text-[#14183D] uppercase tracking-tight">
-              Baza wiedzy <br />
-              <span className="text-[#3B2F8C]">HRly</span>
-            </h1>
-            
-            <p className="text-xs sm:text-sm text-[#55506E] leading-relaxed max-w-xl">
-              Poznaj najnowsze trendy rynkowe, twarde dane o zaangażowaniu i gotowe scenariusze wdrożeniowe. Tworzymy merytoryczne artykuły dla menedżerów, liderów i pasjonatów HR, którzy chcą realnie usprawniać swoje organizacje.
-            </p>
-
-            {/* Small badge group for metrics/credibility */}
-            <div className="flex flex-wrap gap-3 pt-2 text-[#3B2F8C] font-mono text-[9.5px] uppercase font-bold">
-              <span className="flex items-center gap-1 bg-white/80 border border-[#C4BBDE]/40 px-2.5 py-1 rounded-lg shadow-2xs">
-                ✓ 0% Lania Wody
-              </span>
-              <span className="flex items-center gap-1 bg-white/80 border border-[#C4BBDE]/40 px-2.5 py-1 rounded-lg shadow-2xs">
-                ✓ 58 Mierzonych Wskaźników
-              </span>
-              <span className="flex items-center gap-1 bg-white/80 border border-[#C4BBDE]/40 px-2.5 py-1 rounded-lg shadow-2xs">
-                ✓ Gotowe Scenariusze
-              </span>
-            </div>
-          </div>
-
-          {/* Right Column: Premium Newsletter Signup Card */}
-          <div className="lg:col-span-5">
-            <div className="bg-white/95 border border-[#C4BBDE]/60 p-6 sm:p-8 rounded-2xl relative overflow-hidden shadow-lg backdrop-blur-xs flex flex-col justify-center">
-              <div className="space-y-4 relative z-10">
-                <div className="flex items-center gap-3">
-                  <div className="p-2.5 bg-[#3B2F8C]/10 rounded-xl text-[#3B2F8C] shrink-0">
-                    <Mail className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-display font-extrabold text-sm text-[#14183D] uppercase tracking-tight leading-none">
-                      Newsletter HRly
-                    </h3>
-                    <p className="text-[9.5px] text-[#6A5E8C] font-mono uppercase font-bold tracking-wider mt-1">
-                      Twarde dane i mądre rady
-                    </p>
-                  </div>
-                </div>
-
-                <p className="text-[11px] text-[#55506E] leading-relaxed">
-                  Zapisz się, aby otrzymywać merytoryczne analizy rynkowe, twarde wskaźniki i gotowe scenariusze prosto na skrzynkę pocztową. Zero spamu.
-                </p>
-
-                {!newsletterSubscribed ? (
-                  <form onSubmit={handleNewsletterSubmit} className="space-y-3 pt-1">
-                    <div>
-                      <label className="text-[9.5px] font-bold text-[#6A5E8C] uppercase tracking-wider block mb-1">Twój e-mail</label>
-                      <input
-                        type="email"
-                        required
-                        placeholder="np. monika@twojafirma.pl"
-                        value={newsletterEmail}
-                        onChange={(e) => setNewsletterEmail(e.target.value)}
-                        className="w-full text-xs bg-[#FBFAF8] border border-[#C4BBDE]/40 rounded-xl px-3 py-2.5 text-[#14183D] focus:border-[#3B2F8C] focus:outline-none placeholder-[#A39AB4]/70"
-                      />
-                    </div>
-                    
-                    <button
-                      type="submit"
-                      className="w-full py-2.5 bg-[#3B2F8C] hover:bg-[#231B5E] text-white rounded-xl text-xs font-bold tracking-tight shadow-md transition-all flex items-center justify-center gap-1.5 cursor-pointer uppercase font-mono"
-                    >
-                      <span>Zapisz się bezpłatnie</span>
-                      <Send className="w-3.5 h-3.5 text-[#F4A574]" />
-                    </button>
-                    <p className="text-[9px] text-[#6A5E8C] text-center leading-normal">
-                      Bezpieczne przetwarzanie danych zgodnie z RODO.
-                    </p>
-                  </form>
-                ) : (
-                  <div className="bg-[#D1FAE5]/60 border border-[#047857]/20 text-[#047857] p-5 rounded-xl text-center space-y-2 animate-fade-in">
-                    <CheckCircle className="w-8 h-8 mx-auto text-[#047857]" />
-                    <p className="text-xs font-bold">Dziękujemy za zapis!</p>
-                    <p className="text-[10px] text-[#047857]/80 leading-relaxed">
-                      Wysłaliśmy link aktywacyjny. Potwierdź swój adres e-mail, aby otrzymywać merytoryczne treści.
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
+    <div style={{
+      background: 'linear-gradient(135deg, #14183D 0%, #3B2F8C 100%)',
+      borderRadius: '24px',
+      padding: '48px 40px',
+      color: '#fff',
+      textAlign: 'center',
+      marginTop: '64px',
+    }}>
+      <div style={{ fontSize: '32px', marginBottom: '12px' }}>📬</div>
+      <h3 style={{ fontSize: '24px', fontWeight: 800, margin: '0 0 8px', letterSpacing: '-0.02em' }}>
+        Bądź na bieżąco z HR
+      </h3>
+      <p style={{ color: 'rgba(255,255,255,0.7)', margin: '0 0 28px', fontSize: '15px' }}>
+        Najnowsze analizy, trendy i wskazówki prosto na Twój email.
+      </p>
+      {sent ? (
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', color: '#A7F3D0', fontWeight: 600 }}>
+          <CheckCircle size={20} />
+          <span>Zapisano! Sprawdź skrzynkę.</span>
         </div>
-      </div>
-
-      <div className="space-y-6">
-        
-        {/* Search Bar & Header Row */}
-        <div className="flex flex-col sm:flex-row gap-4 items-center justify-between bg-white border border-[#EFEAE1] p-4.5 rounded-2xl shadow-xs">
-          <div className="relative w-full sm:max-w-md">
-            <input
-              type="text"
-              placeholder="Wyszukaj artykuł (np. rekrutacja, analityka)..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full text-xs bg-[#FBFAF8] border border-[#EFEAE1] rounded-xl pl-9 pr-3 py-2.5 text-[#14183D] focus:border-[#3B2F8C] focus:outline-none placeholder-[#A39AB4]/80 transition-all"
-            />
-            <Search className="w-4 h-4 text-[#6A5E8C] absolute left-3 top-3" />
-          </div>
-          <div className="text-xs text-[#55506E] font-mono shrink-0">
-            Pokazano: <strong>{filteredArticles.length}</strong> artykułów z <strong>{allArticles.length}</strong> ogółem
-          </div>
-        </div>
-
-        {filteredArticles.length === 0 ? (
-          <div className="text-center py-16 bg-[#FFFFFF] border border-dashed border-[#EFEAE1] rounded-2xl p-6">
-            <BookOpen className="w-10 h-10 text-[#6A5E8C] mx-auto opacity-40 mb-3" />
-            <p className="text-sm text-[#14183D] font-bold">Brak pasujących artykułów</p>
-            <p className="text-xs text-[#6A5E8C] mt-1 max-w-sm mx-auto">
-              Nie znaleźliśmy artykułów spełniających Twoje kryteria. Spróbuj wpisać inne słowo kluczowe.
-            </p>
-            <button
-              onClick={() => setSearchQuery("")}
-              className="mt-4 px-4 py-2 bg-[#E3DEEE] text-[#3B2F8C] text-xs font-bold rounded-lg hover:bg-[#C4BBDE] transition-colors cursor-pointer"
-            >
-              Zresetuj filtry wyszukiwania
-            </button>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredArticles.map((article) => (
-                <div 
-                  key={article.id}
-                  className="bg-white border border-[#EFEAE1] rounded-2xl overflow-hidden hover:shadow-lg hover:shadow-indigo-900/5 hover:border-[#C4BBDE]/55 transition-all duration-300 flex flex-col justify-between group"
-                >
-                  <div>
-                    {/* Beautiful cover image with zoom effect on hover */}
-                    <div className="aspect-[16/9] w-full overflow-hidden bg-[#F4F1EC] relative border-b border-[#EFEAE1]/60">
-                      <img
-                        src={getArticleImage(article)}
-                        alt={article.title}
-                        referrerPolicy="no-referrer"
-                        loading="lazy"
-                        decoding="async"
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
-                      />
-                      <div className="absolute top-3 left-3">
-                        <span className="text-[9px] uppercase font-bold tracking-widest text-[#3B2F8C] bg-white/95 px-2.5 py-1 rounded-full shadow-xs border border-[#C4BBDE]/35 leading-none">
-                          {article.category}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="p-5 space-y-2.5">
-                      <div className="flex items-center gap-1.5 text-[10px] text-[#6A5E8C] font-mono">
-                        <Clock className="w-3.5 h-3.5 text-[#F4A574]" />
-                        <span>{article.readTime}</span>
-                      </div>
-
-                      <h3 className="font-display font-bold text-[#14183D] text-sm sm:text-base leading-snug group-hover:text-[#3B2F8C] transition-colors line-clamp-2">
-                        {article.title}
-                      </h3>
-
-                      <p className="text-[11px] text-[#55506E] leading-relaxed line-clamp-3">
-                        {article.summary}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="bg-[#FBFAF8] px-5 py-3 border-t border-[#EFEAE1]/70 flex items-center justify-between">
-                    <span className="text-[10px] text-[#6A5E8C] font-mono flex items-center gap-1">
-                      <Calendar className="w-3.5 h-3.5" />
-                      {article.publishDate}
-                    </span>
-
-                    <button
-                      onClick={() => openArticleInNewTab(article)}
-                      className="text-xs font-bold text-[#3B2F8C] hover:text-[#231B5E] flex items-center gap-1 cursor-pointer"
-                      title="Otwórz artykuł w nowej karcie"
-                    >
-                      Czytaj dalej
-                      <ChevronRight className="w-4 h-4 text-[#F4A574]" />
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-      </div>
+      ) : (
+        <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '12px', maxWidth: '400px', margin: '0 auto' }}>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="twoj@email.pl"
+            required
+            style={{
+              flex: 1, padding: '12px 16px', borderRadius: '12px',
+              border: 'none', fontSize: '14px', background: 'rgba(255,255,255,0.15)',
+              color: '#fff', outline: 'none',
+            }}
+          />
+          <button type="submit" disabled={loading} style={{
+            padding: '12px 24px', borderRadius: '12px', border: 'none',
+            background: '#F4A574', color: '#14183D', fontWeight: 700,
+            fontSize: '14px', cursor: 'pointer', whiteSpace: 'nowrap',
+          }}>
+            {loading ? '...' : <><Send size={14} style={{ marginRight: 6, display: 'inline' }} />Zapisz</>}
+          </button>
+        </form>
+      )}
     </div>
   );
-};
+}
+
+// ── Main Component ────────────────────────────────────────────
+export default function HrlyBlogSection() {
+  const [search, setSearch] = useState('');
+  const [activeCategory, setActiveCategory] = useState('Wszystkie');
+  const [readingPost, setReadingPost] = useState<BlogPost | null>(null);
+
+  // Load published posts from CMS (localStorage)
+  const allPosts = useMemo(() => {
+    const config = loadConfig();
+    return (config.blogPosts || [])
+      .filter((p) => p.status === 'published')
+      .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
+  }, []);
+
+  // Dynamic categories from CMS posts
+  const categories = useMemo(() => {
+    const cats = ['Wszystkie', ...Array.from(new Set(allPosts.map((p) => p.category).filter(Boolean)))];
+    return cats;
+  }, [allPosts]);
+
+  const filtered = useMemo(() => {
+    return allPosts.filter((p) => {
+      const matchesCat = activeCategory === 'Wszystkie' || p.category === activeCategory;
+      const q = search.toLowerCase();
+      const matchesSearch = !q || p.title.toLowerCase().includes(q) || p.excerpt.toLowerCase().includes(q);
+      return matchesCat && matchesSearch;
+    });
+  }, [allPosts, activeCategory, search]);
+
+  const handleCardClick = (post: BlogPost) => {
+    openArticleInNewTab(post);
+  };
+
+  // Empty state
+  if (allPosts.length === 0) {
+    return (
+      <section id="blog" style={{ padding: '80px 0', background: '#FBFAF8' }}>
+        <div style={{ maxWidth: '900px', margin: '0 auto', padding: '0 24px', textAlign: 'center' }}>
+          <span style={{
+            display: 'inline-block', background: '#E3DEEE', color: '#3B2F8C',
+            fontSize: '11px', fontWeight: 700, letterSpacing: '0.12em',
+            textTransform: 'uppercase', padding: '5px 14px', borderRadius: '999px', marginBottom: '20px',
+          }}>
+            Baza wiedzy HR
+          </span>
+          <h2 style={{ fontSize: 'clamp(28px, 5vw, 42px)', fontWeight: 800, color: '#14183D', letterSpacing: '-0.03em', margin: '0 0 16px' }}>
+            Artykuły & Analizy
+          </h2>
+          <p style={{ color: '#6B6484', fontSize: '16px', marginBottom: '48px' }}>
+            Wkrótce tutaj pojawią się artykuły HR i analizy rynkowe.
+          </p>
+          <div style={{
+            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px',
+            padding: '48px', background: '#fff', borderRadius: '24px',
+            border: '2px dashed #E3DEEE', color: '#A39AB4',
+          }}>
+            <PenSquare size={40} />
+            <p style={{ margin: 0, fontWeight: 600 }}>Brak opublikowanych artykułów</p>
+            <p style={{ margin: 0, fontSize: '14px' }}>Dodaj artykuł w panelu administracyjnym</p>
+          </div>
+          <NewsletterBox />
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section id="blog" style={{ padding: '80px 0', background: '#FBFAF8' }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
+
+        {/* Header */}
+        <div style={{ textAlign: 'center', marginBottom: '48px' }}>
+          <span style={{
+            display: 'inline-block', background: '#E3DEEE', color: '#3B2F8C',
+            fontSize: '11px', fontWeight: 700, letterSpacing: '0.12em',
+            textTransform: 'uppercase', padding: '5px 14px', borderRadius: '999px', marginBottom: '20px',
+          }}>
+            Baza wiedzy HR
+          </span>
+          <h2 style={{ fontSize: 'clamp(28px, 5vw, 42px)', fontWeight: 800, color: '#14183D', letterSpacing: '-0.03em', margin: '0 0 16px' }}>
+            Artykuły & Analizy
+          </h2>
+          <p style={{ color: '#6B6484', fontSize: '16px', maxWidth: '560px', margin: '0 auto' }}>
+            Praktyczna wiedza o zarządzaniu ludźmi, analityce HR i trendach rynkowych.
+          </p>
+        </div>
+
+        {/* Search + Filters */}
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', alignItems: 'center', marginBottom: '32px' }}>
+          <div style={{ position: 'relative', flex: 1, minWidth: '220px' }}>
+            <Search size={16} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: '#A39AB4' }} />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Szukaj artykułów..."
+              style={{
+                width: '100%', padding: '10px 14px 10px 40px',
+                borderRadius: '12px', border: '1.5px solid #E8E3F0',
+                fontSize: '14px', color: '#14183D', background: '#fff',
+                outline: 'none', boxSizing: 'border-box',
+              }}
+            />
+          </div>
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                style={{
+                  padding: '8px 16px', borderRadius: '999px', border: 'none',
+                  fontSize: '13px', fontWeight: 600, cursor: 'pointer',
+                  background: activeCategory === cat ? '#3B2F8C' : '#F0EDFA',
+                  color: activeCategory === cat ? '#fff' : '#3B2F8C',
+                  transition: 'all 0.2s',
+                }}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Articles grid */}
+        {filtered.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '64px', color: '#A39AB4' }}>
+            <BookOpen size={40} style={{ marginBottom: '12px', opacity: 0.5 }} />
+            <p>Brak artykułów dla wybranych filtrów.</p>
+          </div>
+        ) : (
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+            gap: '24px',
+          }}>
+            {filtered.map((post, idx) => (
+              <article
+                key={post.id}
+                onClick={() => handleCardClick(post)}
+                style={{
+                  background: '#fff',
+                  borderRadius: '20px',
+                  border: '1px solid #E8E3F0',
+                  overflow: 'hidden',
+                  cursor: 'pointer',
+                  transition: 'transform 0.2s, box-shadow 0.2s',
+                  boxShadow: '0 2px 8px rgba(20,24,61,0.06)',
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.transform = 'translateY(-4px)';
+                  (e.currentTarget as HTMLElement).style.boxShadow = '0 12px 32px rgba(59,47,140,0.12)';
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
+                  (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 8px rgba(20,24,61,0.06)';
+                }}
+              >
+                {/* Cover image */}
+                <div style={{ position: 'relative', aspectRatio: '16/9', overflow: 'hidden' }}>
+                  <img
+                    src={getArticleImage(post, idx)}
+                    alt={post.title}
+                    loading="lazy"
+                    decoding="async"
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                  />
+                  <div style={{
+                    position: 'absolute', top: '12px', left: '12px',
+                    background: '#3B2F8C', color: '#fff',
+                    fontSize: '10px', fontWeight: 700, letterSpacing: '0.1em',
+                    textTransform: 'uppercase', padding: '4px 10px', borderRadius: '999px',
+                  }}>
+                    {post.category}
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div style={{ padding: '20px' }}>
+                  <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#14183D', margin: '0 0 8px', lineHeight: 1.3 }}>
+                    {post.title}
+                  </h3>
+                  <p style={{ fontSize: '13px', color: '#6B6484', margin: '0 0 16px', lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                    {post.excerpt}
+                  </p>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '12px', color: '#A39AB4' }}>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <Calendar size={12} />
+                      {new Date(post.publishedAt).toLocaleDateString('pl-PL', { year: 'numeric', month: 'short', day: 'numeric' })}
+                    </span>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#3B2F8C', fontWeight: 600 }}>
+                      Czytaj dalej <ChevronRight size={14} />
+                    </span>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
+
+        {/* Newsletter */}
+        <NewsletterBox />
+      </div>
+    </section>
+  );
+}

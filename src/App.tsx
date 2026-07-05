@@ -12,13 +12,13 @@ import { HrlyHeroGraphic } from './components/HrlyHeroGraphic';
 import { addLead, useSiteConfig } from './hooks/useSiteConfig';
 
 const HrlyDashboardPreview = lazy(() => import('./components/HrlyDashboardPreview').then(m => ({ default: m.HrlyDashboardPreview })));
-const HrlyBlogSection = lazy(() => import('./components/HrlyBlogSection').then(m => ({ default: m.HrlyBlogSection })));
+const HrlyBlogSection = lazy(() => import('./components/HrlyBlogSection'));
 const HrlyPricingCalculator = lazy(() => import('./components/HrlyPricingCalculator').then(m => ({ default: m.HrlyPricingCalculator })));
 const HrlyMethodologyVisual = lazy(() => import('./components/HrlyMethodologyVisual').then(m => ({ default: m.HrlyMethodologyVisual })));
 
 // Admin panel is heavy (pulls in @google/genai) and only used on the /admin tab,
 // so load it on demand to keep the public bundle small.
-const AdminPanel = lazy(() => import('./components/AdminPanel').then((m) => ({ default: m.AdminPanel })));
+const AdminPanel = lazy(() => import('./components/AdminPanel'));
 
 type PageRoute = 'home' | 'features' | 'pricing' | 'about' | 'blog' | 'contact' | 'admin';
 
@@ -369,7 +369,11 @@ const getScreenshotImpactText = (num: string) => {
 
 export default function App() {
   const { config, updateSection } = useSiteConfig();
-  const [activeTab, setActiveTab] = useState<PageRoute>('home');
+  const [activeTab, setActiveTab] = useState<PageRoute>(() => {
+    const hash = window.location.hash.replace('#', '');
+    const validRoutes = ['home', 'features', 'pricing', 'about', 'blog', 'contact', 'admin'];
+    return (validRoutes.includes(hash) ? hash : 'home') as PageRoute;
+  });
 
   // Hash routing to allow direct URLs like /#admin, /#pricing, etc.
   useEffect(() => {
@@ -383,7 +387,6 @@ export default function App() {
       }
     };
 
-    handleHashChange(); // Run on mount
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
