@@ -81,6 +81,71 @@ const compressImage = (file: File, maxWidth = 1200, quality = 0.82): Promise<str
 };
 
 // ─────────────────────────────────────────────
+// Security helpers
+// ─────────────────────────────────────────────
+async function sha256(text: string): Promise<string> {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+// Returns true if the string looks like a SHA-256 hex hash (64 hex chars)
+const isHash = (s: string) => /^[a-f0-9]{64}$/.test(s);
+
+// ─────────────────────────────────────────────
+// ConfirmDeleteModal
+// ─────────────────────────────────────────────
+function ConfirmDeleteModal({
+  title, message, onConfirm, onCancel,
+}: { title: string; message: string; onConfirm: () => void; onCancel: () => void }) {
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, zIndex: 9999,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      background: 'rgba(20,24,61,0.5)', backdropFilter: 'blur(4px)',
+    }}>
+      <div style={{
+        background: '#fff', borderRadius: '20px', padding: '32px',
+        maxWidth: '420px', width: '90%', boxShadow: '0 32px 80px rgba(0,0,0,0.24)',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '12px' }}>
+          <div style={{
+            width: '44px', height: '44px', borderRadius: '14px',
+            background: '#FEE2E2', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+          }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="3 6 5 6 21 6" /><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+              <path d="M10 11v6" /><path d="M14 11v6" /><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+            </svg>
+          </div>
+          <div style={{ fontSize: '17px', fontWeight: 800, color: '#14183D' }}>{title}</div>
+        </div>
+        <p style={{ fontSize: '14px', color: '#6B6484', lineHeight: 1.6, margin: '0 0 24px' }}>{message}</p>
+        <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+          <button
+            onClick={onCancel}
+            style={{
+              padding: '10px 20px', borderRadius: '10px', border: '1.5px solid #E8E3F0',
+              background: '#fff', color: '#6B6484', fontSize: '14px', fontWeight: 700, cursor: 'pointer',
+            }}
+          >
+            Anuluj
+          </button>
+          <button
+            onClick={onConfirm}
+            style={{
+              padding: '10px 20px', borderRadius: '10px', border: 'none',
+              background: '#DC2626', color: '#fff', fontSize: '14px', fontWeight: 700, cursor: 'pointer',
+            }}
+          >
+            Usuń
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────
 // Design tokens
 // ─────────────────────────────────────────────
 const C = {
@@ -577,9 +642,16 @@ function BlogTab({ config, updateSection }: { config: SiteConfig; updateSection:
     setEditing(false);
   };
 
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+
   const deletePost = (id: string) => {
-    if (!confirm('Usunąć artykuł?')) return;
-    updateSection('blogPosts', posts.filter((p) => p.id !== id));
+    setConfirmDeleteId(id);
+  };
+
+  const confirmDeletePost = () => {
+    if (!confirmDeleteId) return;
+    updateSection('blogPosts', posts.filter((p) => p.id !== confirmDeleteId));
+    setConfirmDeleteId(null);
   };
 
   if (editing !== false) {
@@ -590,8 +662,18 @@ function BlogTab({ config, updateSection }: { config: SiteConfig; updateSection:
     );
   }
 
+  const postToDelete = confirmDeleteId ? posts.find((p) => p.id === confirmDeleteId) : null;
+
   return (
     <div>
+      {confirmDeleteId && postToDelete && (
+        <ConfirmDeleteModal
+          title="Usuń artykuł"
+          message={`Czy na pewno chcesz bezpowrotnie usunąć artykuł „${postToDelete.title}"? Tej operacji nie można cofnąć.`}
+          onConfirm={confirmDeletePost}
+          onCancel={() => setConfirmDeleteId(null)}
+        />
+      )}
       <TopBar title="Artykuły">
         <Btn onClick={() => setEditing({})}><Plus size={16} /> Nowy artykuł</Btn>
       </TopBar>
@@ -1460,7 +1542,10 @@ function PagesTab({ config, updateSection }: { config: SiteConfig; updateSection
           <FooterForm config={config} onSave={(d) => handleSave('footer', d)} />
         )}
         {activeSection === 'global' && (
-          <GlobalForm config={config} onSave={(d) => handleSave('global', d)} />
+          <>
+            <GlobalForm config={config} onSave={(d) => handleSave('global', d)} />
+            <ChangePasswordForm config={config} onSave={(d) => handleSave('global', d)} />
+          </>
         )}
       </div>
     </div>
@@ -1529,6 +1614,49 @@ function FooterForm({ config, onSave }: { config: SiteConfig; onSave: (d: SiteCo
   );
 }
 
+function ChangePasswordForm({ config, onSave }: { config: SiteConfig; onSave: (d: SiteConfig['global']) => void }) {
+  const [oldPw, setOldPw] = useState('');
+  const [newPw, setNewPw] = useState('');
+  const [confirmPw, setConfirmPw] = useState('');
+  const [status, setStatus] = useState<{ type: 'error' | 'success'; msg: string } | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = async () => {
+    setStatus(null);
+    if (!oldPw || !newPw || !confirmPw) { setStatus({ type: 'error', msg: 'Wypełnij wszystkie pola.' }); return; }
+    if (newPw !== confirmPw) { setStatus({ type: 'error', msg: 'Nowe hasła nie są identyczne.' }); return; }
+    if (newPw.length < 6) { setStatus({ type: 'error', msg: 'Hasło musi mieć co najmniej 6 znaków.' }); return; }
+    setLoading(true);
+    const stored = config.global.adminPassword;
+    const oldHash = await sha256(oldPw);
+    const isValid = isHash(stored) ? oldHash === stored : oldPw === stored;
+    if (!isValid) { setStatus({ type: 'error', msg: 'Stare hasło jest nieprawidłowe.' }); setLoading(false); return; }
+    const newHash = await sha256(newPw);
+    onSave({ ...config.global, adminPassword: newHash });
+    setOldPw(''); setNewPw(''); setConfirmPw('');
+    setStatus({ type: 'success', msg: '✓ Hasło zmienione i zaszyfrowane (SHA-256).' });
+    setLoading(false);
+  };
+
+  return (
+    <div style={{ background: '#fff', borderRadius: '20px', border: `1px solid ${C.border}`, padding: '24px', marginBottom: '20px' }}>
+      <h3 style={{ fontSize: '16px', fontWeight: 800, color: C.text, margin: '0 0 4px' }}>🔑 Zmiana hasła administratora</h3>
+      <p style={{ fontSize: '13px', color: C.textMuted, margin: '0 0 20px' }}>Hasło jest przechowywane jako bezpieczny hash SHA-256.</p>
+      <Input label="Stare hasło" value={oldPw} onChange={setOldPw} type="password" placeholder="••••••••" />
+      <Input label="Nowe hasło" value={newPw} onChange={setNewPw} type="password" placeholder="min. 6 znaków" />
+      <Input label="Powtórz nowe hasło" value={confirmPw} onChange={setConfirmPw} type="password" placeholder="••••••••" />
+      {status && (
+        <div style={{ fontSize: '13px', fontWeight: 600, color: status.type === 'success' ? C.green : C.red, marginBottom: '12px' }}>
+          {status.msg}
+        </div>
+      )}
+      <Btn onClick={handleChange} disabled={loading}>
+        <Key size={14} /> {loading ? 'Zmieniam...' : 'Zmień hasło'}
+      </Btn>
+    </div>
+  );
+}
+
 function GlobalForm({ config, onSave }: { config: SiteConfig; onSave: (d: SiteConfig['global']) => void }) {
   const [v, setV] = useState({ ...config.global });
   useEffect(() => setV({ ...config.global }), [config.global]);
@@ -1538,11 +1666,11 @@ function GlobalForm({ config, onSave }: { config: SiteConfig; onSave: (d: SiteCo
       <Input label="Tagline" value={v.tagline} onChange={(val) => setV((p) => ({ ...p, tagline: val }))} />
       <Input label="Główny link CTA" value={v.primaryCTALink} onChange={(val) => setV((p) => ({ ...p, primaryCTALink: val }))} />
       <Input label="Tekst głównego CTA" value={v.primaryCTAText} onChange={(val) => setV((p) => ({ ...p, primaryCTAText: val }))} />
-      <Input label="Hasło admina" value={v.adminPassword} onChange={(val) => setV((p) => ({ ...p, adminPassword: val }))} type="password" />
       <Btn onClick={() => onSave(v)}><Save size={14} /> Zapisz Ustawienia globalne</Btn>
     </div>
   );
 }
+
 
 // ─────────────────────────────────────────────
 // Settings Tab
@@ -1809,14 +1937,58 @@ function LoginScreen({ onLogin }: { onLogin: () => void }) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [attempts, setAttempts] = useState(0);
+  const [lockedUntil, setLockedUntil] = useState(0);
+  const [now, setNow] = useState(Date.now());
+
+  // Tick timer for lockout countdown
+  useEffect(() => {
+    if (lockedUntil <= 0) return;
+    const t = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(t);
+  }, [lockedUntil]);
+
+  const isLocked = lockedUntil > now;
+  const lockSecondsLeft = Math.ceil((lockedUntil - now) / 1000);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isLocked) return;
     setLoading(true);
     await new Promise((r) => setTimeout(r, 400));
-    const stored = loadConfig().global.adminPassword;
-    if (password === stored) { onLogin(); }
-    else { setError('Nieprawidłowe hasło'); setPassword(''); }
+
+    const cfg = loadConfig();
+    const stored = cfg.global.adminPassword;
+
+    // Auto-migrate plaintext password to SHA-256 hash on first successful match
+    let isValid = false;
+    if (isHash(stored)) {
+      const inputHash = await sha256(password);
+      isValid = inputHash === stored;
+    } else {
+      // Legacy plaintext comparison
+      isValid = password === stored;
+      if (isValid) {
+        // Migrate to hashed password silently
+        const hashed = await sha256(password);
+        saveConfig({ ...cfg, global: { ...cfg.global, adminPassword: hashed } });
+      }
+    }
+
+    if (isValid) {
+      onLogin();
+    } else {
+      const newAttempts = attempts + 1;
+      setAttempts(newAttempts);
+      if (newAttempts >= 5) {
+        setLockedUntil(Date.now() + 60_000);
+        setError('Zbyt wiele prób. Poczekaj 60 sekund.');
+        setAttempts(0);
+      } else {
+        setError(`Nieprawidłowe hasło. Pozostało prób: ${5 - newAttempts}`);
+      }
+      setPassword('');
+    }
     setLoading(false);
   };
 
@@ -1833,41 +2005,46 @@ function LoginScreen({ onLogin }: { onLogin: () => void }) {
           <div style={{ fontSize: '14px', color: '#6B6484' }}>Panel Administratora</div>
         </div>
 
-        <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#6B6484', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Hasło</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => { setPassword(e.target.value); setError(''); }}
-              placeholder="••••••••"
-              autoFocus
-              style={{
-                width: '100%', padding: '12px 16px', borderRadius: '12px',
-                border: `1.5px solid ${error ? '#DC2626' : '#E8E3F0'}`,
-                fontSize: '15px', color: '#14183D', outline: 'none', boxSizing: 'border-box',
-              }}
-            />
-            {error && <div style={{ fontSize: '12px', color: '#DC2626', marginTop: '6px' }}>{error}</div>}
+        {isLocked ? (
+          <div style={{ textAlign: 'center', padding: '24px 0' }}>
+            <div style={{ fontSize: '44px', marginBottom: '12px' }}>🔒</div>
+            <div style={{ fontSize: '15px', fontWeight: 700, color: '#DC2626', marginBottom: '8px' }}>Panel zablokowany</div>
+            <div style={{ fontSize: '13px', color: '#6B6484' }}>Spróbuj ponownie za <strong>{lockSecondsLeft}s</strong></div>
           </div>
+        ) : (
+          <form onSubmit={handleSubmit}>
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#6B6484', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Hasło</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => { setPassword(e.target.value); setError(''); }}
+                placeholder="••••••••"
+                autoFocus
+                style={{
+                  width: '100%', padding: '12px 16px', borderRadius: '12px',
+                  border: `1.5px solid ${error ? '#DC2626' : '#E8E3F0'}`,
+                  fontSize: '15px', color: '#14183D', outline: 'none', boxSizing: 'border-box',
+                }}
+              />
+              {error && <div style={{ fontSize: '12px', color: '#DC2626', marginTop: '6px' }}>{error}</div>}
+            </div>
 
-          <button type="submit" disabled={loading || !password} style={{
-            width: '100%', padding: '13px', borderRadius: '12px', border: 'none',
-            background: 'linear-gradient(135deg, #3B2F8C, #14183D)',
-            color: '#fff', fontSize: '15px', fontWeight: 700, cursor: loading ? 'wait' : 'pointer',
-            opacity: loading ? 0.7 : 1, transition: 'all 0.2s',
-          }}>
-            {loading ? 'Logowanie...' : 'Zaloguj się'}
-          </button>
-        </form>
-
-        <p style={{ textAlign: 'center', fontSize: '12px', color: '#A39AB4', marginTop: '20px', marginBottom: 0 }}>
-          Domyślne hasło: <code style={{ color: '#3B2F8C' }}>hrly2024</code>
-        </p>
+            <button type="submit" disabled={loading || !password} style={{
+              width: '100%', padding: '13px', borderRadius: '12px', border: 'none',
+              background: 'linear-gradient(135deg, #3B2F8C, #14183D)',
+              color: '#fff', fontSize: '15px', fontWeight: 700, cursor: loading || !password ? 'not-allowed' : 'pointer',
+              opacity: loading || !password ? 0.7 : 1, transition: 'all 0.2s',
+            }}>
+              {loading ? 'Logowanie...' : 'Zaloguj się'}
+            </button>
+          </form>
+        )}
       </div>
     </div>
   );
 }
+
 
 // ─────────────────────────────────────────────
 // ─────────────────────────────────────────────
