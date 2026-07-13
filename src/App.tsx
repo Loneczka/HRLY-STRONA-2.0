@@ -18,7 +18,7 @@ const HrlyMethodologyVisual = lazy(() => import('./components/HrlyMethodologyVis
 
 // Admin panel is heavy (pulls in @google/genai) and only used on the /admin tab,
 // so load it on demand to keep the public bundle small.
-const AdminPanel = lazy(() => import('./components/AdminPanel'));
+const AdminPanel = lazy(() => import('./components/AdminPanel').then(m => ({ default: m.AdminPanel })));
 
 type PageRoute = 'home' | 'features' | 'pricing' | 'about' | 'blog' | 'contact' | 'admin';
 
