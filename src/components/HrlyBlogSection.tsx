@@ -1,9 +1,7 @@
 import React, { useState, useMemo } from 'react';
-import {
-  Search, BookOpen, Clock, Calendar, ChevronRight,
-  Send, CheckCircle, Mail, PenSquare
-} from 'lucide-react';
+import { Search, BookOpen, Clock, Calendar, ChevronRight, Send, CircleCheck as CheckCircle, Mail, SquarePen as PenSquare } from 'lucide-react';
 import { loadConfig, addSubscriber, type BlogPost } from '../hooks/useSiteConfig';
+import { sanitizeHtml } from '../lib/sanitize';
 
 // ── Image fallback ────────────────────────────────────────────
 const FALLBACK_IMAGES = [
@@ -114,7 +112,7 @@ function openArticleInNewTab(post: BlogPost) {
   </div>
   <h1>${escapeHtml(post.title)}</h1>
   <p style="font-size:18px;color:#6B6484;margin-bottom:32px;">${escapeHtml(post.excerpt)}</p>
-  ${markdownToHtml(post.content)}
+  ${sanitizeHtml(post.content)}
   <div style="margin-top:32px;">
     ${(post.tags || []).map((t) => `<span class="tag">#${escapeHtml(t)}</span>`).join('')}
   </div>

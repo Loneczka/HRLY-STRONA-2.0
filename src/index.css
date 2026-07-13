@@ -140,4 +140,47 @@
   animation: marquee-scroll-up 130s linear infinite;
 }
 
+/* Admin Panel Responsive */
+@media (max-width: 768px) {
+  .admin-sidebar {
+    position: fixed !important;
+    left: 0;
+    top: 0;
+    transform: translateX(-100%);
+  }
+  .admin-sidebar[data-mobile-open="true"] {
+    transform: translateX(0);
+  }
+  .admin-menu-btn {
+    display: flex !important;
+  }
+  .admin-overlay {
+    display: block !important;
+  }
+  .admin-dashboard-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .admin-editor-layout {
+    flex-direction: column;
+  }
+  .admin-editor-sidebar {
+    width: 100% !important;
+  }
+  .admin-composer-row {
+    grid-template-columns: 1fr !important;
+  }
+  .admin-pages-grid,
+  .admin-settings-grid,
+  .admin-leads-grid,
+  .admin-hashtag-form {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .admin-overlay {
+    display: none !important;
+  }
+}
+
 
