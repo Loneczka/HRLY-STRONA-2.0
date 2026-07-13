@@ -8,7 +8,7 @@ export type AdminTab =
   | 'calendar'
   | 'newsletter'
   | 'leads'
-  | 'pages'
+  | 'ai-agent'
   | 'settings';
 
 interface NavItem {
@@ -44,7 +44,7 @@ export function AdminSidebar({
     { id: 'calendar', label: 'Kalendarz', icon: '📅' },
     { id: 'newsletter', label: 'Newsletter', icon: '📧', badge: subscriberCount },
     { id: 'leads', label: 'Leady', icon: '📈', badge: unreadLeads },
-    { id: 'pages', label: 'Strony', icon: '📄' },
+    { id: 'ai-agent', label: 'Agent AI', icon: '🤖' },
     { id: 'settings', label: 'Ustawienia', icon: '\u2699\uFE0F' },
   ];
 

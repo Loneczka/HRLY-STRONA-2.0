@@ -8,7 +8,7 @@ import { SocialTab } from './admin/SocialTab';
 import { CalendarTab } from './admin/CalendarTab';
 import { NewsletterTab } from './admin/NewsletterTab';
 import { LeadsTab } from './admin/LeadsTab';
-import { PagesTab } from './admin/PagesTab';
+import { AIAgentTab } from './admin/AIAgentTab';
 import { SettingsTab } from './admin/SettingsTab';
 import { ADMIN_COLORS, AdminButton, AdminInput } from './admin/ui';
 
@@ -166,7 +166,7 @@ function AdminPanelInner() {
               {activeTab === 'calendar' && 'Kalendarz'}
               {activeTab === 'newsletter' && 'Newsletter'}
               {activeTab === 'leads' && 'Leady'}
-              {activeTab === 'pages' && 'Tre\u015B\u0107 stron'}
+              {activeTab === 'ai-agent' && 'Agent AI'}
               {activeTab === 'settings' && 'Ustawienia'}
             </h1>
           </div>
@@ -201,7 +201,7 @@ function AdminPanelInner() {
           {activeTab === 'calendar' && <CalendarTab config={config} onTabChange={setActiveTab} />}
           {activeTab === 'newsletter' && <NewsletterTab config={config} updateConfig={updateConfig} />}
           {activeTab === 'leads' && <LeadsTab config={config} updateConfig={updateConfig} />}
-          {activeTab === 'pages' && <PagesTab config={config} updateConfig={updateConfig} />}
+          {activeTab === 'ai-agent' && <AIAgentTab config={config} updateConfig={updateConfig} />}
           {activeTab === 'settings' && <SettingsTab config={config} updateConfig={updateConfig} />}
         </main>
       </div>
