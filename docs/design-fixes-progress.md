@@ -5,7 +5,7 @@ Weryfikacja: `npm run lint` (tsc --noEmit), `npm run build`, SKRYPT WERYFIKACYJN
 
 Lista zadań:
 - [x] FAZA 0 — Rekonesans i baseline
-- [ ] FAZA 1 — Blokery dostępności
+- [x] FAZA 1 — Blokery dostępności
 - [ ] FAZA 2 — Jedna skala typograficzna
 - [ ] FAZA 3 — Jeden komponent przycisku (STOP 3.2)
 - [ ] FAZA 4 — Kolor: reguła zamiast przypadku
@@ -83,3 +83,77 @@ Lint (`tsc --noEmit`): czysty. Build: OK.
 Odstępstwa od planu i dlaczego: brak. Uwaga: skrypt w `verify.js` zwraca wynik jako string (zamiast `console.log`), żeby dało się go uruchamiać headlessowo — logika pomiaru bez zmian.
 
 Do decyzji właściciela: na razie nic.
+
+---
+
+## FAZA 1 — Blokery dostępności   [ZROBIONE Z ODSTĘPSTWEM]
+
+Zmienione pliki: `src/index.css`, `src/App.tsx`, `src/components/HrlyBlogSection.tsx`, `src/components/HrlyDashboardPreview.tsx`, `src/components/HrlyHeroGraphic.tsx`, `src/components/HrlyMethodologyVisual.tsx`, `src/components/HrlyPricingCalculator.tsx`, `src/components/admin/ui.tsx`, `src/components/admin/BlogTab.tsx`, `src/components/AdminPanel.tsx`, `docs/design-fixes-progress.md`.
+
+### 1.1 Focus
+- Token `--color-focus: #3B2F8C` w `@theme`; reguły `:focus-visible` (fiolet) i `.section-dark … :focus-visible` (brzoskwinia `#F4A574`) w `@layer base`.
+- Usunięte wszystkie `focus:outline-none` (App.tsx ×11, HrlyDashboardPreview ×1, HrlyPricingCalculator ×3) i inline `outline: 'none'` (HrlyBlogSection ×2, admin/ui.tsx ×2, admin/BlogTab ×1). `rg "outline-none|outline:\s*['\"]?none" src` → 0.
+- Klasa `section-dark` dodana do: `App.tsx` 889 (karta „Cicha rezygnacja”), 981 (11 obszarów), 1136 (CTA 07), 2138 (footer); `HrlyMethodologyVisual.tsx` 212; `HrlyBlogSection.tsx` 145 (NewsletterBox); po review także `AdminPanel.tsx` 54 (ekran logowania) i 132 (root panelu). Pominięte (brak fokusowalnych potomków): `HrlyDashboardPreview.tsx` 82 i 305, `App.tsx` ~1854 (about), `HrlyHeroGraphic.tsx` 147.
+
+### 1.2 Reduced motion
+- Nielayerowany blok `@media (prefers-reduced-motion: reduce)` w `index.css` (globalne wyłączenie animacji/tranzycji + `.marquee-viewport/.marquee-track/.marquee-fade/.marquee-dup`).
+- Marquee: duplikat listy ma `aria-hidden="true"` + `marquee-dup`; przy `reduce` lista 11 kart jest statyczna, bez duplikatu i nakładek.
+- `<MotionConfig reducedMotion="user">` wokół drzewa strony publicznej (motion/react); kropka w hero SVG dostała `cx="20"` (pozycja spoczynkowa).
+- Po review: `window.scrollTo` przy zmianie zakładki używa `behavior: 'auto'` przy `reduce` (opcja `behavior` wygrywa z CSS `scroll-behavior`); zduplikowany efekt scrollowania (2× identyczny `useEffect`) zredukowany do jednego.
+
+### 1.3 Nagłówki
+- Logo: `h1` → `span`, przycisk logo `aria-label="hrly — strona główna"`, SVG `aria-hidden`. Hero `h2` → `h1`; tytuły sekcji `h3` → `h2`; tytuły kart `h4` → `h3`. Strona główna: `h1=1`, `h2` sekcje, `h3` karty, zero `h4/h5/h6` przy zamkniętym modalu.
+- Modal pulpitu (`HrlyDashboardPreview`): tytuł `h2` → wybrany obszar `h3` → karty `h4`.
+- Pozostałe trasy (features/pricing/about/contact/blog) przesunięte tak samo (hero `h1`, `h3`→`h2`, `h4`→`h3`). Po review: 4 kafle mockupu pod hero na `#features` (1272/1299/1323/1350) i 3 filary na `#about` (1686/1700/1714) `h3` → `h2`, żeby nie było przeskoku `h1 → h3`.
+
+Wynik skryptu: lint (`tsc --noEmit`) czysty, build OK; `rg "<h4|<h5|<h6" src/App.tsx` → 0.
+
+Odstępstwa od planu i dlaczego:
+- `border-radius: inherit` pominięte w regule focusu — w Tailwind v4 nielayerowana reguła wygrałaby z utility `rounded-*` i „kwadratowała” przyciski przy fokusie; obrys i tak podąża za `border-radius` w nowoczesnych przeglądarkach. Reguły umieszczone w `@layer base`, żeby utility Tailwinda dalej wygrywały.
+- `section-dark` na dwóch wrapperach root admina (`AdminPanel.tsx` 54, 132) — poza zakresem „strona publiczna”, ale bez tej klasy globalny fiolet `#3B2F8C` na ciemnym tle admina (`#1e293b`/`#0f172a`) dawał kontrast 1.37:1/1.67:1, czyli regres względem domyślnego `outline: auto` przeglądarki; brzoskwinia daje 7.3:1/10.5:1. Zero zmian wizualnych poza kolorem obrysu focusu.
+
+Do decyzji właściciela: (a) zaakceptować albo cofnąć `section-dark` w adminie (2 linie); (b) opcjonalnie w późniejszej fazie `.pulse-wave-1, .pulse-wave-2 { stroke-dasharray: none }` przy `reduce`, żeby linia EKG w hero była narysowana w całości statycznie; (c) `.claude/launch.json` (konfiguracja podglądu przeglądarki) nie jest częścią fazy — nie dodawać do commita.
+
+---
+
+## FAZA 1 — Blokery dostępności   [ZROBIONE]
+
+Zmienione pliki: `src/index.css`, `src/App.tsx`, `src/components/HrlyHeroGraphic.tsx`, `src/components/HrlyDashboardPreview.tsx`, `src/components/HrlyMethodologyVisual.tsx`, `src/components/HrlyBlogSection.tsx`, `src/components/HrlyPricingCalculator.tsx`, `src/components/AdminPanel.tsx` (+2 klasy), `src/components/admin/ui.tsx` i `admin/BlogTab.tsx` (tylko usunięcie `outline: 'none'`).
+
+### 1.1 Focus dla klawiatury
+- Token `--color-focus: #3B2F8C` w `@theme`; reguły `:focus-visible` (2px solid, offset 3px) dla `a, button, [role=button], input, select, textarea, summary, [tabindex]` w `@layer base`; wariant `.section-dark … { outline-color: #F4A574 }`.
+- Usunięte wszystkie 15 klas `focus:outline-none` i 5 inline `outline: 'none'` (w tym 3 w adminie). `rg "outline-none|outline:\s*['\"]?none" src` → 0.
+- Nowa klasa `section-dark` na: karcie „Cicha rezygnacja” (887), sekcji 11 obszarów (979), CTA 07 (1132), `<footer>` (2134), ciemnym panelu `HrlyMethodologyVisual` (212), boksie newslettera `HrlyBlogSection` (145) oraz — po uwadze recenzenta — na dwóch wrapperach panelu admina (`AdminPanel.tsx` 54 i 132; admin jest cały ciemny, fiolet dawałby 1,4:1).
+- Tab-walk 1440 (19 przystanków): każdy ma `solid 2px`, offset 3px; jasne sekcje `#3B2F8C` = **10,2:1** (10,65:1 na białym), ciemne `#F4A574` = **8,54:1**. Promienie przycisków bez zmian.
+
+### 1.2 `prefers-reduced-motion`
+- Globalny blok z `animation-duration/iteration-count/transition-duration/scroll-behavior !important` (poza warstwami).
+- Marquee: klasy `marquee-viewport`, `marquee-track`, `marquee-fade`, `marquee-dup`; drugi komplet 11 kart ma `aria-hidden="true"`; przy `reduce` viewport ma `height:auto; overflow:visible`, tor `position:static; animation:none`, wygaszenia i duplikat `display:none` → pełna, statyczna lista 11 kart (strona rośnie 5026 → 5603 px).
+- `<MotionConfig reducedMotion="user">` wokół całego drzewa publicznego (motion/react) — wyłącza animacje transformacji (pływające karty hero, wskaźnik w banerze demo, przejścia tras).
+- Kropka na wykresie hero dostała `cx="20"` (pozycja spoczynkowa); przy `reduce` linia EKG renderuje się jako pełna (`stroke-dasharray: none`), a nie zatrzymany fragment kreskowania.
+- Pomiar headless z emulacją `prefers-reduced-motion: reduce`: **0 działających animacji** (baseline: 12), cała treść widoczna.
+
+### 1.3 Hierarchia nagłówków
+- Logo: `<h1>` → `<span class="block …">` (te same klasy + `block`, żeby box był identyczny jak blokowy `h1`); `<button aria-label="hrly — strona główna">`, SVG `aria-hidden`.
+- Hero `h2` → `h1`; 7 tytułów sekcji `h3` → `h2`; wszystkie tytuły kart `h4` → `h3`. Etykiety były już `span`/`div`.
+- DOM strony głównej: **h1=1 h2=7 h3=39 h4=0**, bez przeskoków. Modal pulpitu (osobny dialog): h2 → h3 → h4 (5 kart).
+- Podstrony traciły `h1` (logo) — przesunięte tak samo (hero `h2`→`h1`, `h3`→`h2`, `h4`→`h3`); każda ma dokładnie jeden `h1` i zero `h4+`.
+
+### Wynik skryptu (1440×900)
+```
+NAGŁÓWKI: h1=1 h2=7 h3=39 h4=0
+ROZMIARY FONTU / WAGI / PRZYCISKI / KONTRAST: bez zmian względem baseline (to zadania FAZ 2–4)
+```
+Diff pikselowy pełnej strony vs baseline (1440 i 390): różnice wyłącznie w regionach animowanych (mockup hero, wskaźnik w banerze demo, marquee) — 0 różnic w headerze, tekstach i układzie. Wysokość strony identyczna (5026 / 8460 px). Lint i build czyste.
+
+Odstępstwa od planu i dlaczego:
+1. Bez `border-radius: inherit` z fragmentu w protokole — w Tailwind v4 taka reguła (poza warstwą) nadpisałaby `rounded-*` elementu i „kwadratowała” przycisk po fokusie; obrys i tak podąża za promieniem. Reguły siedzą w `@layer base`, żeby utility Tailwinda dalej wygrywały.
+2. Selektor dla ciemnych sekcji rozszerzony o `input, select, textarea, summary, [tabindex]` (protokół wymieniał tylko `a, button, [role=button]`).
+3. `section-dark` także w panelu admina (2 wrappery) — reguła globalna trafia i tam; bez tego admin dostałby ring 1,4:1. Zero zmian wizualnych poza kolorem ringu.
+4. Przesunięcie nagłówków na podstronach (poza zakresem strony głównej) było konieczne, bo usunięcie `h1` z logo zabrałoby im jedyny `h1`. Recenzent wskazał odziedziczony przeskok (h1 → h3) na `#features` i `#about`; naprawiony przez `h3` → `h2` na 4 kafelkach makiety (features) i 3 filarach (about).
+5. `window.scrollTo({behavior:'smooth'})` przy zmianie trasy nie jest neutralizowane przez CSS (dotyczy tylko przełączania zakładek, nie animacji) — zostawione.
+6. Zbudowany CSS zawiera martwe utility `.focus\:outline-none`, bo Tailwind v4 skanuje też `docs/*.md`; nieużywane, nieszkodliwe.
+
+Do decyzji właściciela:
+- 4 kafelki makiety na `#features` („Naukowa baza pytań”, „Action Plan”, „Wsparcie Managerów”, „Statystyki i trendy”) są teraz `h2` (dla braku przeskoku) — semantycznie to dekoracja; można je zamienić na `p`, jeśli podstrony wejdą w zakres.
+- Wykluczenie `docs/` ze skanowania Tailwinda (`@source not "../docs"` w `index.css`) — drobna zmiana konfiguracji, poza zakresem fazy.

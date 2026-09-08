@@ -102,7 +102,6 @@ export function AdminInput({
         color: ADMIN_COLORS.text,
         fontSize: '14px',
         width: '100%',
-        outline: 'none',
         transition: 'border-color 0.2s',
         ...style,
       }}
@@ -139,7 +138,6 @@ export function AdminTextarea({
         color: ADMIN_COLORS.text,
         fontSize: '14px',
         width: '100%',
-        outline: 'none',
         resize: 'vertical',
         fontFamily: 'inherit',
         lineHeight: 1.6,

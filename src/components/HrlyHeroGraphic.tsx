@@ -116,6 +116,7 @@ export const HrlyHeroGraphic: React.FC = () => {
 
                 {/* Traveling dot traveling the signal line */}
                 <circle
+                  cx="20"
                   r="3.5"
                   fill="#3B2F8C"
                   cy="40"

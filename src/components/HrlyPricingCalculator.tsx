@@ -61,9 +61,9 @@ export const HrlyPricingCalculator: React.FC<HrlyPricingCalculatorProps> = ({ on
           <span className="text-[10px] text-[#3B2F8C] uppercase font-bold tracking-wider font-mono">
             Kalkulator zapotrzebowania
           </span>
-          <h3 className="font-sans font-black text-xl text-[#14183D] tracking-tight leading-none uppercase">
+          <h2 className="font-sans font-black text-xl text-[#14183D] tracking-tight leading-none uppercase">
             Dobierz pakiet według rozmiaru zespołu
-          </h3>
+          </h2>
           <p className="text-xs text-[#55506E] leading-relaxed">
             Zaczynamy od pakietu Lite dla mniejszych zespołów. Pakiety Standard i Premium systematycznie rozwijają współpracę z menedżerami w stale rosnących organizacjach. Przeciągnij suwak, by natychmiast sprawdzić rekomendowany plan.
           </p>
@@ -112,10 +112,10 @@ export const HrlyPricingCalculator: React.FC<HrlyPricingCalculatorProps> = ({ on
               </div>
               <div>
                 <p className="text-[10px] font-mono font-bold text-[#F4A574]">AUTOPILOT SUGERUJE DLA CIEBIE:</p>
-                <h4 className="text-sm font-black text-[#14183D] flex items-baseline gap-1.5 mt-0.5">
+                <h3 className="text-sm font-black text-[#14183D] flex items-baseline gap-1.5 mt-0.5">
                   {recommendedPlan.name}
                   <span className="text-xs text-[#55506E] font-medium">({recommendedPlan.price})</span>
-                </h4>
+                </h3>
                 <p className="text-[11px] text-[#55506E] mt-0.5">
                   {recommendedPlan.forWhom}
                 </p>
@@ -162,7 +162,7 @@ export const HrlyPricingCalculator: React.FC<HrlyPricingCalculatorProps> = ({ on
               {/* Card top details */}
               <div className="p-5.5 space-y-4">
                 <div className="space-y-1">
-                  <h4 className="font-sans font-black text-base text-[#14183D] tracking-tight">{plan.name}</h4>
+                  <h3 className="font-sans font-black text-base text-[#14183D] tracking-tight">{plan.name}</h3>
                   <p className="text-[10px] text-[#6A5E8C] font-medium leading-none">{plan.forWhom}</p>
                 </div>
 
@@ -239,9 +239,9 @@ export const HrlyPricingCalculator: React.FC<HrlyPricingCalculatorProps> = ({ on
               <form onSubmit={handleFormSubmit} className="space-y-4">
                 <div className="space-y-1">
                   <span className="text-[9px] uppercase font-bold tracking-widest text-[#F4A574]">Zasymulowana Rejestracja</span>
-                  <h3 className="font-display font-extrabold text-base text-[#14183D] tracking-tight">
+                  <h2 className="font-display font-extrabold text-base text-[#14183D] tracking-tight">
                     Inicjujesz pakiet: <span className="text-[#3B2F8C]">{activePlan.name}</span>
-                  </h3>
+                  </h2>
                   <p className="text-[11px] text-[#6A5E8C] leading-relaxed">
                     Wspierasz budowanie zaangażowanych zespołów. Wpisz szczegóły konta testowego, by wejść do konfiguratora.
                   </p>
@@ -256,7 +256,7 @@ export const HrlyPricingCalculator: React.FC<HrlyPricingCalculatorProps> = ({ on
                       placeholder="np. Anna Kępczyńska"
                       value={rgName}
                       onChange={(e) => setRgName(e.target.value)}
-                      className="w-full text-xs bg-[#FBFAF8] border border-[#EFEAE1] rounded-lg p-2.5 text-[#14183D] focus:border-[#3B2F8C] focus:outline-none"
+                      className="w-full text-xs bg-[#FBFAF8] border border-[#EFEAE1] rounded-lg p-2.5 text-[#14183D] focus:border-[#3B2F8C]"
                     />
                   </div>
 
@@ -268,7 +268,7 @@ export const HrlyPricingCalculator: React.FC<HrlyPricingCalculatorProps> = ({ on
                       placeholder="kontakt@twojafirma.pl"
                       value={rgEmail}
                       onChange={(e) => setRgEmail(e.target.value)}
-                      className="w-full text-xs bg-[#FBFAF8] border border-[#EFEAE1] rounded-lg p-2.5 text-[#14183D] focus:border-[#3B2F8C] focus:outline-none"
+                      className="w-full text-xs bg-[#FBFAF8] border border-[#EFEAE1] rounded-lg p-2.5 text-[#14183D] focus:border-[#3B2F8C]"
                     />
                   </div>
 
@@ -281,7 +281,7 @@ export const HrlyPricingCalculator: React.FC<HrlyPricingCalculatorProps> = ({ on
                         placeholder="HRLY Sp. z o.o."
                         value={rgCompany}
                         onChange={(e) => setRgCompany(e.target.value)}
-                        className="w-full text-xs bg-[#FBFAF8] border border-[#EFEAE1] rounded-lg pl-9 pr-3 p-2.5 text-[#14183D] focus:border-[#3B2F8C] focus:outline-none"
+                        className="w-full text-xs bg-[#FBFAF8] border border-[#EFEAE1] rounded-lg pl-9 pr-3 p-2.5 text-[#14183D] focus:border-[#3B2F8C]"
                       />
                       <Building2 className="w-4 h-4 text-[#6A5E8C] absolute left-3 top-3.5" />
                     </div>
@@ -319,7 +319,7 @@ export const HrlyPricingCalculator: React.FC<HrlyPricingCalculatorProps> = ({ on
 
                 <div className="space-y-1">
                   <span className="text-[10px] uppercase font-bold tracking-widest text-[#047857]">Zgłoszenie Poprawne!</span>
-                  <h3 className="font-display font-black text-lg text-[#14183D] tracking-tight">Witaj na pokładzie HRly, {rgName}!</h3>
+                  <h2 className="font-display font-black text-lg text-[#14183D] tracking-tight">Witaj na pokładzie HRly, {rgName}!</h2>
                   <p className="text-xs text-[#55506E] leading-relaxed max-w-xs mx-auto">
                     Konto dla organizacji <strong>{rgCompany}</strong> zostało pomyślnie zadeklarowane w bazie. Na podany e-mail <strong>{rgEmail}</strong> wysłaliśmy panel logowania i darmową instrukcję wdrożenia analityki HR w kilka minut.
                   </p>

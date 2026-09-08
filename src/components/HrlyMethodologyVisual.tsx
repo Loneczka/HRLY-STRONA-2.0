@@ -209,7 +209,7 @@ export function HrlyMethodologyVisual() {
   const satisfactionList = theories.filter(t => t.category === 'satisfaction');
 
   return (
-    <div className="bg-[#101435] border border-white/10 rounded-[32px] p-6 lg:p-10 text-white shadow-2xl relative overflow-hidden">
+    <div className="bg-[#101435] border border-white/10 rounded-[32px] p-6 lg:p-10 text-white shadow-2xl relative overflow-hidden section-dark">
       {/* Decors */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-[#3B2F8C]/15 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#F4A574]/5 rounded-full blur-3xl pointer-events-none" />
@@ -224,9 +224,9 @@ export function HrlyMethodologyVisual() {
             <span className="text-[10px] font-mono font-bold uppercase text-[#F4A574] tracking-widest block">
               Silnik Diagnostyczny HRly
             </span>
-            <h4 className="font-display font-black text-xl text-white uppercase tracking-tight">
+            <h2 className="font-display font-black text-xl text-white uppercase tracking-tight">
               11 Naukowych Teorii
-            </h4>
+            </h2>
             <p className="text-xs text-gray-300">
               Przełączaj i sprawdź, jak zintegrowaliśmy klasyczną wiedzę psychologiczną z praktycznymi pytaniami badawczymi w naszej aplikacji.
             </p>
@@ -323,9 +323,9 @@ export function HrlyMethodologyVisual() {
                     <span className="text-[10px] font-mono font-bold text-[#F4A574] uppercase tracking-wider block">
                       {active.subtitle}
                     </span>
-                    <h5 className="font-display font-black text-sm uppercase text-white tracking-tight mt-0.5 leading-none">
+                    <h3 className="font-display font-black text-sm uppercase text-white tracking-tight mt-0.5 leading-none">
                       {active.name}
-                    </h5>
+                    </h3>
                   </div>
                 </div>
                 <p className="text-[11.5px] text-gray-300 leading-relaxed font-normal">

@@ -51,7 +51,7 @@ function AdminPanelInner() {
 
   if (!isAuthenticated) {
     return (
-      <div style={{
+      <div className="section-dark" style={{
         minHeight: '100vh',
         background: `linear-gradient(135deg, ${ADMIN_COLORS.bg}, #1a1a2e)`,
         display: 'flex',
@@ -129,7 +129,7 @@ function AdminPanelInner() {
   const subscriberCount = config.subscribers.length;
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: ADMIN_COLORS.bg }}>
+    <div className="section-dark" style={{ display: 'flex', minHeight: '100vh', background: ADMIN_COLORS.bg }}>
       <AdminSidebar
         activeTab={activeTab}
         onTabChange={setActiveTab}

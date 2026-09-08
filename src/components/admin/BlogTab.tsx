@@ -354,7 +354,6 @@ function BlogPostEditor({
             color: ADMIN_COLORS.text,
             fontSize: '15px',
             lineHeight: 1.8,
-            outline: 'none',
             resize: 'none',
             fontFamily: 'inherit',
           }}

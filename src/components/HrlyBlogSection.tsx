@@ -142,7 +142,7 @@ function NewsletterBox() {
   };
 
   return (
-    <div style={{
+    <div className="section-dark" style={{
       background: 'linear-gradient(135deg, #14183D 0%, #3B2F8C 100%)',
       borderRadius: '24px',
       padding: '48px 40px',
@@ -151,9 +151,9 @@ function NewsletterBox() {
       marginTop: '64px',
     }}>
       <div style={{ fontSize: '32px', marginBottom: '12px' }}>📬</div>
-      <h3 style={{ fontSize: '24px', fontWeight: 800, margin: '0 0 8px', letterSpacing: '-0.02em' }}>
+      <h2 style={{ fontSize: '24px', fontWeight: 800, margin: '0 0 8px', letterSpacing: '-0.02em' }}>
         Bądź na bieżąco z HR
-      </h3>
+      </h2>
       <p style={{ color: 'rgba(255,255,255,0.7)', margin: '0 0 28px', fontSize: '15px' }}>
         Najnowsze analizy, trendy i wskazówki prosto na Twój email.
       </p>
@@ -173,7 +173,7 @@ function NewsletterBox() {
             style={{
               flex: 1, padding: '12px 16px', borderRadius: '12px',
               border: 'none', fontSize: '14px', background: 'rgba(255,255,255,0.15)',
-              color: '#fff', outline: 'none',
+              color: '#fff',
             }}
           />
           <button type="submit" disabled={loading} style={{
@@ -234,9 +234,9 @@ export default function HrlyBlogSection() {
           }}>
             Baza wiedzy HR
           </span>
-          <h2 style={{ fontSize: 'clamp(28px, 5vw, 42px)', fontWeight: 800, color: '#14183D', letterSpacing: '-0.03em', margin: '0 0 16px' }}>
+          <h1 style={{ fontSize: 'clamp(28px, 5vw, 42px)', fontWeight: 800, color: '#14183D', letterSpacing: '-0.03em', margin: '0 0 16px' }}>
             Artykuły & Analizy
-          </h2>
+          </h1>
           <p style={{ color: '#6B6484', fontSize: '16px', marginBottom: '48px' }}>
             Wkrótce tutaj pojawią się artykuły HR i analizy rynkowe.
           </p>
@@ -268,9 +268,9 @@ export default function HrlyBlogSection() {
           }}>
             Baza wiedzy HR
           </span>
-          <h2 style={{ fontSize: 'clamp(28px, 5vw, 42px)', fontWeight: 800, color: '#14183D', letterSpacing: '-0.03em', margin: '0 0 16px' }}>
+          <h1 style={{ fontSize: 'clamp(28px, 5vw, 42px)', fontWeight: 800, color: '#14183D', letterSpacing: '-0.03em', margin: '0 0 16px' }}>
             Artykuły & Analizy
-          </h2>
+          </h1>
           <p style={{ color: '#6B6484', fontSize: '16px', maxWidth: '560px', margin: '0 auto' }}>
             Praktyczna wiedza o zarządzaniu ludźmi, analityce HR i trendach rynkowych.
           </p>
@@ -289,7 +289,7 @@ export default function HrlyBlogSection() {
                 width: '100%', padding: '10px 14px 10px 40px',
                 borderRadius: '12px', border: '1.5px solid #E8E3F0',
                 fontSize: '14px', color: '#14183D', background: '#fff',
-                outline: 'none', boxSizing: 'border-box',
+                boxSizing: 'border-box',
               }}
             />
           </div>
@@ -367,9 +367,9 @@ export default function HrlyBlogSection() {
 
                 {/* Content */}
                 <div style={{ padding: '20px' }}>
-                  <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#14183D', margin: '0 0 8px', lineHeight: 1.3 }}>
+                  <h2 style={{ fontSize: '16px', fontWeight: 700, color: '#14183D', margin: '0 0 8px', lineHeight: 1.3 }}>
                     {post.title}
-                  </h3>
+                  </h2>
                   <p style={{ fontSize: '13px', color: '#6B6484', margin: '0 0 16px', lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                     {post.excerpt}
                   </p>

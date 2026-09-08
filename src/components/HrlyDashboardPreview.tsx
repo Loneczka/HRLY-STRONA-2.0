@@ -82,9 +82,9 @@ export const HrlyDashboardPreview: React.FC = () => {
       <div className="bg-[#14183D] px-6 py-5 text-white flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="space-y-1 text-center md:text-left">
           <span className="text-[10px] uppercase font-mono tracking-widest text-[#F4A574]">PULPIT ANALITYCZNY OPERACYJNY</span>
-          <h4 className="font-display font-black text-xl tracking-tight">
+          <h2 className="font-display font-black text-xl tracking-tight">
             Wyniki Badania Zaangażowania Organizacji
-          </h4>
+          </h2>
         </div>
         
         <div className="flex flex-wrap items-center justify-center gap-6">
@@ -124,7 +124,7 @@ export const HrlyDashboardPreview: React.FC = () => {
                 <select
                   value={selectedAreaId}
                   onChange={(e) => setSelectedAreaId(Number(e.target.value))}
-                  className="w-full p-4 rounded-2xl border border-[#C4BBDE]/35 bg-white text-xs font-bold text-[#14183D] appearance-none cursor-pointer focus:outline-none focus:ring-1 focus:ring-[#3B2F8C] shadow-xs"
+                  className="w-full p-4 rounded-2xl border border-[#C4BBDE]/35 bg-white text-xs font-bold text-[#14183D] appearance-none cursor-pointer focus:ring-1 focus:ring-[#3B2F8C] shadow-xs"
                 >
                   {HR_AREAS.map((area) => (
                     <option key={area.id} value={area.id}>
@@ -202,9 +202,9 @@ export const HrlyDashboardPreview: React.FC = () => {
                   </div>
                   <div>
                     <span className="block text-[9px] text-gray-400 font-mono tracking-widest uppercase">Karta Wyniku Obszaru</span>
-                    <h5 className="font-display font-extrabold text-[#14183D] text-lg leading-tight">
+                    <h3 className="font-display font-extrabold text-[#14183D] text-lg leading-tight">
                       {activeArea.title}
-                    </h5>
+                    </h3>
                   </div>
                 </div>
 
@@ -243,9 +243,9 @@ export const HrlyDashboardPreview: React.FC = () => {
                   </div>
                   <div>
                     <span className="block text-[8px] font-mono uppercase tracking-wider text-gray-400">Ludzie i zachowania</span>
-                    <h6 className="text-xs font-black uppercase text-[#14183D] tracking-tight">
+                    <h4 className="text-xs font-black uppercase text-[#14183D] tracking-tight">
                       Wpływ na pracownika
-                    </h6>
+                    </h4>
                   </div>
                 </div>
                 <p className="text-xs text-[#55506E] leading-relaxed">
@@ -261,9 +261,9 @@ export const HrlyDashboardPreview: React.FC = () => {
                   </div>
                   <div>
                     <span className="block text-[8px] font-mono uppercase tracking-wider text-gray-400">Finanse i operacje</span>
-                    <h6 className="text-xs font-black uppercase text-[#14183D] tracking-tight">
+                    <h4 className="text-xs font-black uppercase text-[#14183D] tracking-tight">
                       Wpływ na biznes
-                    </h6>
+                    </h4>
                   </div>
                 </div>
                 <p className="text-xs text-[#55506E] leading-relaxed">
@@ -281,9 +281,9 @@ export const HrlyDashboardPreview: React.FC = () => {
                 </div>
                 <div>
                   <span className="block text-[8px] font-mono uppercase tracking-wider text-gray-400">Rozwiązanie strategiczne</span>
-                  <h6 className="text-xs font-black uppercase text-[#14183D] tracking-tight">
+                  <h4 className="text-xs font-black uppercase text-[#14183D] tracking-tight">
                     Rekomendacja dla organizacji
-                  </h6>
+                  </h4>
                 </div>
               </div>
               
@@ -312,9 +312,9 @@ export const HrlyDashboardPreview: React.FC = () => {
                   </div>
                   <div>
                     <span className="block text-[8px] font-mono uppercase tracking-widest text-white/50">Menedżerski Toolkit</span>
-                    <h6 className="text-xs font-extrabold uppercase text-white tracking-wider">
+                    <h4 className="text-xs font-extrabold uppercase text-white tracking-wider">
                       Narzędzia dla managera
-                    </h6>
+                    </h4>
                   </div>
                 </div>
                 <span className="text-[9px] font-mono text-[#F4A574] bg-[#F4A574]/10 border border-[#F4A574]/25 px-2.5 py-0.5 rounded-full font-bold">
@@ -363,9 +363,9 @@ export const HrlyDashboardPreview: React.FC = () => {
                   </div>
                   <div>
                     <span className="block text-[8px] font-mono uppercase tracking-wider text-gray-400">Szczegółowa analityka twarda</span>
-                    <h6 className="text-xs font-black uppercase text-[#14183D] tracking-tight">
+                    <h4 className="text-xs font-black uppercase text-[#14183D] tracking-tight">
                       Rozbicie na czynniki cząstkowe
-                    </h6>
+                    </h4>
                   </div>
                 </div>
                 <span className="text-[10px] font-mono text-gray-400">
