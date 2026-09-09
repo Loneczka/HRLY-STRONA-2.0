@@ -29,6 +29,8 @@ type PageRoute = 'home' | 'features' | 'pricing' | 'about' | 'blog' | 'contact' 
 
 /** FAZA 5.4 — numer sekcji dokłada <SectionLabel>, więc z tekstu z CMS zdejmujemy prefiks „NN · ". */
 const stripSectionNumber = (text: string): string => text.replace(/^\s*\d{1,2}\s*[·.\u2013-]\s*/, '');
+/** Usuwa końcową strzałkę z tekstu CTA z CMS („Wypróbuj za darmo →”) — strzałkę rysuje ikona komponentu Button. */
+const stripTrailingArrow = (text: string) => text.replace(/\s*(→|->|➔|➜)\s*$/, '');
 
 const RESEARCH_AREAS = [
   {
@@ -375,6 +377,8 @@ const getScreenshotImpactText = (num: string) => {
   }
 };
 
+const NAV_ITEMS = [['features', 'Funkcje'], ['pricing', 'Cennik'], ['blog', 'Baza wiedzy'], ['contact', 'Kontakt']] as const;
+
 export default function App() {
   const { config, updateSection } = useSiteConfig();
   const [activeTab, setActiveTab] = useState<PageRoute>(() => {
@@ -555,47 +559,12 @@ export default function App() {
           </button>
 
           {/* Desktop Navigation Link Tabs */}
-          <nav className="hidden lg:flex items-center gap-1 bg-primary-faint/60 p-1 rounded-xl border border-border-soft/40">
-            <button
-              onClick={() => setActiveTab('features')}
-              className={`px-4 py-1.5 rounded-lg type-body-sm font-semibold transition-all cursor-pointer ${
-                activeTab === 'features'
-                  ? 'bg-white text-indigo-primary shadow-xs'
-                  : 'text-muted-purple hover:text-text-dark'
-              }`}
-            >
-              Funkcje
-            </button>
-            <button
-              onClick={() => setActiveTab('pricing')}
-              className={`px-4 py-1.5 rounded-lg type-body-sm font-semibold transition-all cursor-pointer ${
-                activeTab === 'pricing'
-                  ? 'bg-white text-indigo-primary shadow-xs'
-                  : 'text-muted-purple hover:text-text-dark'
-              }`}
-            >
-              Cennik
-            </button>
-            <button
-              onClick={() => setActiveTab('blog')}
-              className={`px-4 py-1.5 rounded-lg type-body-sm font-semibold transition-all cursor-pointer ${
-                activeTab === 'blog'
-                  ? 'bg-white text-indigo-primary shadow-xs'
-                  : 'text-muted-purple hover:text-text-dark'
-              }`}
-            >
-              Baza wiedzy
-            </button>
-            <button
-              onClick={() => setActiveTab('contact')}
-              className={`px-4 py-1.5 rounded-lg type-body-sm font-semibold transition-all cursor-pointer ${
-                activeTab === 'contact'
-                  ? 'bg-white text-indigo-primary shadow-xs'
-                  : 'text-muted-purple hover:text-text-dark'
-              }`}
-            >
-              Kontakt
-            </button>
+          <nav className="hidden lg:flex items-center gap-1 bg-primary-faint/60 p-1 rounded-xl border border-border-soft/40" aria-label="Nawigacja główna">
+            {NAV_ITEMS.map(([route, label]) => (
+              <Button key={route} variant="ghost" size="md" aria-current={activeTab === route ? 'page' : undefined} onClick={() => setActiveTab(route)}>
+                {label}
+              </Button>
+            ))}
           </nav>
 
           {/* Action Zone (Demo / Registration) */}
@@ -628,30 +597,11 @@ export default function App() {
             className="lg:hidden bg-white border-b border-border-soft/60 overflow-hidden sticky top-[61px] z-[9800]"
           >
             <nav className="flex flex-col p-4 space-y-2">
-              <button 
-                onClick={() => { setActiveTab('features'); setMobileMenuOpen(false); }}
-                className={`p-3 text-left type-body-sm font-semibold rounded-lg cursor-pointer ${activeTab === 'features' ? 'bg-indigo-primary text-white' : 'text-muted-purple'}`}
-              >
-                Funkcje
-              </button>
-              <button 
-                onClick={() => { setActiveTab('pricing'); setMobileMenuOpen(false); }}
-                className={`p-3 text-left type-body-sm font-semibold rounded-lg cursor-pointer ${activeTab === 'pricing' ? 'bg-indigo-primary text-white' : 'text-muted-purple'}`}
-              >
-                Cennik
-              </button>
-              <button 
-                onClick={() => { setActiveTab('blog'); setMobileMenuOpen(false); }}
-                className={`p-3 text-left type-body-sm font-semibold rounded-lg cursor-pointer ${activeTab === 'blog' ? 'bg-indigo-primary text-white' : 'text-muted-purple'}`}
-              >
-                Baza wiedzy
-              </button>
-              <button 
-                onClick={() => { setActiveTab('contact'); setMobileMenuOpen(false); }}
-                className={`p-3 text-left type-body-sm font-semibold rounded-lg cursor-pointer ${activeTab === 'contact' ? 'bg-indigo-primary text-white' : 'text-muted-purple'}`}
-              >
-                Kontakt
-              </button>
+              {NAV_ITEMS.map(([route, label]) => (
+                <Button key={route} variant="ghost" size="md" fullWidth className="justify-start" aria-current={activeTab === route ? 'page' : undefined} onClick={() => { setActiveTab(route); setMobileMenuOpen(false); }}>
+                  {label}
+                </Button>
+              ))}
               
               <div className="pt-3 border-t border-border-soft flex flex-col gap-2">
                 <Button size="md" fullWidth onClick={() => { setActiveTab('pricing'); setMobileMenuOpen(false); }}>
@@ -685,8 +635,8 @@ export default function App() {
                 <div className="absolute top-0 right-0 w-[420px] h-[420px] bg-primary-light/40 rounded-full blur-3xl pointer-events-none -mr-32 -mt-32" />
                 <div className="absolute bottom-0 left-0 w-[420px] h-[420px] bg-primary-light/30 rounded-full blur-3xl pointer-events-none -ml-32 -mb-32" />
                 
-                <div className="w-full flex flex-col lg:flex-row items-center justify-between gap-10 relative z-10">
-                  <div className="space-y-6 max-w-xl text-center lg:text-left flex flex-col items-center lg:items-start">
+                <div className="w-full flex flex-col xl:flex-row items-center justify-between gap-10 relative z-10">
+                  <div className="space-y-6 max-w-xl text-center xl:text-left flex flex-col items-center xl:items-start">
                     
                     {/* Etykieta sekcji 01 (treść z CMS; numer dokłada SectionLabel) */}
                     <SectionLabel number="01" icon={<Sparkles />}>
@@ -709,18 +659,18 @@ export default function App() {
                     </div>
 
                     {/* Action buttons */}
-                    <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 w-full sm:w-auto pt-2">
-                      <Button size="lg" className="w-full sm:w-auto" onClick={() => setActiveTab('pricing')}>
-                        {config.hero.ctaPrimaryText || "Wypróbuj bezpłatnie"}
+                    <div className="flex flex-col sm:flex-row items-center justify-center xl:justify-start gap-3 w-full sm:w-auto pt-2">
+                      <Button size="lg" icon={<ArrowRight />} className="w-full sm:w-auto" onClick={() => setActiveTab('pricing')}>
+                        {stripTrailingArrow(config.hero.ctaPrimaryText) || "Wypróbuj bezpłatnie"}
                       </Button>
                       
                       <Button variant="secondary" size="lg" className="w-full sm:w-auto" onClick={() => setIsDashboardModalOpen(true)}>
-                        {config.hero.ctaSecondaryText || "Obejrzyj demo interaktywne"}
+                        {stripTrailingArrow(config.hero.ctaSecondaryText) || "Obejrzyj demo interaktywne"}
                       </Button>
                     </div>
 
                     {/* Trust small indicators */}
-                    <div className="flex flex-wrap items-center justify-center lg:justify-start gap-x-5 gap-y-2 pt-4 border-t border-border-soft type-label text-muted-indigo font-mono w-full">
+                    <div className="flex flex-wrap items-center justify-center xl:justify-start gap-x-5 gap-y-2 pt-4 border-t border-border-soft type-label text-muted-indigo font-mono w-full">
                       <span className="flex items-center gap-1">
                         <span className="text-success">✓</span>
                         14 dni testu bez karty
@@ -737,7 +687,7 @@ export default function App() {
                   </div>
 
                   {/* Modern Hero Graphic directly rendered */}
-                  <div className="relative w-full lg:w-[440px] shrink-0">
+                  <div className="relative w-full xl:w-[440px] shrink-0">
                     <HrlyHeroGraphic />
                   </div>
                 </div>
@@ -2139,16 +2089,16 @@ export default function App() {
           <div className="md:col-span-5 grid grid-cols-2 gap-4 text-center md:text-left type-body-sm font-semibold text-on-dark-body">
             <div className="space-y-1">
               <span className="type-label text-on-dark-muted font-mono uppercase block mb-1">Opcje menu</span>
-              <button onClick={() => setActiveTab('features')} className="block py-2 hover:text-white hover:underline underline-offset-4 w-full md:text-left transition-colors cursor-pointer">Funkcje</button>
-              <button onClick={() => setActiveTab('pricing')} className="block py-2 hover:text-white hover:underline underline-offset-4 w-full md:text-left transition-colors cursor-pointer">Cennik</button>
-              <button onClick={() => setActiveTab('about')} className="block py-2 hover:text-white hover:underline underline-offset-4 w-full md:text-left transition-colors cursor-pointer">O nas</button>
+              <Button variant="ghost" size="md" tone="dark" className="w-full justify-center md:justify-start md:-ml-5" onClick={() => setActiveTab('features')}>Funkcje</Button>
+              <Button variant="ghost" size="md" tone="dark" className="w-full justify-center md:justify-start md:-ml-5" onClick={() => setActiveTab('pricing')}>Cennik</Button>
+              <Button variant="ghost" size="md" tone="dark" className="w-full justify-center md:justify-start md:-ml-5" onClick={() => setActiveTab('about')}>O nas</Button>
             </div>
             <div className="space-y-1">
               <span className="type-label text-on-dark-muted font-mono uppercase block mb-1">Baza wiedzy</span>
-              <button onClick={() => setActiveTab('blog')} className="block py-2 hover:text-white hover:underline underline-offset-4 w-full md:text-left transition-colors cursor-pointer">Blog / Baza wiedzy</button>
-              <button onClick={() => setActiveTab('contact')} className="block py-2 hover:text-white hover:underline underline-offset-4 w-full md:text-left transition-colors cursor-pointer">Kontakt z nami</button>
-              <a href="#privacy" className="block py-2 hover:text-white hover:underline underline-offset-4 w-full md:text-left transition-colors cursor-not-allowed">Polityka prywatności</a>
-              <a href="#rules" className="block py-2 hover:text-white hover:underline underline-offset-4 w-full md:text-left transition-colors cursor-not-allowed">Regulamin</a>
+              <Button variant="ghost" size="md" tone="dark" className="w-full justify-center md:justify-start md:-ml-5" onClick={() => setActiveTab('blog')}>Blog / Baza wiedzy</Button>
+              <Button variant="ghost" size="md" tone="dark" className="w-full justify-center md:justify-start md:-ml-5" onClick={() => setActiveTab('contact')}>Kontakt z nami</Button>
+              <Button href="#privacy" variant="ghost" size="md" tone="dark" className="w-full justify-center md:justify-start md:-ml-5" aria-disabled="true" title="Strona w przygotowaniu">Polityka prywatności</Button>
+              <Button href="#rules" variant="ghost" size="md" tone="dark" className="w-full justify-center md:justify-start md:-ml-5" aria-disabled="true" title="Strona w przygotowaniu">Regulamin</Button>
             </div>
           </div>
 

@@ -22,7 +22,7 @@ const PATH_B = linePath(SERIES_B);
 
 export const HrlyHeroGraphic: React.FC = () => {
   return (
-    <div className="relative w-full lg:max-w-md h-[480px] flex items-center justify-center overflow-visible bg-transparent select-none">
+    <div className="relative w-full lg:max-w-md mx-auto h-[480px] flex items-center justify-center overflow-visible bg-transparent select-none">
       {/* Background radial glow */}
       <div className="absolute top-[10%] left-[5%] w-72 h-72 rounded-full bg-indigo-primary/12 blur-[80px] animate-pulse" />
       <div className="absolute bottom-[10%] right-[5%] w-64 h-64 rounded-full bg-primary-light/40 blur-[75px] animate-pulse delay-75" />

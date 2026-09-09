@@ -8,7 +8,7 @@ import React from 'react';
  * Radius:   12px zawsze. Krój: Inter (font-sans). Sentence case — komponent wymusza `normal-case`,
  *           a tekst przekazuje się w zdaniu (bez `uppercase`).
  * Ikona:    opcjonalna, po prawej, 16px, wyśrodkowana w pionie względem tekstu.
- * Stany:    default / hover / active / focus-visible (globalny ring z FAZY 1) / disabled.
+ * Stany:    default / hover / active / focus-visible (globalny ring z FAZY 1) / disabled / aria-current="page" (ghost w nawigacji).
  * Tone:     'light' (domyślnie) | 'dark' — na ciemnych sekcjach (`.section-dark`).
  *
  * Kolory pochodzą WYŁĄCZNIE z tokenów w src/index.css (@theme):
@@ -70,7 +70,8 @@ const VARIANT: Record<ButtonTone, Record<ButtonVariant, string>> = {
       'bg-cta-primary text-cta-primary-text hover:bg-cta-primary-hover active:bg-cta-primary-active active:scale-[0.98]',
     secondary:
       'bg-white text-cta-outline border border-cta-outline hover:bg-cta-outline/5 active:bg-cta-outline/10',
-    ghost: 'bg-transparent text-cta-outline hover:underline underline-offset-4 active:text-cta-outline-hover',
+    ghost:
+      'bg-transparent text-cta-outline hover:underline underline-offset-4 active:text-cta-outline-hover aria-[current=page]:bg-primary-light/60 aria-[current=page]:text-indigo-primary aria-[current=page]:no-underline',
   },
   dark: {
     primary:
@@ -78,7 +79,7 @@ const VARIANT: Record<ButtonTone, Record<ButtonVariant, string>> = {
     secondary:
       'bg-transparent text-white border border-white/40 hover:bg-white/10 active:bg-white/20 focus-visible:outline-accent-apricot',
     ghost:
-      'bg-transparent text-white hover:underline underline-offset-4 active:text-white/80 focus-visible:outline-accent-apricot',
+      'bg-transparent text-white hover:underline underline-offset-4 active:text-white/80 focus-visible:outline-accent-apricot aria-[current=page]:bg-white/10 aria-[current=page]:no-underline',
   },
 };
 

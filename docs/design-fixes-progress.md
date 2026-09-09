@@ -555,3 +555,19 @@ Odstępstwa od planu i dlaczego: 1. Warunek stanu pustego rozszerzony o `metric`
 4. `metric.source` renderuję dosłownie, bez doklejania prefiksu „Źródło:”. Doklejenie prefiksu byłoby wymyślaniem copy; pełne brzmienie przypisu zapisuje właściciel.
 
 5. Import `SocialProof` w App.tsx zostaje mimo zakomentowanego użycia — dzięki temu `npm run lint` (tsc) sprawdza komponent i nie zgnije on cicho. `tsconfig.json` nie ma `noUnusedLocals`, więc lint jest czysty, a Vite wycina martwy import z bundl
+
+---
+
+## PO FAZACH — drobne poprawki z listy decyzji   [ZROBIONE]
+
+Zmienione pliki: `src/App.tsx`, `src/components/Button.tsx`, `src/components/HrlyHeroGraphic.tsx`, `src/hooks/useSiteConfig.ts`, `src/index.css`.
+
+1. **Strzałki „→” w CTA hero** — usunięte z `DEFAULT_CONFIG.hero.ctaPrimaryText/ctaSecondaryText`; na renderze `stripTrailingArrow()` obcina końcową strzałkę także z tekstu zapisanego w CMS (żeby stara konfiguracja w localStorage nie dawała podwójnej strzałki); hero primary ma ikonę `ArrowRight` jak header.
+2. **`h1` na 1024–1279 px** — bez nowego rozmiaru poza skalą: układ dwukolumnowy hero od `xl` (1280 px) zamiast `lg`; w 1024–1279 hero układa się jak na mobile (tekst na całą szerokość, mockup wyśrodkowany pod spodem). Pomiar: `h1` = 3 linie na 1024, 1100, 1280 i 1440 (było 4 na 1024–1279).
+3. **Nav-pills, menu mobilne, linki footera → `Button variant="ghost"`** — stan aktywny przez `aria-current="page"` (styl w komponencie: lawendowa pill / `bg-white/10` na ciemnym); footer `md:-ml-5`, żeby tekst trzymał linię nagłówka kolumny. „Polityka prywatności” i „Regulamin” (martwe kotwice `#privacy`/`#rules`) renderują się jako `Button` z `aria-disabled` (bez `href`, poza tab-orderem, `title="Strona w przygotowaniu"`). Skrypt: `WYSOKOŚCI 36 (logo), 40, 48`, `RADIUSY 0px (logo), 12px`, `KROJE Inter`; header 69 → 75 px.
+4. **`--color-warning-orange`** `#B45309` → `#9A3412` (na `warning-soft` 4,51 → 6,0:1).
+5. **Pomiar produkcji (hrly.pl, headless z tej maszyny):** load 345 ms, FCP 420 ms, wszystkie chunki JS pobrane do ~290 ms, Inter i JetBrains Mono załadowane, teksty mockupu obecne w DOM w chwili pomiaru (~880 ms). Brak śladu 3-sekundowego opóźnienia z briefu — jeśli występuje u właściciela, to efekt wolnej sieci przy pierwszym wejściu (fonty Google, ~200 KB) i wtedy pomaga self-hosting fontów + `preload`; nie zmieniałem.
+
+Wynik skryptu (1440): rozmiary 12–60, wagi 400–800, h1=1 h2=7 h3=39 h4=0, BŁĘDY KONTRASTU 0; tab-walk 16/16 z ringiem (dwa martwe linki footera celowo poza tab-orderem). Lint i build czyste.
+
+Nie zrobione (decyzja): pill sekcji 08 zostaje bez brzoskwini (jedna reguła dla ciemnych etykiet).

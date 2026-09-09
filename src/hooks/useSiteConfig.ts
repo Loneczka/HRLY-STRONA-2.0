@@ -170,9 +170,9 @@ export const DEFAULT_CONFIG: SiteConfig = {
   hero: {
     headline: 'Zmień dane HR w strategiczne decyzje.',
     subheadline: 'HRly to inteligentna platforma analityki HR. W kilka minut przetwarza dane Twojej organizacji i zwraca gotowe rekomendacje dla biznesu, HR i menedżerów.',
-    ctaPrimaryText: 'Wypróbuj za darmo →',
+    ctaPrimaryText: 'Wypróbuj za darmo',
     ctaPrimaryLink: 'https://app.hrly.pl/signup',
-    ctaSecondaryText: 'Jak to działa →',
+    ctaSecondaryText: 'Jak to działa',
     badge: '01 · Analityka HR z AI',
   },
   stats: {
