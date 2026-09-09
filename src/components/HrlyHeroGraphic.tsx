@@ -28,7 +28,7 @@ export const HrlyHeroGraphic: React.FC = () => {
       {/* MAIN 3D PERSPECTIVE WRAPPER (Gentler angle) */}
       <div className="relative isometric-container w-full h-full flex items-center justify-center">
         <motion.div 
-          className="relative isometric-card w-[320px] h-[320px] flex items-center justify-center"
+          className="relative isometric-card w-[350px] h-[350px] max-sm:w-[330px] max-sm:h-[330px] shrink-0 flex items-center justify-center"
           style={{
             transform: 'rotateX(38deg) rotateY(0deg) rotateZ(-20deg)',
             transformStyle: 'preserve-3d',
@@ -36,7 +36,7 @@ export const HrlyHeroGraphic: React.FC = () => {
         >
           {/* Base Grid Underlay (Page Sheet) */}
           <div 
-            className="absolute w-[320px] h-[320px] bg-[#FBFAF8]/30 border border-[#EFEAE1]/50 rounded-[40px] shadow-lg overflow-hidden"
+            className="absolute w-[350px] h-[350px] max-sm:w-[330px] max-sm:h-[330px] bg-[#FBFAF8]/30 border border-[#EFEAE1]/50 rounded-[40px] shadow-lg overflow-hidden"
             style={{
               transform: 'translateZ(0px)',
             }}
@@ -52,7 +52,7 @@ export const HrlyHeroGraphic: React.FC = () => {
 
           {/* Main Card: "Analityka Pulsu" with floating motion */}
           <motion.div
-            className="absolute w-[290px] h-[290px] bg-white border border-[#EFEAE1]/90 rounded-[32px] p-5 shadow-[0_30px_60px_-15px_rgba(20,24,61,0.18)] flex flex-col justify-between"
+            className="absolute w-[320px] min-h-[320px] max-sm:w-[300px] max-sm:min-h-[300px] bg-white border border-[#EFEAE1]/90 rounded-[32px] p-5 shadow-[0_30px_60px_-15px_rgba(20,24,61,0.18)] flex flex-col justify-between"
             style={{
               transformStyle: 'preserve-3d',
             }}
@@ -68,10 +68,10 @@ export const HrlyHeroGraphic: React.FC = () => {
           >
             {/* Header info */}
             <div>
-              <span className="text-[9px] font-display font-extrabold text-[#3B2F8C] uppercase tracking-widest block mb-0.5">
+              <span className="type-label font-display text-[#3B2F8C] uppercase block mb-0.5">
                 Kondycja Zespołu
               </span>
-              <div className="text-base font-display font-bold text-[#14183D] tracking-tight">
+              <div className="type-h3 font-display text-[#14183D]">
                 Analityka Pulsu
               </div>
             </div>
@@ -85,7 +85,7 @@ export const HrlyHeroGraphic: React.FC = () => {
               }}
             >
               {/* LIVE DANE badge */}
-              <div className="absolute top-2.5 right-2.5 bg-[#D1FAE5] text-[7px] text-[#047857] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 shadow-sm z-20">
+              <div className="absolute top-2.5 right-2.5 bg-[#D1FAE5] type-label text-[#047857] px-2 py-0.5 rounded-full flex items-center gap-1 shadow-sm z-20">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-pulse" />
                 DANE LIVE
               </div>
@@ -131,12 +131,12 @@ export const HrlyHeroGraphic: React.FC = () => {
             {/* Bottom details block */}
             <div>
               <div className="border-t border-[#EFEAE1]/75 my-2.5" />
-              <div className="flex justify-between items-center text-[10px] text-[#55506E] font-display font-medium">
+              <div className="flex justify-between items-center type-label text-[#55506E] font-display">
                 <span className="flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-[#F4A574] shadow-sm" />
                   Uznanie: 3.8
                 </span>
-                <span className="text-emerald-600 font-extrabold font-mono tracking-tight">
+                <span className="text-emerald-600 font-mono">
                   +12% wzrostu
                 </span>
               </div>
@@ -145,7 +145,7 @@ export const HrlyHeroGraphic: React.FC = () => {
 
           {/* Floating Card 1: "ZAUFANIE W FIRMIE" (Top Right) */}
           <motion.div
-            className="absolute -top-10 -right-8 w-[175px] bg-gradient-to-br from-[#241F59] to-[#120E37] border border-white/10 rounded-2xl p-3.5 shadow-[0_20px_45px_-10px_rgba(20,24,61,0.5)] text-white space-y-1.5"
+            className="absolute -top-10 -right-8 w-[210px] max-sm:w-[190px] bg-gradient-to-br from-[#241F59] to-[#120E37] border border-white/10 rounded-2xl p-3.5 shadow-[0_20px_45px_-10px_rgba(20,24,61,0.5)] text-white space-y-1.5"
             style={{
               transformStyle: 'preserve-3d',
             }}
@@ -161,14 +161,14 @@ export const HrlyHeroGraphic: React.FC = () => {
             }}
           >
             <div className="flex justify-between items-center">
-              <span className="text-[8px] font-bold tracking-widest text-[#6A5E8C] font-display uppercase">
+              <span className="type-label text-[#6A5E8C] font-display uppercase">
                 Zaufanie w firmie
               </span>
               <Heart className="w-3 h-3 text-[#FF5A79] fill-[#FF5A79] animate-pulse" />
             </div>
             <div className="flex items-baseline gap-1.5 mt-2">
-              <span className="text-xl font-display font-extrabold leading-none">94%</span>
-              <span className="text-[9px] font-bold text-[#00E5A3] font-display">Wysokie</span>
+              <span className="type-h3 font-display">94%</span>
+              <span className="type-label text-[#00E5A3] font-display">Wysokie</span>
             </div>
             <div className="w-full bg-white/10 h-1 rounded-full mt-2 overflow-hidden">
               <div className="h-full bg-gradient-to-r from-[#F4A574] to-[#F4A574] rounded-full w-[94%]" />
@@ -177,7 +177,7 @@ export const HrlyHeroGraphic: React.FC = () => {
 
           {/* Floating Card 2: "RETENCJA KADRY" (Bottom Left) */}
           <motion.div
-            className="absolute -bottom-10 -left-8 w-[185px] bg-white border border-[#EFEAE1]/90 rounded-2xl p-3.5 shadow-[0_20px_40px_-10px_rgba(20,24,61,0.18)] flex items-center justify-between gap-3"
+            className="absolute -bottom-10 -left-8 w-[220px] max-sm:w-[200px] bg-white border border-[#EFEAE1]/90 rounded-2xl p-3.5 shadow-[0_20px_40px_-10px_rgba(20,24,61,0.18)] flex items-center justify-between gap-3"
             style={{
               transformStyle: 'preserve-3d',
             }}
@@ -194,13 +194,13 @@ export const HrlyHeroGraphic: React.FC = () => {
             }}
           >
             <div className="space-y-0.5">
-              <span className="text-[8px] font-bold tracking-widest text-[#6A5E8C] font-display uppercase block">
+              <span className="type-label text-[#6A5E8C] font-display uppercase block">
                 Retencja kadry
               </span>
-              <strong className="text-base font-bold text-[#14183D] mt-1 block leading-none">
+              <strong className="type-h3 text-[#14183D] mt-1 block">
                 stabilna
               </strong>
-              <span className="text-[9px] text-emerald-800 font-bold font-display mt-0.5 block leading-none">
+              <span className="type-label text-emerald-800 font-display mt-0.5 block">
                 96.4% retencji
               </span>
             </div>
@@ -211,7 +211,7 @@ export const HrlyHeroGraphic: React.FC = () => {
 
           {/* Decorative Waveform Button badge (Top Right, above main card) */}
           <motion.div
-            className="absolute top-[18px] -right-3 w-7 h-7 rounded-lg bg-indigo-50 border border-[#C4BBDE]/30 text-[#3B2F8C] flex items-center justify-center shadow-md"
+            className="absolute top-[84px] -right-3 w-7 h-7 rounded-lg bg-indigo-50 border border-[#C4BBDE]/30 text-[#3B2F8C] flex items-center justify-center shadow-md"
             animate={{
               translateZ: [20, 32, 20],
               y: [-2, 2, -2]
@@ -228,7 +228,7 @@ export const HrlyHeroGraphic: React.FC = () => {
 
           {/* Decorative "Preview" badge (Left side of main card) */}
           <motion.div
-            className="absolute top-[60px] -left-8 bg-white/95 border border-[#EFEAE1]/80 px-2.5 py-1.5 shadow-[0_4px_12px_rgba(20,24,61,0.08)] text-[#14183D] text-[9px] font-bold rounded-lg uppercase tracking-wider font-display"
+            className="absolute top-[60px] max-sm:top-[125px] -left-16 lg:max-xl:-left-12 max-sm:-left-8 bg-white/95 border border-[#EFEAE1]/80 px-2.5 py-1.5 shadow-[0_4px_12px_rgba(20,24,61,0.08)] text-[#14183D] type-label rounded-lg uppercase font-display"
             animate={{
               translateZ: [20, 32, 20],
               y: [2, -2, 2]

@@ -6,7 +6,7 @@ Weryfikacja: `npm run lint` (tsc --noEmit), `npm run build`, SKRYPT WERYFIKACYJN
 Lista zadań:
 - [x] FAZA 0 — Rekonesans i baseline
 - [x] FAZA 1 — Blokery dostępności
-- [ ] FAZA 2 — Jedna skala typograficzna
+- [x] FAZA 2 — Jedna skala typograficzna
 - [ ] FAZA 3 — Jeden komponent przycisku (STOP 3.2)
 - [ ] FAZA 4 — Kolor: reguła zamiast przypadku
 - [ ] FAZA 5 — Bugi wizualne
@@ -157,3 +157,56 @@ Odstępstwa od planu i dlaczego:
 Do decyzji właściciela:
 - 4 kafelki makiety na `#features` („Naukowa baza pytań”, „Action Plan”, „Wsparcie Managerów”, „Statystyki i trendy”) są teraz `h2` (dla braku przeskoku) — semantycznie to dekoracja; można je zamienić na `p`, jeśli podstrony wejdą w zakres.
 - Wykluczenie `docs/` ze skanowania Tailwinda (`@source not "../docs"` w `index.css`) — drobna zmiana konfiguracji, poza zakresem fazy.
+
+---
+
+## FAZA 2 — Jedna skala typograficzna   [ZROBIONE Z ODSTĘPSTWAMI]
+
+Zmienione pliki: `src/index.css` (tokeny), `src/App.tsx` (header, menu mobilne, hero, sekcje 02–07, footer), `src/components/HrlyHeroGraphic.tsx` (mockup hero), `src/components/HrlyDashboardPreview.tsx` (modal pulpitu), `index.html` (1 linia — patrz odstępstwo 5), `docs/design-fixes-progress.md`. Zakres: strona główna + header/footer/menu + modal pulpitu. Podstrony (`#features/#pricing/#about/#contact/#blog`) i `HrlyMethodologyVisual/PricingCalculator/BlogSection` nietknięte.
+
+### 2.1 Tokeny (`src/index.css`, blok `@utility`)
+Siedem klas dokładnie wg tabeli protokołu: `type-display` 60/36, `type-h2` 40/28, `type-h3` 20/18, `type-body-lg` 18/16, `type-body` 16/15, `type-body-sm` 14, `type-label` 12 (interlinia/waga/tracking z tabeli, mobile = `max-width: 768px` zagnieżdżone w `@utility`; zbudowany CSS zawiera media query — sprawdzone w `dist/assets/*.css`). Klasa NIE ustawia rodziny — `font-display/sans/mono` zostają na elemencie.
+
+### 2.2 Mapowanie
+- Wszystkie `text-[7–11px]`, `text-xs…text-4xl`, `font-black/medium/light`, `leading-*`, `tracking-*` na tekstach strony głównej i modala zamienione na tokeny (`rg` z bramki: 0 trafień w `HrlyHeroGraphic.tsx` i `HrlyDashboardPreview.tsx`; w `App.tsx` trafienia tylko na logo, CTA i w blokach podstron/nieosiągalnym dialogu demo 2185–2265).
+- Siatki kart (02, 03, 04, 06) z `h-full`/`items-stretch`; mockup hero powiększony pod 12/18/20 px (arkusz 320→350, karta główna 290→320 z `min-h`, karty pływające 175→210 i 185→220, badge „Preview” `-left-8`→`-left-16`, ikonka fali `top-[18px]`→`top-[84px]`).
+- Modal: `h2` → `type-h3`, liczby → `type-h3`, `h4` kart → `type-body font-bold`, etykiety → `type-label`, zdania → `type-body-sm`, lista obszarów → `type-body-sm font-semibold` / `type-label` / `type-body font-bold font-display`.
+- CTA: tylko `font-black` → `font-extrabold` (baner demo); paddingi, promienie, kolory i rozmiary tekstu CTA bez zmian (FAZA 3).
+
+### Poprawki po review (druga iteracja)
+1. **Mockup hero na mobile bez skalowania.** Pierwsza wersja dopasowywała powiększony mockup do 390 px przez `max-sm:scale-[0.85]` — to renderowało `type-label` 12 px jako ~10,2 px i `type-h3` 18 px jako ~15,3 px (obejście reguły „nie zmniejszaj fontu, żeby zmieścić layout”). Usunięte. Zamiast tego wymiary tylko-mobilne (`max-sm:`): arkusz i kontener 350→330, karta główna 320→300 (`min-h` 300), karty pływające 210→190 i 220→200. Pomiar 390 (`hero-scale.js`): `scale=none`, kontener 308×480, `OVERLAPS(0)`; wszystkie teksty mockupu w klipie sekcji (x 17…373): „Kondycja Zespołu” l=34, „+12% wzrostu” r=368; rozmiary 12/18 px. Układ 1440 bez zmian (różnice ≤2 px = faza animacji pływania).
+2. **`shrink-0` na `.isometric-card`.** Jako flex item kurczył się z 350 do 308 px w kontenerze 390 (karta główna centrowana, karta „Retencja kadry” zakotwiczona do lewej krawędzi zmniejszonego pudełka) — stąd karta retencji zasłaniała „+” w „+12% wzrostu”. Po `shrink-0` geometria jest ta sama co na 1440; na zrzucie 390 „+12% wzrostu” w całości widoczne.
+3. **Badge „Preview”:** na mobile `max-sm:top-[125px] max-sm:-left-8` (na 1440 bez zmian). Badge wisi z lewej strony karty, której lewy róg i tak jest na krawędzi klipu sekcji, więc na 390 nie da się go pokazać w całości bez zasłonięcia tekstu karty — wybrane położenie: 28 px ucięte (baseline FAZY 0: ~40 px, „VIEW”; pierwsza wersja FAZY 2: 30 px), zero kontaktu z „Kondycja Zespołu”/„Analityka Pulsu”, badge opiera się o lewą krawędź panelu wykresu (~8 px, tylko obramowanie siatki). Dodatkowo `lg:max-xl:-left-12`, bo na 1024–1279 px badge stykał się z boxem `h1` (na 1100 px: 10 px luzu; 1440 nietknięte).
+4. Modal: dwa wiersze nagłówków („Narzędzia dla managera” + pigułka „Podgląd szablonów”, „Rozbicie na czynniki cząstkowe” + „N czynniki analizowane”) dostały `flex-wrap gap-y-2`, a pigułka/meta `shrink-0 whitespace-nowrap` — na 390 pigułka spada pod tytuł zamiast ściskać go do 3 linii. Kafelek „Częstotliwość”: `type-body-sm font-bold` → `type-label` (wartość w kafelku statystyk, nie emfaza inline).
+5. Sekcja 05, siatka 2×2 atrybutów: `sm:min-h-[2.6em]` na `h3` (2 linie × 1.3), żeby opisy w rzędzie zaczynały się na tej samej wysokości („Naukowa struktura” i „Szybka konfiguracja” łamią się na 2 linie obok 1-linijkowych sąsiadów). Bez zmian fontów.
+
+### Wynik skryptu
+```
+1440×900 (strona):   ROZMIARY FONTU: 12, 14, 16, 18, 20, 40, 60   WAGI: 400, 600, 700, 800
+                     NAGŁÓWKI: h1=1 h2=7 h3=39 h4=0
+                     WYSOKOŚCI PRZYCISKÓW: 32, 34, 36, 38, 41, 44, 46, 48, 52
+                     BŁĘDY KONTRASTU (7): ✓×3 2.37:1, +12% wzrostu 3.65:1, 94% 1.04:1, Wysokie 1.58:1, 10× 1.99:1  (te same 7 co w baseline — FAZA 4)
+390×844 (strona):    ROZMIARY FONTU: 12, 14, 15, 16, 18, 20, 28, 36   WAGI: 400, 600, 700, 800
+                     (20px ×1 = logo „hrly” w headerze — wyjątek znaku firmowego; 15px = type-body mobile wg tabeli)
+                     BŁĘDY KONTRASTU (8): 7 jw. + „01” [18px/w700] 3.88:1
+1440 + modal:        ROZMIARY: 12, 14, 16, 18, 20, 40, 60   WAGI: 400, 600, 700, 800   NAGŁÓWKI: h1=1 h2=8 h3=40 h4=5
+390 + modal:         ROZMIARY: 12, 14, 15, 16, 18, 20, 28, 36   WAGI: 400, 600, 700, 800
+offenders.js:        1440 → 0; 390 → 1 (logo 20px)
+lint (tsc --noEmit): czysty   build: OK
+```
+Zrzuty 1440 (pełna strona), 390 (pełna strona) i modal 1440/390: nic nie nachodzi na tekst, siatki równe (po poprawkach z review).
+
+### Odstępstwa od planu i dlaczego
+1. **Modal `h2` → `type-h3`** (20/700/1.3 zamiast 40/800/1.15) i **`h4` kart modala → `type-body font-bold`** (16/700/1.6 zamiast `type-h3`): 40 px nie mieści się w pasku modala, a 20 px rozbijał nagłówki w 2-kolumnowej siatce kart. Oba warianty były w spec dopuszczone pod warunkiem opisania. Skutek uboczny: „WPŁYW NA PRACOWNIKA” łamie się na 2 linie przy 1440 (obok 1-linijkowego „WPŁYW NA BIZNES”).
+2. **Tytuły kart marquee (sekcja 05): `truncate` → `sm:truncate`.** Spec: „zostaw truncate”; poniżej 640 px 18-px tytuł w 300-px karcie byłby ucinany w połowie słowa, więc na mobile tytuły się zawijają (karty wyższe, ~2 w oknie marquee). Na ≥640 px truncate bez zmian.
+3. **Wysokości nav/footera:** linki nav header 28→34 px i linki footera 31→38 px (skutek `type-body-sm font-semibold` z mapowania), header 62→68,7 px. Sześć CTA ma identyczne wysokości (32/44/46/52/41/48) — nie ruszone.
+4. **CTA „Zobacz naszą ofertę” zostaje na `text-[11px]`** (sekcja 05). Reguła fazy: rozmiary CTA nietykane do FAZY 3; skrypt tego nie raportuje (przycisk ma dziecko SVG, więc nie jest liściem). **Przeniesione do FAZY 3 jako jawny offender** — docelowo 12 px (`type-label`-owy rozmiar) przy przebudowie przycisku.
+5. **`index.html`: Google Fonts JetBrains Mono `400;500` → `400;500;600`.** `type-label` ma wagę 600, a mono nie miało tej wagi — Chrome syntetyzował pogrubienie z 500. Jedna linia, bez nowej zależności (ten sam request do Google Fonts). Jeśli właściciel woli, można cofnąć i zaakceptować syntetyczny bold.
+6. **Logo „hrly” 20 px w headerze** zostaje (znak firmowy, spec) — na 390 pojawia się w `ROZMIARY FONTU` jako jedyny rozmiar spoza zbioru mobile.
+7. Mockup hero na mobile ma własne wymiary (`max-sm:`), a badge „Preview” jest na 390 częściowo ucięty (28 px, mniej niż w baseline) i oparty o krawędź panelu wykresu — kompromis, patrz „Poprawki po review” 3; pełne rozwiązanie w FAZIE 6 (hero).
+8. Na 1024–1279 px `h1` 60 px łamie się na 4 linie („ZMIEŃ DANE / HR W / …”) — poza bramką 1440/390, do FAZY 6.
+
+### Do decyzji właściciela
+- FAZA 3: `text-[11px]` na CTA „Zobacz naszą ofertę” → 12 px (jedyny tekst < 12 px na stronie głównej).
+- FAZA 4: numerały „01/02/03” w sekcji 02 (`#C4672D` na białym) — po zmianie na 18 px/700 na mobile przestają być „large text” i mają 3.88:1 (na 1440 przy 20 px/700 nadal large, OK); przyciemnić kolor albo zaakceptować. Pozostałe 7 błędów kontrastu — bez zmian od baseline. Modal: 40 (1440) / 32 (390) błędów kontrastu — również FAZA 4 (etykiety `#A39AB4`/`text-gray-400` na tłach, wyniki obszarów).
+- `index.html` (waga 600 JetBrains Mono): zostawić czy cofnąć.
