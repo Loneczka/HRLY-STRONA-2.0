@@ -2,6 +2,24 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { Activity, TrendingUp, Heart } from 'lucide-react';
 
+/* FAZA 6.3 — dane wykresu w karcie „Analityka Pulsu”.
+   Dwa szeregi po 12 punktów miesięcznych, liczone w jednostkach viewBox,
+   które odpowiadają pikselom panelu (236×128 = wnętrze panelu na 390 px; skala 1,0 też na 1440),
+   więc font-size 12 w SVG renderuje się jako 12 px. */
+const SERIES_A = [58, 61, 60, 66, 64, 70, 73, 71, 76, 79, 78, 84]; // zaangażowanie
+const SERIES_B = [62, 60, 63, 61, 65, 64, 68, 66, 69, 72, 71, 74]; // eNPS
+const MONTHS = ['Sty', 'Lut', 'Mar', 'Kwi', 'Maj', 'Cze', 'Lip', 'Sie', 'Wrz', 'Paź', 'Lis', 'Gru'];
+const Y_TICKS = [60, 70, 80];
+const PLOT = { x0: 30, x1: 230, yTop: 26, yBottom: 98, vMin: 55, vMax: 88 };
+
+const px = (i: number) => PLOT.x0 + (i * (PLOT.x1 - PLOT.x0)) / (SERIES_A.length - 1);
+const py = (v: number) => PLOT.yBottom - ((v - PLOT.vMin) / (PLOT.vMax - PLOT.vMin)) * (PLOT.yBottom - PLOT.yTop);
+const linePath = (series: number[]) =>
+  series.map((v, i) => `${i === 0 ? 'M' : 'L'} ${px(i).toFixed(1)} ${py(v).toFixed(1)}`).join(' ');
+
+const PATH_A = linePath(SERIES_A);
+const PATH_B = linePath(SERIES_B);
+
 export const HrlyHeroGraphic: React.FC = () => {
   return (
     <div className="relative w-full lg:max-w-md h-[480px] flex items-center justify-center overflow-visible bg-transparent select-none">
@@ -10,7 +28,7 @@ export const HrlyHeroGraphic: React.FC = () => {
       <div className="absolute bottom-[10%] right-[5%] w-64 h-64 rounded-full bg-primary-light/40 blur-[75px] animate-pulse delay-75" />
 
       {/* Dotted Grid Background */}
-      <div 
+      <div
         className="absolute inset-0 opacity-[0.05] pointer-events-none"
         style={{
           backgroundImage: 'radial-gradient(var(--color-indigo-primary) 2px, transparent 2px)',
@@ -25,23 +43,25 @@ export const HrlyHeroGraphic: React.FC = () => {
       {/* Decorative bead/sphere behind top-left */}
       <div className="absolute top-[12%] left-[20%] w-16 h-16 rounded-full bg-gradient-to-tr from-indigo-primary/30 to-primary-light/30 blur-[8px] opacity-80" />
 
-      {/* MAIN 3D PERSPECTIVE WRAPPER (Gentler angle) */}
+      {/* MAIN 3D PERSPECTIVE WRAPPER
+          FAZA 6.2: karta zachowuje perspektywę (rotateX), ale rotacja w płaszczyźnie ekranu = 0°,
+          więc żaden tekst mockupu nie jest przechylony (rotateZ było -20°). */}
       <div className="relative isometric-container w-full h-full flex items-center justify-center">
-        <motion.div 
+        <motion.div
           className="relative isometric-card w-[350px] h-[350px] max-sm:w-[330px] max-sm:h-[330px] shrink-0 flex items-center justify-center"
           style={{
-            transform: 'rotateX(38deg) rotateY(0deg) rotateZ(-20deg)',
+            transform: 'rotateX(14deg) rotateY(0deg) rotateZ(0deg)',
             transformStyle: 'preserve-3d',
           }}
         >
           {/* Base Grid Underlay (Page Sheet) */}
-          <div 
+          <div
             className="absolute w-[350px] h-[350px] max-sm:w-[330px] max-sm:h-[330px] bg-neutral-bg/30 border border-border-soft/50 rounded-[40px] shadow-lg overflow-hidden"
             style={{
               transform: 'translateZ(0px)',
             }}
           >
-            <div 
+            <div
               className="absolute inset-0 opacity-[0.06] rounded-[40px]"
               style={{
                 backgroundImage: 'linear-gradient(to right, var(--color-indigo-primary) 1px, transparent 1px), linear-gradient(to bottom, var(--color-indigo-primary) 1px, transparent 1px)',
@@ -77,8 +97,8 @@ export const HrlyHeroGraphic: React.FC = () => {
             </div>
 
             {/* Grid display with Animating Live Wave */}
-            <div 
-              className="relative h-[115px] bg-neutral-bg/95 border border-border-soft/75 rounded-2xl p-2.5 overflow-hidden my-2.5"
+            <div
+              className="relative h-[150px] bg-neutral-bg/95 border border-border-soft/75 rounded-2xl p-2.5 overflow-hidden my-2.5"
               style={{
                 backgroundImage: 'linear-gradient(to right, color-mix(in oklab, var(--color-text-dark) 4%, transparent) 1px, transparent 1px), linear-gradient(to bottom, color-mix(in oklab, var(--color-text-dark) 4%, transparent) 1px, transparent 1px)',
                 backgroundSize: '9px 9px'
@@ -90,22 +110,75 @@ export const HrlyHeroGraphic: React.FC = () => {
                 DANE LIVE
               </div>
 
-              {/* Heartbeat SVG Wave Line (Animating) */}
-              <svg className="w-full h-full relative z-10" viewBox="0 0 200 80" preserveAspectRatio="none">
-                {/* Secondary wave - Indigo (Animating) */}
+              {/* FAZA 6.3 — wykres 12-punktowy, dwa szeregi, oś X (miesiące) i oś Y (60/70/80).
+                  viewBox 236×128 = wewnętrzny rozmiar panelu (mobile), skala 1,0 na 390 i na 1440,
+                  więc font-size 12 renderuje się jako 12 px (nie zmniejszamy tekstu pod layout). */}
+              <svg
+                className="w-full h-full relative z-10"
+                viewBox="0 0 236 128"
+                role="img"
+                aria-label="Wykres: zaangażowanie i eNPS w 12 miesiącach"
+              >
+                {/* Siatka pozioma + linia bazowa osi X */}
+                <g strokeWidth="1" fill="none">
+                  {Y_TICKS.map((v) => (
+                    <line
+                      key={`grid-${v}`}
+                      x1={PLOT.x0}
+                      x2={PLOT.x1}
+                      y1={py(v)}
+                      y2={py(v)}
+                      stroke="color-mix(in oklab, var(--color-border-indigo) 55%, transparent)"
+                    />
+                  ))}
+                  <line x1={PLOT.x0} x2={PLOT.x1} y1={PLOT.yBottom} y2={PLOT.yBottom} stroke="var(--color-border-indigo)" />
+                </g>
+
+                {/* Oś Y — wartości */}
+                <g className="type-label font-mono text-muted-purple" fill="currentColor" textAnchor="end">
+                  {Y_TICKS.map((v) => (
+                    <text key={`ty-${v}`} x={PLOT.x0 - 6} y={py(v) + 4}>{v}</text>
+                  ))}
+                </g>
+
+                {/* Oś X — miesiące (co druga etykieta, żeby nie zmniejszać fontu) */}
+                <g className="type-label font-mono text-muted-purple" fill="currentColor" textAnchor="middle">
+                  {MONTHS.map((m, i) => (i % 2 === 0 ? (
+                    <text key={m} x={px(i)} y={PLOT.yBottom + 18}>{m}</text>
+                  ) : null))}
+                </g>
+
+                {/* Szereg B — eNPS (drugi szereg, statyczny) */}
                 <path
-                  d="M 20 50 L 35 50 L 42 60 L 50 45 L 58 45 L 72 25 L 100 25 L 106 38 L 112 48 L 120 38 L 160 32 L 200 32"
+                  d={PATH_B}
                   fill="none"
                   stroke="var(--color-muted-indigo)"
-                  strokeWidth="2"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="opacity-70"
+                />
+
+                {/* Szereg A — zaangażowanie: pełna linia + dwie animowane fale („live”) */}
+                <path
+                  d={PATH_A}
+                  fill="none"
+                  stroke="var(--color-indigo-primary)"
+                  strokeWidth="2.4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d={PATH_A}
+                  fill="none"
+                  stroke="var(--color-indigo-primary)"
+                  strokeWidth="2.4"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   className="opacity-30 pulse-wave-1"
                 />
-
-                {/* Primary bright wave - indigo (Animating; light card, so no apricot here — the 94% bar on the navy card is the hero's single apricot accent) */}
                 <path
-                  d="M 20 50 L 35 50 L 42 60 L 50 45 L 58 45 L 72 25 L 100 25 L 106 38 L 112 48 L 120 38 L 160 32 L 200 32"
+                  d={PATH_A}
                   fill="none"
                   stroke="var(--color-indigo-primary)"
                   strokeWidth="3.2"
@@ -114,17 +187,21 @@ export const HrlyHeroGraphic: React.FC = () => {
                   className="drop-shadow-[0_0_5px_color-mix(in_oklab,var(--color-indigo-primary)_50%,transparent)] pulse-wave-2"
                 />
 
-                {/* Traveling dot traveling the signal line */}
-                <circle
-                  cx="20"
-                  r="3.5"
-                  fill="var(--color-indigo-primary)"
-                  cy="40"
-                  className="drop-shadow-[0_0_4px_var(--color-indigo-primary)] traveling-dot"
-                />
+                {/* Punkty szeregu A */}
+                <g fill="var(--color-neutral-surface)" stroke="var(--color-indigo-primary)" strokeWidth="1.4">
+                  {SERIES_A.map((v, i) => (
+                    <circle key={`p-${i}`} cx={px(i)} cy={py(v)} r="2.2" />
+                  ))}
+                </g>
 
-                {/* Fixed Wave Dot */}
-                <circle cx="20" cy="50" r="3.5" fill="var(--color-text-dark)" className="drop-shadow-[0_2px_4px_color-mix(in_oklab,var(--color-text-dark)_15%,transparent)]" />
+                {/* Ostatni pomiar */}
+                <circle
+                  cx={px(SERIES_A.length - 1)}
+                  cy={py(SERIES_A[SERIES_A.length - 1])}
+                  r="3.4"
+                  fill="var(--color-indigo-primary)"
+                  className="drop-shadow-[0_2px_4px_color-mix(in_oklab,var(--color-text-dark)_15%,transparent)]"
+                />
               </svg>
             </div>
 
@@ -143,75 +220,12 @@ export const HrlyHeroGraphic: React.FC = () => {
             </div>
           </motion.div>
 
-          {/* Floating Card 1: "ZAUFANIE W FIRMIE" (Top Right) */}
+          {/* Decorative Waveform Button badge (Top Right, above main card).
+              Poprawka po review: przy 390 px prawa krawędź stoi dokładnie na klipie sekcji,
+              a poniżej wychodziła poza nią — na <390 px (max-[390px] = width < 390px) chowamy ją tak jak badge „Preview”
+              (element czysto dekoracyjny; przesunięcie do środka zasłoniłoby wykres). */}
           <motion.div
-            className="absolute -top-10 -right-8 w-[210px] max-sm:w-[190px] bg-navy-card-from bg-gradient-to-br from-navy-card-from to-navy-card-to border border-white/10 rounded-2xl p-3.5 shadow-[0_20px_45px_-10px_color-mix(in_oklab,var(--color-text-dark)_50%,transparent)] text-white space-y-1.5"
-            style={{
-              transformStyle: 'preserve-3d',
-            }}
-            animate={{
-              translateZ: [40, 56, 40],
-              y: [-6, 6, -6],
-              x: [2, -2, 2]
-            }}
-            transition={{
-              duration: 5,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-          >
-            <div className="flex justify-between items-center">
-              <span className="type-label text-on-dark-muted font-display uppercase">
-                Zaufanie w firmie
-              </span>
-              <Heart className="w-3 h-3 text-accent-rose fill-accent-rose animate-pulse" />
-            </div>
-            <div className="flex items-baseline gap-1.5 mt-2">
-              <span className="type-h3 font-display">94%</span>
-              <span className="type-label text-success-on-dark font-display">Wysokie</span>
-            </div>
-            <div className="w-full bg-white/10 h-1 rounded-full mt-2 overflow-hidden">
-              <div className="h-full bg-accent-apricot rounded-full w-[94%]" />
-            </div>
-          </motion.div>
-
-          {/* Floating Card 2: "RETENCJA KADRY" (Bottom Left) */}
-          <motion.div
-            className="absolute -bottom-10 -left-8 w-[220px] max-sm:w-[200px] bg-neutral-surface border border-border-soft/90 rounded-2xl p-3.5 shadow-[0_20px_40px_-10px_color-mix(in_oklab,var(--color-text-dark)_18%,transparent)] flex items-center justify-between gap-3"
-            style={{
-              transformStyle: 'preserve-3d',
-            }}
-            animate={{
-              translateZ: [60, 78, 60],
-              y: [6, -6, 6],
-              x: [-2, 2, -2]
-            }}
-            transition={{
-              duration: 7,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: 0.5
-            }}
-          >
-            <div className="space-y-0.5">
-              <span className="type-label text-muted-indigo font-display uppercase block">
-                Retencja kadry
-              </span>
-              <strong className="type-h3 text-text-dark mt-1 block">
-                stabilna
-              </strong>
-              <span className="type-label text-success font-display mt-0.5 block">
-                96.4% retencji
-              </span>
-            </div>
-            <div className="w-8 h-8 rounded-xl bg-success-soft text-success flex items-center justify-center shrink-0 shadow-sm border border-success/15">
-              <TrendingUp className="w-4 h-4 text-success" />
-            </div>
-          </motion.div>
-
-          {/* Decorative Waveform Button badge (Top Right, above main card) */}
-          <motion.div
-            className="absolute top-[84px] -right-3 w-7 h-7 rounded-lg bg-primary-light/60 border border-border-indigo/30 text-indigo-primary flex items-center justify-center shadow-md"
+            className="absolute top-[84px] -right-3 max-[390px]:hidden w-7 h-7 rounded-lg bg-primary-light/60 border border-border-indigo/30 text-indigo-primary flex items-center justify-center shadow-md"
             animate={{
               translateZ: [20, 32, 20],
               y: [-2, 2, -2]
@@ -226,9 +240,11 @@ export const HrlyHeroGraphic: React.FC = () => {
             <Activity className="w-3.5 h-3.5 text-indigo-primary" strokeWidth={2.5} />
           </motion.div>
 
-          {/* Decorative "Preview" badge (Left side of main card) */}
+          {/* Decorative "Preview" badge (Left side of main card).
+              FAZA 6.2: na <640 px ukryta — po wyprostowaniu mockupu wchodziła na oś Y wykresu
+              i tak czy tak wystawała poza klip sekcji (kompromis z FAZY 2 zamknięty). */}
           <motion.div
-            className="absolute top-[60px] max-sm:top-[125px] -left-16 lg:max-xl:-left-12 max-sm:-left-8 bg-neutral-surface/95 border border-border-soft/80 px-2.5 py-1.5 shadow-[0_4px_12px_color-mix(in_oklab,var(--color-text-dark)_8%,transparent)] text-text-dark type-label rounded-lg uppercase font-display"
+            className="absolute top-[60px] -left-14 lg:max-xl:-left-12 max-sm:hidden bg-neutral-surface/95 border border-border-soft/80 px-2.5 py-1.5 shadow-[0_4px_12px_color-mix(in_oklab,var(--color-text-dark)_8%,transparent)] text-text-dark type-label rounded-lg uppercase font-display"
             animate={{
               translateZ: [20, 32, 20],
               y: [2, -2, 2]
@@ -244,6 +260,77 @@ export const HrlyHeroGraphic: React.FC = () => {
           </motion.div>
 
         </motion.div>
+
+        {/* FAZA 6.2 — karty z liczbami POZA bryłą 3D: zero rotacji i zero perspektywy,
+            więc „94%” i „96.4%” czytają się pod 0°. Geometria (350×350) taka sama jak karta 3D.
+            Poprawka po review: poniżej 640 px odsunięcie kart jest płynne —
+            clamp(-8px, 185px - 50vw, 24px). Sekcja hero ma overflow-hidden i szerokość
+            vw - 32 px (padding <main>), więc od środka makiety jest 50vw - 16 px miejsca;
+            przy połowie ramki 165 px offset musi zejść do ~21 px do wewnątrz przy 320 px.
+            Do 378 px wzwyż clamp zwraca -8 px, czyli układ 390/1440 bez zmian. */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div className="relative w-[350px] h-[350px] max-sm:w-[330px] max-sm:h-[330px] shrink-0">
+
+            {/* Floating Card 1: "ZAUFANIE W FIRMIE" (Top Right) */}
+            <motion.div
+              className="absolute -top-16 -right-10 lg:max-xl:-right-6 max-sm:-top-14 max-sm:right-[clamp(-8px,calc(185px_-_50vw),24px)] w-[210px] max-sm:w-[190px] bg-navy-card-from bg-gradient-to-br from-navy-card-from to-navy-card-to border border-white/10 rounded-2xl p-3.5 shadow-[0_20px_45px_-10px_color-mix(in_oklab,var(--color-text-dark)_50%,transparent)] text-white space-y-1.5"
+              animate={{
+                y: [-6, 6, -6],
+                x: [2, -2, 2]
+              }}
+              transition={{
+                duration: 5,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+            >
+              <div className="flex justify-between items-center">
+                <span className="type-label text-on-dark-muted font-display uppercase">
+                  Zaufanie w firmie
+                </span>
+                <Heart className="w-3 h-3 text-accent-rose fill-accent-rose animate-pulse" />
+              </div>
+              <div className="flex items-baseline gap-1.5 mt-2">
+                <span className="type-h3 font-display">94%</span>
+                <span className="type-label text-success-on-dark font-display">Wysokie</span>
+              </div>
+              <div className="w-full bg-white/10 h-1 rounded-full mt-2 overflow-hidden">
+                <div className="h-full bg-accent-apricot rounded-full w-[94%]" />
+              </div>
+            </motion.div>
+
+            {/* Floating Card 2: "RETENCJA KADRY" (Bottom Left) */}
+            <motion.div
+              className="absolute -bottom-[72px] -left-12 max-sm:-bottom-[68px] max-sm:left-[clamp(-8px,calc(185px_-_50vw),24px)] w-[220px] max-sm:w-[200px] bg-neutral-surface border border-border-soft/90 rounded-2xl p-3.5 shadow-[0_20px_40px_-10px_color-mix(in_oklab,var(--color-text-dark)_18%,transparent)] flex items-center justify-between gap-3"
+              animate={{
+                y: [6, -6, 6],
+                x: [-2, 2, -2]
+              }}
+              transition={{
+                duration: 7,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: 0.5
+              }}
+            >
+              <div className="space-y-0.5">
+                <span className="type-label text-muted-indigo font-display uppercase block">
+                  Retencja kadry
+                </span>
+                <strong className="type-h3 text-text-dark mt-1 block">
+                  stabilna
+                </strong>
+                <span className="type-label text-success font-display mt-0.5 block">
+                  96.4% retencji
+                </span>
+              </div>
+              <div className="w-8 h-8 rounded-xl bg-success-soft text-success flex items-center justify-center shrink-0 shadow-sm border border-success/15">
+                <TrendingUp className="w-4 h-4 text-success" />
+              </div>
+            </motion.div>
+
+          </div>
+        </div>
       </div>
     </div>
   );

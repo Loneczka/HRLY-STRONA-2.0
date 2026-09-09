@@ -10,7 +10,7 @@ Lista zadań:
 - [x] FAZA 3 — Jeden komponent przycisku (STOP 3.2 rozstrzygnięty: A2)
 - [x] FAZA 4 — Kolor: reguła zamiast przypadku
 - [x] FAZA 5 — Bugi wizualne
-- [ ] FAZA 6 — Hero (STOP 6.3 warunkowy)
+- [x] FAZA 6 — Hero (STOP 6.3 nie był potrzebny)
 - [ ] FAZA 7 — Social proof (STOP na treści)
 
 ---
@@ -370,3 +370,40 @@ Wszystko identyczne z FAZĄ 4 poza `KOLORY TEKSTU`: brzoskwinia ×2 → ×1 (pat
 Do decyzji właściciela:
 - Czy `hero.badge` w CMS ma stracić prefiks „01 · ” (wtedy helper można usunąć).
 - Ton akcentowy dla etykiety sekcji 08 (odstępstwo 1).
+
+---
+
+## FAZA 6 — Hero   [ZROBIONE Z ODSTĘPSTWAMI]
+
+Zmienione pliki: `src/components/HrlyHeroGraphic.tsx`, `src/index.css` (usunięty keyframe `travelDotAnim` + `.traveling-dot`). Hero w `App.tsx` bez zmian.
+
+### 6.1 Czas animacji wejścia — bez zmian (pomiar)
+Probe `hero-timing.js` (próbkowanie opacity od `navigationStart`): wszystkie 15 elementów hero (badge, h1, lead, CTA, pasek zaufania, teksty mockupu, statystyki) osiągają opacity 1 w **360 ms** (load + 339 ms), stagger **1 ms**. Jedyne wejście to wrapper strony (`motion.div`, 0,3 s). Poniżej progu 400 ms, więc nie ruszane. Margines ~40 ms; „3 sekundy” z briefu lokalnie nie występują — to czas ładowania JS/fontów na produkcji (osobne zadanie: preload fontów / krytyczny CSS).
+
+### 6.2 Rotacja
+- Karta główna: `rotateX(38deg) rotateZ(-20deg)` → `rotateX(14deg) rotateZ(0deg)` (perspektywa i pływanie w Z zostają).
+- Obie karty z liczbami („Zaufanie w firmie 94%”, „Retencja kadry 96.4%”) przeniesione poza bryłę 3D do płaskiej nakładki (`absolute inset-0` w `.isometric-container`), własne pływanie x/y.
+- Pomiar `hero-angles.js` (kąt z realnych rectów + kontrola macierzowa): przed 14,2–17,2° na każdym tekście; po **0,00° dla wszystkich 21 elementów** (1440 i 390). Wymóg: etykiety ≤ 3°, liczby 0° — spełniony z zapasem.
+
+### 6.3 Gęstość danych — w istniejącym SVG (STOP nie był potrzebny)
+Ten sam `<svg>` w `HrlyHeroGraphic.tsx`: `SERIES_A` (zaangażowanie, 12 punktów 58→84) i `SERIES_B` (eNPS, 62→74), ścieżki liczone helperami `px()/py()`; 12 kropek + wyróżniony ostatni pomiar; 3 linie siatki + oś bazowa; oś Y (60/70/80); oś X co drugi miesiąc (Sty/Mar/Maj/Lip/Wrz/Lis); `role="img"` + `aria-label`. `viewBox 236×128` = wnętrze panelu na 390 px, `preserveAspectRatio` domyślne → skala 1:1 na 1440 i 390, etykiety osi to `type-label font-mono text-muted-purple` = **12 px renderowane**, 7,4:1. Panel wykresu 115 → 150 px (karta bez zmian wysokości). Fale „live” (`pulse-wave-1/2`) zostały na serii A; pod reduce-motion pełna linia. Zero bibliotek, zero nowych plików.
+
+### 6.4 Re-animacja
+Brak `whileInView`; po przewinięciu do 4000 px i powrocie hero pełne, `getAnimations()` bez nowych wejść.
+
+### Wynik skryptu
+```
+1440: ROZMIARY 12, 14, 16, 18, 20, 40, 60   WAGI 400, 600, 700, 800   NAGŁÓWKI h1=1 h2=7 h3=39 h4=0   CTA 40/48 Inter   BŁĘDY KONTRASTU (0)
+390:  ROZMIARY 12, 14, 15, 16, 18, 20, 28, 36   BŁĘDY KONTRASTU (0)   scrollWidth = 390
+```
+Lint i build czyste. Recenzja: akceptacja PASS (0 uwag); regresja — bloker (karty pływające po wyjęciu z bryły 3D ucinały się poniżej ~385 px) naprawiony płynnym odsunięciem `clamp(-8px, calc(185px - 50vw), 24px)` poniżej 640 px + korekta 1–4 px na 1024–1029 px; runda 2: PASS.
+
+Odstępstwa od planu i dlaczego:
+1. `rotateZ` = 0° zamiast −3° ze spec: kontr-rotacja wiersza „Uznanie / +12%” wewnątrz przechylonej karty dawałaby widoczny zbieg; wyzerowanie całej karty daje 0° wszędzie.
+2. Usunięta „podróżująca kropka” (`travelDotAnim`) — przy 12 kropkach danych była szumem; spec mówił „zostaw”, ale sens (sygnał „live”) niosą fale.
+3. Badge „Preview” jest teraz w całości widoczny na 390 (kompromis z FAZY 2 przestał być potrzebny).
+4. Na 320–640 px karta „Zaufanie” styka się z linią etykiety „Kondycja zespołu” (~3 px nakładania bboxów, bez kolizji glifów) — minor z recenzji, do ewentualnej korekty offsetu.
+
+Do decyzji właściciela:
+- Produkcja: preload fontów / krytyczny CSS, jeśli „puste prostokąty przez 3 s” z briefu nadal występują na hrly.pl (lokalnie hero jest pełne po 360 ms).
+- `h1` 60 px na 1024–1279 px łamie się na 4 linie — poza bramką 1440/390; ewentualnie `lg:text-[52px]` jako krok pośredni (to byłby nowy rozmiar poza skalą — wymaga decyzji).

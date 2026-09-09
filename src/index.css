@@ -183,15 +183,6 @@
   }
 }
 
-@keyframes travelDotAnim {
-  0% {
-    cx: 0px;
-  }
-  100% {
-    cx: 200px;
-  }
-}
-
 .pulse-wave-1 {
   stroke-dasharray: 60 140;
   animation: pulseWaveAnim 3.5s linear infinite;
@@ -200,10 +191,6 @@
 .pulse-wave-2 {
   stroke-dasharray: 50 150;
   animation: pulseWaveAnimAlt 2.8s linear infinite;
-}
-
-.traveling-dot {
-  animation: travelDotAnim 2.8s linear infinite;
 }
 
 @keyframes marquee-scroll-up {
