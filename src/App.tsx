@@ -9,6 +9,7 @@ import {
   User, Building, MousePointerClick
 } from 'lucide-react';
 import { HrlyHeroGraphic } from './components/HrlyHeroGraphic';
+import { Button } from './components/Button';
 import { addLead, useSiteConfig } from './hooks/useSiteConfig';
 
 const HrlyDashboardPreview = lazy(() => import('./components/HrlyDashboardPreview').then(m => ({ default: m.HrlyDashboardPreview })));
@@ -505,7 +506,7 @@ export default function App() {
           </div>
         </div>
       }>
-        <AdminPanel onBack={() => setActiveTab('home')} />
+        <AdminPanel />
       </Suspense>
     );
   }
@@ -592,13 +593,9 @@ export default function App() {
 
           {/* Action Zone (Demo / Registration) */}
           <div className="hidden lg:flex items-center gap-3">
-            <button
-              onClick={() => { setActiveTab('pricing'); }}
-              className="text-xs font-bold bg-[#3B2F8C] hover:bg-[#231B5E] text-white px-4 py-2 rounded-xl shadow-md shadow-[#3B2F8C]/10 flex items-center gap-1.5 hover:scale-[0.98] transition-transform cursor-pointer"
-            >
+            <Button size="md" icon={<ArrowRight />} onClick={() => { setActiveTab('pricing'); }}>
               Załóż darmowe konto
-              <ArrowRight className="w-3.5 h-3.5 text-[#F4A574]" />
-            </button>
+            </Button>
           </div>
 
           {/* Mobile menu hamburger toggle */}
@@ -650,12 +647,9 @@ export default function App() {
               </button>
               
               <div className="pt-3 border-t border-[#EFEAE1] flex flex-col gap-2">
-                <button
-                  onClick={() => { setActiveTab('pricing'); setMobileMenuOpen(false); }}
-                  className="w-full text-center py-2.5 bg-[#3B2F8C] text-white font-bold text-xs rounded-lg cursor-pointer"
-                >
+                <Button size="md" fullWidth onClick={() => { setActiveTab('pricing'); setMobileMenuOpen(false); }}>
                   Załóż darmowe konto
-                </button>
+                </Button>
               </div>
             </nav>
           </motion.div>
@@ -710,20 +704,13 @@ export default function App() {
 
                     {/* Action buttons */}
                     <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 w-full sm:w-auto pt-2">
-                      <button
-                        onClick={() => setActiveTab('pricing')}
-                        className="w-full sm:w-auto py-3.5 px-6 bg-[#3B2F8C] hover:bg-[#231B5E] text-white rounded-xl text-xs font-bold tracking-tight shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer hover:scale-[1.02]"
-                      >
+                      <Button size="lg" className="w-full sm:w-auto" onClick={() => setActiveTab('pricing')}>
                         {config.hero.ctaPrimaryText || "Wypróbuj bezpłatnie"}
-                        <ArrowRight className="w-4 h-4 text-[#F4A574]" />
-                      </button>
+                      </Button>
                       
-                      <button
-                        onClick={() => setIsDashboardModalOpen(true)}
-                        className="w-full sm:w-auto py-3.5 px-6 bg-white hover:bg-[#F4F1EC] text-[#3B2F8C] border border-[#C4BBDE] rounded-xl text-xs font-bold tracking-tight text-center transition-all cursor-pointer hover:scale-[1.02]"
-                      >
+                      <Button variant="secondary" size="lg" className="w-full sm:w-auto" onClick={() => setIsDashboardModalOpen(true)}>
                         {config.hero.ctaSecondaryText || "Obejrzyj demo interaktywne"}
-                      </button>
+                      </Button>
                     </div>
 
                     {/* Trust small indicators */}
@@ -781,16 +768,10 @@ export default function App() {
                   </p>
                   <div className="flex flex-col items-center justify-center pt-4 relative">
                     <div className="relative group">
-                      {/* Vibrant pulsing background glow */}
-                      <div className="absolute -inset-1.5 bg-gradient-to-r from-[#F4A574] to-[#ffaa75] rounded-2xl blur-md opacity-75 group-hover:opacity-100 transition duration-300 animate-pulse" />
                       
-                      <button
-                        onClick={() => setIsDashboardModalOpen(true)}
-                        className="relative py-4 px-9 text-xs sm:text-sm bg-gradient-to-r from-[#F4A574] to-[#fca570] hover:from-[#e29362] hover:to-[#e98a51] text-[#14183D] font-display font-extrabold uppercase tracking-wider rounded-xl shadow-lg transition-all hover:scale-[1.03] active:scale-[0.98] duration-200 cursor-pointer flex items-center gap-2.5 z-10"
-                      >
+                      <Button size="lg" icon={<ArrowUpRight />} className="relative z-10" onClick={() => setIsDashboardModalOpen(true)}>
                         Otwórz przykładowy raport
-                        <ArrowUpRight className="w-4.5 h-4.5 text-[#14183D] stroke-[2.5]" />
-                      </button>
+                      </Button>
 
                       {/* Small floating pointer icon to suggest clicking */}
                       <motion.div
@@ -1032,13 +1013,9 @@ export default function App() {
 
                     {/* CTA Button */}
                     <div className="pt-2">
-                      <button
-                        onClick={() => setActiveTab('pricing')}
-                        className="px-6 py-3 bg-white hover:bg-[#F4A574] text-[#14183D] hover:text-white text-[11px] font-mono font-bold uppercase rounded-full transition-all flex items-center gap-2 shadow-sm hover:shadow-md cursor-pointer select-none"
-                      >
+                      <Button variant="secondary" size="md" tone="dark" icon={<ArrowRight />} onClick={() => setActiveTab('pricing')}>
                         Zobacz naszą ofertę
-                        <ArrowRight className="w-3.5 h-3.5 text-[#F4A574]" />
-                      </button>
+                      </Button>
                     </div>
                   </div>
 
@@ -1147,12 +1124,9 @@ export default function App() {
                   </p>
 
                   <div className="flex flex-col items-center justify-center gap-4 pt-2">
-                    <button
-                      onClick={() => { setActiveTab('pricing'); }}
-                      className="py-4 px-8 text-xs bg-[#F4A574] hover:bg-[#e0915f] text-[#14183D] font-display font-extrabold uppercase tracking-wider rounded-xl shadow-lg transition-all hover:scale-[1.03] active:scale-[0.98] duration-200 cursor-pointer"
-                    >
+                    <Button size="lg" tone="dark" onClick={() => { setActiveTab('pricing'); }}>
                       Zacznij bezpłatny test
-                    </button>
+                    </Button>
                     
                     {/* Security credentials in white/gray */}
                     <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 type-label text-gray-400 font-mono">
@@ -1586,7 +1560,7 @@ export default function App() {
                   <p className="text-xs text-[#55506E] mt-3 animate-pulse">Ładowanie kalkulatora cennika...</p>
                 </div>
               }>
-                <HrlyPricingCalculator onNavigate={setActiveTab} />
+                <HrlyPricingCalculator onNavigate={(tab) => setActiveTab(tab as PageRoute)} />
               </Suspense>
 
               {/* Contact Box copy from page 6 */}
@@ -1882,7 +1856,7 @@ export default function App() {
                   <p className="text-xs text-[#55506E] mt-3 animate-pulse">Ładowanie artykułów blogowych...</p>
                 </div>
               }>
-                <HrlyBlogSection config={config} />
+                <HrlyBlogSection />
               </Suspense>
             </motion.div>
           )}

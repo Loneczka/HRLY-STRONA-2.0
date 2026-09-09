@@ -7,7 +7,7 @@ Lista zadań:
 - [x] FAZA 0 — Rekonesans i baseline
 - [x] FAZA 1 — Blokery dostępności
 - [x] FAZA 2 — Jedna skala typograficzna
-- [~] FAZA 3 — Jeden komponent przycisku (3.1 zrobione, STOP 3.2 — czeka na decyzję)
+- [x] FAZA 3 — Jeden komponent przycisku (STOP 3.2 rozstrzygnięty: A2)
 - [ ] FAZA 4 — Kolor: reguła zamiast przypadku
 - [ ] FAZA 5 — Bugi wizualne
 - [ ] FAZA 6 — Hero (STOP 6.3 warunkowy)
@@ -213,9 +213,9 @@ Zrzuty 1440 (pełna strona), 390 (pełna strona) i modal 1440/390: nic nie nacho
 
 ---
 
-## FAZA 3 — Jeden komponent przycisku   [W TOKU — 3.1 ZROBIONE, STOP 3.2]
+## FAZA 3 — Jeden komponent przycisku   [ZROBIONE Z ODSTĘPSTWAMI]
 
-Zmienione pliki: `src/components/Button.tsx` (nowy — jedyny nowy plik tej fazy), `src/index.css` (tokeny `--color-cta-*`). CTA na stronie **jeszcze nie podmienione** (3.3 po decyzji).
+Zmienione pliki: `src/components/Button.tsx` (nowy — jedyny nowy plik tej fazy), `src/index.css` (tokeny `--color-cta-*`), `src/App.tsx` (7 CTA na `<Button>`, 3 poprawki typów w miejscach wywołań), `package.json`/`package-lock.json` (`@types/react`, `@types/react-dom` — dev, za zgodą właściciela).
 
 ### 3.1 Komponent `Button`
 - `variant: primary | secondary | ghost`, `size: md (h-10, px-5, 14/600) | lg (h-12, px-7, 16/700)`, `tone: light | dark`, `icon` (po prawej, 16 px, `aria-hidden`), `fullWidth`, forma `<a href>` lub `<button type="button">`.
@@ -241,6 +241,39 @@ Odstępstwa od planu i dlaczego:
 2. Dodatkowe tokeny `--color-cta-primary-dark-*` i `--color-cta-outline*` (protokół zakładał jeden kolor primary) — bez nich primary na ciemnych sekcjach (05, 07) ginie w tle (1,6:1), a secondary/ghost w brzoskwini nie przeszłyby kontrastu.
 3. Wysokości: nav-pills (34 px) i linki footera (38 px) nie są CTA — nie przechodzą na `Button`; skrypt będzie je nadal raportować obok 40/48.
 
-Do decyzji właściciela (STOP):
-- **3.2 — kolor primary** (rekomendacja i warianty w podsumowaniu).
-- **`@types/react` + `@types/react-dom`** (devDependencies): repo nie ma typów Reacta, więc `React.ButtonHTMLAttributes` itd. są `any` i typowanie propsów `Button` (rozdzielenie `<a>`/`<button>`, `href`+`disabled`) nie jest egzekwowane przez `tsc`. Runtime działa poprawnie. Dodanie to nowa zależność (dev) — zgodnie z protokołem to STOP; bez zgody nie dodaję.
+### 3.2 Decyzja właściciela (2026-09-09): **A2 — fiolet `#3B2F8C` primary na jasnym tle, inwersja (biały / fioletowy tekst) na ciemnych sekcjach; brzoskwinia tylko jako akcent.** Zgoda także na `@types/react` + `@types/react-dom` (devDependencies).
+Tokeny w `src/index.css` odpowiadają decyzji bez zmian (placeholder = wybrany wariant).
+
+### 3.3 Podmiana CTA (7 miejsc)
+| CTA | Button | Pomiar 1440 |
+|---|---|---|
+| Header „Załóż darmowe konto” | `primary md` + ArrowRight | 40 px, 14/600, `#3B2F8C` |
+| Menu mobilne „Załóż darmowe konto” | `primary md fullWidth` | 40 px |
+| Hero „Wypróbuj za darmo →” (CMS) | `primary lg` | 48 px, 16/700 |
+| Hero „Jak to działa →” (CMS) | `secondary lg` | 48 px, biały + border fiolet |
+| Baner demo „Otwórz przykładowy raport” | `primary lg` + ArrowUpRight | 48 px, sentence case |
+| 05 „Zobacz naszą ofertę” (ciemna) | `secondary md tone=dark` + ArrowRight | 40 px, biały tekst, border white/40 |
+| 07 „Zacznij bezpłatny test” (ciemna) | `primary lg tone=dark` | 48 px, biały / `#3B2F8C` (inwersja) |
+Wszystkie: `rounded-xl` 12 px, Inter, `text-transform: none`, ring fokusu 10,2:1 (jasne) / 8,54:1 (ciemne, brzoskwinia).
+
+### Wynik skryptu (1440×900)
+```
+WYSOKOŚCI PRZYCISKÓW: 34, 36, 38, 40, 48      (34 = nav-pills, 36 = logo, 38 = linki footera — nie-CTA; CTA: tylko 40 i 48)
+RADIUSY PRZYCISKÓW:   0px, 8px, 12px           (0/8 = logo, linki footera, nav-pills; CTA: tylko 12px)
+KROJE PRZYCISKÓW:     Inter                    (jeden krój — cel osiągnięty)
+NAGŁÓWKI: h1=1 h2=7 h3=39 h4=0   ROZMIARY/WAGI: bez zmian (12–60 / 400–800)
+CTA (6): bg primary = rgb(59,47,140) na jasnym; na ciemnym inwersja rgb(255,255,255) (decyzja A2)
+390: WYSOKOŚCI 36, 38, 40, 48; RADIUSY 0px, 12px; KROJE Inter
+```
+Lint (`tsc --noEmit`, teraz z prawdziwymi typami Reacta) i build czyste.
+
+### Odstępstwa od planu i dlaczego (uzupełnienie)
+4. **Skrypt raportuje 5 wysokości, nie 2** — trzy dodatkowe to elementy nie będące CTA (logo-button 36, nav-pills 34, linki footera 38 — wyższe po FAZIE 2, bo mają `type-body-sm`). Sześć CTA ma dokładnie 40/48. Zamiana nav/footera na `Button ghost` byłaby zmianą poza zakresem („Wszystkie 6 miejsc na `<Button>`”).
+5. **Hero: bez ikon.** Teksty CTA z CMS kończą się znakiem „→” („Wypróbuj za darmo →”, „Jak to działa →”); dodanie ikony dawałoby podwójną strzałkę, a treść z CMS to copy — nie ruszam. Do decyzji: usunąć „→” z `DEFAULT_CONFIG.hero.ctaPrimaryText/ctaSecondaryText` i włączyć ikonę.
+6. **Usunięta brzoskwiniowa poświata (`blur` + `animate-pulse`) za CTA banera demo** — to była stylizacja tego jednego przycisku (peach glow za fioletowym przyciskiem nie ma sensu; zgodne z regułą akcentu FAZY 4). Ikonka „kursora” obok przycisku zostaje.
+7. **Ikony w CTA dziedziczą kolor tekstu** (biały/fiolet) zamiast brzoskwini — brzoskwinia wewnątrz przycisku primary to drugi kolor akcji w jednym elemencie.
+8. **3 poprawki typów w `App.tsx`** ujawnione przez `@types/react` (wcześniej `React.*` było `any`): `AdminPanel` i `HrlyBlogSection` dostawały propsy, których nie deklarują (`onBack`, `config` — ignorowane w runtime; usunięte), `HrlyPricingCalculator onNavigate` oczekuje `(tab: string) => void` (opakowane w `tab as PageRoute`). Zero zmian zachowania.
+
+Do decyzji właściciela:
+- Usunięcie „→” z tekstów CTA hero w `DEFAULT_CONFIG` (i w zapisanej konfiguracji CMS), żeby móc użyć ikony jak w headerze.
+- Czy linki footera / nav-pills mają przejść na `Button ghost` (spójny system, ale poza zakresem 6 CTA).
