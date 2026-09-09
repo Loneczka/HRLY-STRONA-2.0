@@ -11,6 +11,9 @@ import {
 import { HrlyHeroGraphic } from './components/HrlyHeroGraphic';
 import { Button } from './components/Button';
 import { SectionLabel } from './components/SectionLabel';
+// FAZA 7 — szkielet sekcji social proof. Import celowo zostaje mimo zakomentowanego
+// użycia niżej: dzięki temu komponent jest sprawdzany przez `npm run lint` (tsc).
+import { SocialProof } from './components/SocialProof';
 import { addLead, useSiteConfig } from './hooks/useSiteConfig';
 
 const HrlyDashboardPreview = lazy(() => import('./components/HrlyDashboardPreview').then(m => ({ default: m.HrlyDashboardPreview })));
@@ -755,6 +758,16 @@ export default function App() {
                   </div>
                 </div>
               </section>
+
+              {/* FAZA 7 — SOCIAL PROOF (STOP na treści; docs/design-fixes.md, FAZA 7).
+                  Sekcja czeka na materiały od właściciela: 4–6 logotypów klientów (SVG mono + zgoda
+                  na użycie), 1 cytat (treść, imię i nazwisko, stanowisko, firma, zgoda) oraz 1 liczba
+                  (np. liczba wdrożeń) ze źródłem. Bez tych treści komponent zwraca `null`, więc nawet
+                  po odkomentowaniu nic się nie wyrenderuje — dopiero wypełnione propsy pokazują sekcję.
+                  PRZY WŁĄCZANIU PRZENUMEROWAĆ ETYKIETY: ta sekcja bierze 02, a dotychczasowe
+                  SectionLabel przesuwają się o jeden — 02→03 (Pulpit demonstracyjny), 03→04,
+                  04→05, 05→06, 06→07, 07→08, 08→09. Hero (01) bez zmian. */}
+              {/* <SocialProof number="02" logos={[]} quote={undefined} metric={undefined} /> */}
 
               {/* SECTION: Interactive Demo Trigger Banner */}
               <section className="bg-white border border-border-soft/80 rounded-[32px] p-8 sm:p-12 text-center relative overflow-hidden shadow-xs">

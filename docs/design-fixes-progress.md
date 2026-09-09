@@ -11,7 +11,7 @@ Lista zadań:
 - [x] FAZA 4 — Kolor: reguła zamiast przypadku
 - [x] FAZA 5 — Bugi wizualne
 - [x] FAZA 6 — Hero (STOP 6.3 nie był potrzebny)
-- [ ] FAZA 7 — Social proof (STOP na treści)
+- [x] FAZA 7 — Social proof — szkielet (STOP na treści: czeka na materiały)
 
 ---
 
@@ -407,3 +407,151 @@ Odstępstwa od planu i dlaczego:
 Do decyzji właściciela:
 - Produkcja: preload fontów / krytyczny CSS, jeśli „puste prostokąty przez 3 s” z briefu nadal występują na hrly.pl (lokalnie hero jest pełne po 360 ms).
 - `h1` 60 px na 1024–1279 px łamie się na 4 linie — poza bramką 1440/390; ewentualnie `lg:text-[52px]` jako krok pośredni (to byłby nowy rozmiar poza skalą — wymaga decyzji).
+
+---
+
+## FAZA 7 — Social proof (szkielet)   [ZROBIONE — STOP NA TREŚCI]
+
+Zmienione pliki: `src/components/SocialProof.tsx` (nowy), `src/App.tsx` (import + zakomentowane użycie między hero a sekcją „02 · Pulpit demonstracyjny”, z instrukcją przenumerowania 02→03 … 08→09 po włączeniu).
+
+### Komponent
+SocialProof — src/components/SocialProof.tsx
+
+Typy eksportowane:
+- SocialProofLogo = { name: string; src?: string; svg?: React.ReactNode }
+  `name` wymagana zawsze: idzie do `alt` (przy `src`) albo do `sr-only` (przy `svg`). Gdy brak i `src`, i `svg` — renderuje się sama nazwa jako tekst (mono, uppercase, `text-muted-indigo`, BEZ wygaszenia, żeby nie zbić kontrastu).
+- SocialProofQuote = { text, author, role, company, avatarSrc? } — wszystkie string; `avatarSrc` opcjonalny (obraz dekoracyjny, `alt=""`, autor jest w `<figcaption>`).
+- SocialProofMetric = { value: string; label: string; source?: string } — `source` renderowany DOSŁOWNIE, bez doklejania „Źródło:”; pełną formę zapisuje właściciel.
+- SocialProofProps = { number: string; label?: string (domyślnie "Zaufali nam"); tone?: 'light' | 'dark'; logos?: SocialProofLogo[]; quote?: SocialProofQuote; metric?: SocialProofMetric; className?: string (tylko layout); headingId?: string (domyślnie "social-proof-heading") }
+
+Zachowanie:
+- Zwraca `null`, gdy `logos.length === 0 && !quote && !metric` — nic nie trafia do DOM.
+- Struktura: `<section aria-labelledby>` → `<h2 id>` z `<SectionLabel number tone>` → `<ul>` logotypów (`flex flex-wrap justify-center gap-x-10 gap-y-6`) → `<figure>` z `<blockquote>` + `<figcaption>` w karcie `bg-neutral-surface border border-border-soft rounded-3xl p-8` → blok metryki (`type-h2 font-mono text-indigo-primary` + `type-label` + opcjonalny przypis `type-body-sm text-muted-purple`).
+- Tło sekcji: `bg-neutral-bg border border-border-soft/80 rounded-[32px] p-8 sm:p-12` — czyli ta sama geometria co sąsiednie sekcje, ale bez białego wypełnienia, żeby biała karta cytatu miała kontrast.
+- Zero CTA (zgodnie ze spec), zero nowych zależności, zero hexów.
+
+Użycie w App.tsx (linia 770, zakomentowane):
+{/* <SocialProof number="02" logos={[]} quote={undefined} metric={undefined} /> */}
+
+### Treści, których potrzebuję od właściciela (STOP)
+Treści, które musi dostarczyć właściciel, żeby sekcję dało się włączyć:
+
+1. LOGOTYPY KLIENTÓW — 4–6 sztuk.
+   - Dla każdego: nazwa firmy (`name`, trafia do `alt`) + plik SVG jednokolorowy/monochromatyczny (`src`) albo SVG inline (`svg`).
+   - Wysokość renderowania 32 px, więc logo musi być czytelne w tej skali i mieć przezroczyste tło.
+   - WYMAGANA pisemna zgoda każdego klienta na użycie znaku towarowego na stronie (zwykle klauzula „referencje/logo” w umowie albo osobna zgoda mailowa).
+   - Jeśli logotypów nie ma, alternatywa: same nazwy firm (komponent renderuje wtedy tekst) — nadal wymaga zgody.
+
+2. CYTAT — dokładnie jeden.
+   - `text` — treść wypowiedzi (1–3 zdania, ~150–280 znaków czyta się najlepiej w tej karcie),
+   - `author` — imię i nazwisko,
+   - `role` — stanowisko,
+   - `company` — firma,
+   - `avatarSrc` — opcjonalne zdjęcie (kwadrat, min. 80×80 px),
+   - zgoda osoby na publikację imienia, stanowiska, firmy i (jeśli jest) wizerunku — RODO, nie tylko grzeczność.
+
+3. LICZBA (metryka) — jedna.
+   - `value` (np. liczba wdrożeń / przebadanych pracowników / firm korzystających),
+   - `label` (co ta liczba oznacza),
+   - `source` — przypis ze źródłem w pełnym brzmieniu, np. „Dane wewnętrzne HRly, IV kw. 2025” albo „Badanie X, N=…, 2025”. Bez źródła liczba jest kolejnym twierdzeniem bez pokrycia i lepiej jej nie pokazywać.
+
+4. DECYZJA O NUMERACJI — patrz komentarz w App.tsx: włączenie sekcji przesuwa etykiety 02→03, 03→04, 04→05, 05→06, 06→07, 07→08, 08→09 (hero 01 bez zmian). To jedyna zmiana copy, jakiej sekcja wymaga, i celowo NIE została wykonana z góry.
+
+Czego NIE zrobiłem świadomie (STOP): nie wymyśliłem ani jednej nazwy firmy, cytatu, stanowiska ani placeholderowego logotypu. Puste propsy = pusty DOM.
+
+### Inwentarz liczb i twierdzeń w copy strony głównej (do decyzji: przypis ze źródłem / zmiana / usunięcie)
+INWENTARZ LICZB I TWIERDZEŃ NA STRONIE GŁÓWNEJ (do decyzji: które wymagają przypisu ze źródłem).
+Ścieżki bezwzględne skrócone do repo-relative dla czytelności; wszystkie pliki w /Users/jakubzacios/dev/personal/HRLY-STRONA-2.0/.
+
+═══ A. HERO (sekcja 01) — src/App.tsx + src/hooks/useSiteConfig.ts ═══
+Kafle statystyk (wartości domyślne w kodzie, nadpisywalne z CMS):
+- src/App.tsx:745 — „58” + src/App.tsx:746 „Analizowanych czynników”  [CMS: src/hooks/useSiteConfig.ts:180-181 stat1Value '58' / stat1Label 'Analizowanych czynników HR']
+- src/App.tsx:749 — „10×” + src/App.tsx:750 „Szybsze raportowanie”  [CMS: src/hooks/useSiteConfig.ts:182-183 stat2Value '10×']  ← 10× WZGLĘDEM CZEGO? twierdzenie porównawcze, wymaga bazy odniesienia
+- src/App.tsx:753 — „+23%” + src/App.tsx:754 „Wzrost zaangażowania”  [CMS: src/hooks/useSiteConfig.ts:184-185 stat3Value '+23%']  ← twierdzenie o EFEKCIE produktu, najwyższe ryzyko: wymaga badania/case study albo usunięcia
+Pasek zaufania pod CTA:
+- src/App.tsx:726 — „14 dni testu bez karty”  (warunek handlowy — nie źródło, ale musi się zgadzać z regulaminem/cennikiem)
+- src/App.tsx:734 — „Wdrożenie w 15 minut”  ← twierdzenie o czasie, weryfikowalne u klienta
+- src/App.tsx:728 — „Pełna zgodność z RODO”  ← nie liczba, ale twierdzenie prawne; warto podeprzeć polityką prywatności / DPA
+Copy hero (CMS):
+- src/hooks/useSiteConfig.ts:172 — subheadline: „W kilka minut przetwarza dane…”
+- src/App.tsx:707 — fallback subheadline: „…w kilka minut.”
+
+═══ B. GRAFIKA HERO (mockup produktu) — src/components/HrlyHeroGraphic.tsx ═══
+Liczby renderowane jako dane demonstracyjne w podglądzie produktu:
+- src/components/HrlyHeroGraphic.tsx:294 — „94%” (karta „Zaufanie w firmie”), pasek postępu w:298 („w-[94%]”)
+- src/components/HrlyHeroGraphic.tsx:324 — „96.4% retencji” (karta „Retencja kadry”)
+- src/components/HrlyHeroGraphic.tsx:214 — „Uznanie: 3.8”
+- src/components/HrlyHeroGraphic.tsx:217 — „+12% wzrostu”
+- src/components/HrlyHeroGraphic.tsx:9 — SERIES_A [58…84] (wykres „zaangażowanie”, 12 miesięcy)
+- src/components/HrlyHeroGraphic.tsx:10 — SERIES_B [62…74] (wykres „eNPS”)
+- src/components/HrlyHeroGraphic.tsx:12 — Y_TICKS [60, 70, 80] (etykiety osi Y wykresu)
+UWAGA: to dane fikcyjne w mockupie. Jest badge „Preview” (src/components/HrlyHeroGraphic.tsx:259), ale nie ma jawnego podpisu „dane przykładowe”. DECYZJA: dopisać podpis „dane demonstracyjne” albo zostawić na badge’u.
+
+═══ C. SEKCJA 02 — Pulpit demonstracyjny — src/App.tsx ═══
+- src/App.tsx:781 — „diagnozujemy 58 czynników zaangażowania”  ← ta sama liczba co kafel hero; wymaga listy/metodologii do wglądu
+
+═══ D. SEKCJA 04 — Wyzwania, które rozwiązujemy — src/App.tsx ═══
+- src/App.tsx:882 — „Wypalenie i rotacja talentów kosztuje firmy średnio 240 000 zł rocznie.”  ← NAJMOCNIEJSZE twierdzenie liczbowe na stronie, bez źródła. Wymaga: badania (jakiego rynku? jakiej wielkości firmy? per firma czy per pracownik?) albo przeformułowania.
+- src/App.tsx:895 — „Działy HR marnują tygodnie…”, „wskaźników ROI”  (ilościowe, choć bez liczby)
+- src/App.tsx:908 — „rozmowami 1-on-1”  (nazwa formatu, nie twierdzenie)
+
+═══ E. SEKCJA 05 — Co otrzymujesz — src/App.tsx ═══
+- src/App.tsx:942 — „Raporty w kilka minut”  ← twierdzenie o czasie
+- src/App.tsx:944-945 — „1-on-1” (nazwa formatu)
+
+═══ F. SEKCJA 06 — Metodologia / marquee — src/App.tsx (lewa kolumna) ═══
+- src/App.tsx:977 — „HRly bada 58 precyzyjnie dobranych czynników”  ← trzecie wystąpienie „58”
+- src/App.tsx:988 — „Metodologia oparta o standardy psychologii pracy, eNPS oraz kluczowe mierniki zaangażowania Gallupa.”  ← NAJWIĘKSZE RYZYKO PRAWNE: powołanie się na cudzą, chronioną metodologię (Gallup Q12®) i cudzy znak towarowy. Wymaga albo licencji/zgody, albo przeformułowania na „inspirowane publicznie dostępnymi badaniami” + link do źródła.
+- src/App.tsx:1015 — „uruchomisz w mniej niż minutę”  ← twierdzenie o czasie
+- src/App.tsx:964 — komentarz sekcji „11 obszarów” (patrz src/App.tsx:1091 — „11 kluczowych obszarów” w copy)
+
+═══ G. SEKCJA 06 — KARTY MARQUEE (11 kart, każda z twierdzeniem statystycznym) ═══
+Wszystkie w jednej funkcji src/App.tsx:361-377 (`getScreenshotImpactText`), renderowane w src/App.tsx:1063. ŻADNA nie ma źródła — to najgęstszy blok niepodpartych liczb na stronie:
+- src/App.tsx:363 — „Konkurencyjne wynagrodzenie obniża rotację o 43% i zwiększa produktywność o 25%.”
+- src/App.tsx:364 — „Jasność celów podnosi wydajność o 56%. Pracownicy widzący wpływ są 3,5× bardziej zaangażowani.”
+- src/App.tsx:365 — „87% pracowników uznaje, że pochwała wpływa na satysfakcję. Uznanie zmniejsza rotację o 30%.”
+- src/App.tsx:366 — „72% firm z nowoczesnymi technologiami raportuje wzrost produktywności. $1 zainwestowany = $4 zwrotu.”
+- src/App.tsx:367 — „Zaufanie = 76% wyższe zaangażowanie. Silna kultura = 40% wyższa retencja.”
+- src/App.tsx:368 — „Elastyczność obniża stres o 20%, a work-life balance obniża absencję o 75%.”
+- src/App.tsx:369 — „90% osób uważa, że szkolenia zwiększają zaangażowanie. Jasna ścieżka = +76% lojalności.”
+- src/App.tsx:370 — „Zaufanie do organizacji = 17% wyższa produktywność i 21% większa rentowność.”
+- src/App.tsx:371 — „Optymalne obciążenie = 25% wyższa produktywność. Wysoka presja to główny czynnik wypalenia.”
+- src/App.tsx:372 — „Efektywna komunikacja = 147% wyższy poziom zaangażowania pracowników.”
+- src/App.tsx:373 — „Autonomia jest jednym z najsilniejszych predyktorów zaangażowania i satysfakcji.” (jedyna bez liczby)
+REKOMENDACJA: albo jeden wspólny przypis pod marquee („Źródła: …” z listą badań), albo przypis per karta, albo usunięcie liczb. Karty są duplikowane w pętli (src/App.tsx:1036), więc każde twierdzenie pojawia się w DOM dwa razy (drugi egzemplarz ma `aria-hidden`).
+
+═══ H. SEKCJA 07 — Jak to działa — src/App.tsx ═══
+- src/App.tsx:1084 — „w 3 prostych krokach” (opis produktu, nie twierdzenie o rynku)
+- src/App.tsx:1090 — „roześlij go w kilka sekund”  ← twierdzenie o czasie
+- src/App.tsx:1091 — „grupuje je w 11 kluczowych obszarów”  ← spójne z metodologią; wymaga listy obszarów (jest w RESEARCH_AREAS)
+- src/App.tsx:1090 — „kwestionariusz Pulse-Check zaprojektowany przez psychologów pracy”  ← twierdzenie o autorstwie: kto konkretnie? wymaga nazwisk/afiliacji albo złagodzenia
+
+═══ I. SEKCJA 08 — CTA końcowe — src/App.tsx ═══
+- src/App.tsx:1120 — „Zbuduj zaangażowany zespół w 15 minut.”  ← powtórka twierdzenia o czasie z hero
+- src/App.tsx:1136 — „14 dni testu bez zobowiązań”  (warunek handlowy; spójny z src/App.tsx:726)
+
+═══ J. DANE W KODZIE, KTÓRE NIE RENDERUJĄ SIĘ NA HOME (ale są w bundlu) ═══
+`RESEARCH_AREAS` (src/App.tsx:33-342) zawiera dla każdego z 11 obszarów pola `states.niski|sredni|wysoki` z twardymi kwotami i procentami, m.in.:
+- src/App.tsx:41-42 — „+45% ryzyka odejść”, „-240 000 zł strat / rok”
+- src/App.tsx:52-53 — „–43% redukcji rotacji”, „+180 000 zł oszczędności”
+… i analogiczne pary dla obszarów 02-11.
+Na stronie głównej z tego obiektu renderują się TYLKO `area.title` (src/App.tsx:1057) i `getScreenshotImpactText(area.num)` (src/App.tsx:1063); `states`, `financial`, `metricValue`, `factors`, `action` nie są używane nigdzie w App.tsx (na zakładce „Funkcje” renderuje się jedynie `area.question`, src/App.tsx:1416). To martwe dane — jeśli wrócą do widoku, wchodzą do tej samej kolejki „liczba wymaga źródła”.
+
+═══ PODSUMOWANIE PRIORYTETÓW (moja rekomendacja) ═══
+1. Wysoki priorytet (twierdzenia o cudzych badaniach / rynku, bez źródła): src/App.tsx:882 (240 000 zł), src/App.tsx:988 (Gallup), cały blok src/App.tsx:363-372 (11 kart marquee).
+2. Średni (twierdzenia o efekcie własnego produktu): src/App.tsx:753 / useSiteConfig.ts:184 (+23%), src/App.tsx:749 / useSiteConfig.ts:182 (10×).
+3. Niski (weryfikowalne u siebie, wystarczy spójność z ofertą): 58 czynników (src/App.tsx:745, 781, 977), 11 obszarów (src/App.tsx:1091), 15 minut (src/App.tsx:734, 1120), 14 dni (src/App.tsx:726, 1136), „kilka minut/sekund/mniej niż minutę” (src/App.tsx:707, 942, 1015, 1090).
+4. Do oznaczenia jako dane przykładowe: mockup hero (src/components/HrlyHeroGraphic.tsx:9, 10, 12, 214, 217, 294, 324).
+
+### Wynik skryptu
+Identyczny z FAZĄ 6 (komponent nic nie renderuje bez treści): 1440 — rozmiary 12–60, wagi 400–800, h1=1 h2=7 h3=39 h4=0, CTA 40/48 Inter, BŁĘDY KONTRASTU 0, wysokość strony 5823 px; 390 — 0 błędów. Lint i build czyste.
+
+Odstępstwa od planu i dlaczego: 1. Warunek stanu pustego rozszerzony o `metric`. Spec mówi: `null` gdy `logos.length === 0 && !quote`. Zaimplementowałem `null` gdy `!hasLogos && !quote && !metric` — inaczej sekcja z samą liczbą wdrożeń (dopuszczoną przez spec jako osobny prop) nie dałaby się pokazać. To nadzbiór warunku ze spec: w scenariuszu ze spec (brak logotypów, brak cytatu, brak metryki) zachowanie jest identyczne.
+
+2. Nazwa sekcji dla czytnika ekranu: `SectionLabel` renderuje `<span>`, więc żeby mieć `aria-labelledby` bez duplikowania treści (ukryty nagłówek + widoczny pill = tekst czytany dwa razy) opakowałem etykietę w `<h2 id={headingId}>`. Nagłówek nie ma własnej typografii (preflight Tailwinda), więc pill wygląda tak samo jak w pozostałych sekcjach. Skutek uboczny do świadomości: po włączeniu sekcji skrypt pokaże h2=8 zamiast 7.
+
+3. Treść etykiety jako prop z domyślną wartością „Zaufali nam” (tekst wprost ze spec FAZY 7), a nie hardkod — właściciel może ją zmienić bez dotykania komponentu. Nie jest to zmiana istniejącego copy: dopóki sekcja jest wyłączona, tekst nigdzie się nie renderuje.
+
+4. `metric.source` renderuję dosłownie, bez doklejania prefiksu „Źródło:”. Doklejenie prefiksu byłoby wymyślaniem copy; pełne brzmienie przypisu zapisuje właściciel.
+
+5. Import `SocialProof` w App.tsx zostaje mimo zakomentowanego użycia — dzięki temu `npm run lint` (tsc) sprawdza komponent i nie zgnije on cicho. `tsconfig.json` nie ma `noUnusedLocals`, więc lint jest czysty, a Vite wycina martwy import z bundl
