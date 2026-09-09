@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { HrlyHeroGraphic } from './components/HrlyHeroGraphic';
 import { Button } from './components/Button';
+import { SectionLabel } from './components/SectionLabel';
 import { addLead, useSiteConfig } from './hooks/useSiteConfig';
 
 const HrlyDashboardPreview = lazy(() => import('./components/HrlyDashboardPreview').then(m => ({ default: m.HrlyDashboardPreview })));
@@ -22,6 +23,9 @@ const HrlyMethodologyVisual = lazy(() => import('./components/HrlyMethodologyVis
 const AdminPanel = lazy(() => import('./components/AdminPanel').then(m => ({ default: m.AdminPanel })));
 
 type PageRoute = 'home' | 'features' | 'pricing' | 'about' | 'blog' | 'contact' | 'admin';
+
+/** FAZA 5.4 — numer sekcji dokłada <SectionLabel>, więc z tekstu z CMS zdejmujemy prefiks „NN · ". */
+const stripSectionNumber = (text: string): string => text.replace(/^\s*\d{1,2}\s*[·.\u2013-]\s*/, '');
 
 const RESEARCH_AREAS = [
   {
@@ -681,11 +685,10 @@ export default function App() {
                 <div className="w-full flex flex-col lg:flex-row items-center justify-between gap-10 relative z-10">
                   <div className="space-y-6 max-w-xl text-center lg:text-left flex flex-col items-center lg:items-start">
                     
-                    {/* Badge */}
-                    <div className="inline-flex items-center gap-2 bg-primary-light/60 text-indigo-primary px-3.5 py-1.5 rounded-full border border-border-indigo/40 type-label uppercase shadow-xs">
-                      <Sparkles className="w-3.5 h-3.5 text-indigo-primary" />
-                      {config.hero.badge || "01 · ANALITYKA I REKOMENDACJE HR W KILKA MINUT"}
-                    </div>
+                    {/* Etykieta sekcji 01 (treść z CMS; numer dokłada SectionLabel) */}
+                    <SectionLabel number="01" icon={<Sparkles />}>
+                      {stripSectionNumber(config.hero.badge || "01 · ANALITYKA I REKOMENDACJE HR W KILKA MINUT")}
+                    </SectionLabel>
 
                     {/* Headline & Description */}
                     <div className="space-y-4">
@@ -757,9 +760,7 @@ export default function App() {
               <section className="bg-white border border-border-soft/80 rounded-[32px] p-8 sm:p-12 text-center relative overflow-hidden shadow-xs">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-primary/5 rounded-full blur-3xl pointer-events-none" />
                 <div className="max-w-2xl mx-auto space-y-6 relative z-10">
-                  <span className="inline-flex items-center gap-1.5 bg-primary-light/60 text-indigo-primary px-3 py-1.5 rounded-full border border-border-indigo/35 type-label uppercase shadow-xs">
-                    Pulpit demonstracyjny
-                  </span>
+                  <SectionLabel number="02">Pulpit demonstracyjny</SectionLabel>
                   <h2 className="font-display type-h2 text-text-dark uppercase">
                     Przetestuj interaktywny pulpit HRly
                   </h2>
@@ -800,12 +801,10 @@ export default function App() {
                 </div>
               </section>
 
-              {/* SECTION: Od wyniku do działania (02) */}
+              {/* SECTION: Od wyniku do działania (03) */}
               <section className="bg-white border border-border-soft rounded-3xl p-8 sm:p-12 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
                 <div className="lg:col-span-4 space-y-4">
-                  <span className="type-label font-mono uppercase text-indigo-primary bg-primary-light px-2.5 py-1 rounded-full">
-                    02 · OD WYNIKU DO DZIAŁANIA
-                  </span>
+                  <SectionLabel number="03">Od wyniku do działania</SectionLabel>
                   <h2 className="font-display type-h2 text-text-dark uppercase">
                     Dane, które zamieniają się w decyzje.
                   </h2>
@@ -817,7 +816,7 @@ export default function App() {
                 <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-3 gap-4 font-normal items-stretch">
                   <div className="h-full p-5 rounded-2xl border border-border-soft bg-neutral-bg/40 space-y-3 hover:translate-y-[-2px] transition-transform">
                     <span className="type-h3 text-indigo-primary font-mono">01</span>
-                    <h3 className="type-h3 text-text-dark uppercase">Wynik</h3>
+                    <h3 className="font-display type-h3 text-text-dark uppercase">Wynik</h3>
                     <p className="type-body-sm text-muted-purple">
                       Raport od razu i precyzyjnie wskazuje obszary z najniższą oceną kapitału ludzkiego. Od razu widać, gdzie w zespole narasta napięcie.
                     </p>
@@ -825,7 +824,7 @@ export default function App() {
 
                   <div className="h-full p-5 rounded-2xl border border-border-soft bg-neutral-bg/40 space-y-3 hover:translate-y-[-2px] transition-transform">
                     <span className="type-h3 text-indigo-primary font-mono">02</span>
-                    <h3 className="type-h3 text-text-dark uppercase">Priorytet</h3>
+                    <h3 className="font-display type-h3 text-text-dark uppercase">Priorytet</h3>
                     <p className="type-body-sm text-muted-purple">
                       Intuicyjny algorytm pomaga ustalić hierarchię działań. Dokładnie wiesz, które negatywne czynniki wymagają reakcji w pierwszej kolejności.
                     </p>
@@ -833,7 +832,7 @@ export default function App() {
 
                   <div className="h-full p-5 rounded-2xl border border-border-soft bg-neutral-bg/40 space-y-3 hover:translate-y-[-2px] transition-transform">
                     <span className="type-h3 text-indigo-primary font-mono">03</span>
-                    <h3 className="type-h3 text-text-dark uppercase">Narzędzie</h3>
+                    <h3 className="font-display type-h3 text-text-dark uppercase">Narzędzie</h3>
                     <p className="type-body-sm text-muted-purple">
                       Liderzy otrzymują kompletny toolkit wspierający ich w rozmowach z podwładnymi i tworzeniu jasnej odpowiedzi zwrotnej zespołowi.
                     </p>
@@ -841,15 +840,13 @@ export default function App() {
                 </div>
               </section>
 
-              {/* SECTION: Wyzwania, które rozwiązujemy (03) */}
+              {/* SECTION: Wyzwania, które rozwiązujemy (04) */}
               <section className="space-y-12">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                   
                   {/* Left Column: Heading */}
                   <div className="lg:col-span-5 space-y-4">
-                    <span className="type-label font-mono uppercase text-indigo-primary bg-primary-light/60 px-2.5 py-1 rounded-full border border-border-indigo/30">
-                      03 · Wyzwania, które rozwiązujemy
-                    </span>
+                    <SectionLabel number="04">Wyzwania, które rozwiązujemy</SectionLabel>
                     <h2 className="font-display type-h2 text-text-dark uppercase">
                       Tradycyjne ankiety HR generują wykresy, a nie rozwiązania.
                     </h2>
@@ -867,7 +864,7 @@ export default function App() {
                         <Users className="w-5 h-5" />
                       </div>
                       <div className="space-y-1">
-                        <h3 className="font-sans type-h3 text-white uppercase">Cicha rezygnacja i kosztowna rotacja</h3>
+                        <h3 className="font-display type-h3 text-white uppercase">Cicha rezygnacja i kosztowna rotacja</h3>
                         <p className="type-body-sm text-on-dark-body">
                           Wypalenie i rotacja talentów kosztuje firmy średnio 240 000 zł rocznie. Zazwyczaj dowiadujesz się o problemie dopiero wtedy, gdy wypowiedzenie ląduje na biurku.
                         </p>
@@ -880,7 +877,7 @@ export default function App() {
                         <Clock className="w-5 h-5" />
                       </div>
                       <div className="space-y-1">
-                        <h3 className="font-sans type-h3 text-text-dark uppercase">Marnowanie czasu na tabelki</h3>
+                        <h3 className="font-display type-h3 text-text-dark uppercase">Marnowanie czasu na tabelki</h3>
                         <p className="type-body-sm text-muted-purple">
                           Działy HR marnują tygodnie na przepisywanie arkuszy Excel. Zarząd oczekuje twardych decyzji biznesowych i wskaźników ROI, a Ty dysponujesz jedynie przeczuciem.
                         </p>
@@ -893,7 +890,7 @@ export default function App() {
                         <HelpCircle className="w-5 h-5" />
                       </div>
                       <div className="space-y-1">
-                        <h3 className="font-sans type-h3 text-text-dark uppercase">Menedżerowie bez wsparcia</h3>
+                        <h3 className="font-display type-h3 text-text-dark uppercase">Menedżerowie bez wsparcia</h3>
                         <p className="type-body-sm text-muted-purple">
                           Liderzy potrzebują konkretnych instrukcji, a nie kolejnej tabelki z wynikami zaangażowania. Brakuje narzędzi łączących ankiety z codziennymi rozmowami 1-on-1.
                         </p>
@@ -905,15 +902,13 @@ export default function App() {
                 </div>
               </section>
 
-              {/* SECTION: Co otrzymujesz (04) */}
+              {/* SECTION: Co otrzymujesz (05) */}
               <section className="bg-white border border-border-soft rounded-[32px] p-8 sm:p-12 relative overflow-hidden shadow-xs">
                 <div className="absolute top-0 right-0 w-80 h-80 bg-indigo-primary/5 rounded-full blur-3xl pointer-events-none" />
                 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
                   <div className="lg:col-span-5 space-y-5">
-                    <span className="inline-flex items-center gap-1.5 bg-primary-light/60 text-indigo-primary px-3 py-1.5 rounded-full border border-border-indigo/35 type-label uppercase">
-                      04 · CO OTRZYMUJESZ
-                    </span>
+                    <SectionLabel number="05">Co otrzymujesz</SectionLabel>
                     <h2 className="font-display type-h2 text-text-dark uppercase">
                       Wzmocnij swoją pozycję. Mów językiem biznesu.
                     </h2>
@@ -931,17 +926,17 @@ export default function App() {
 
                   <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {[
-                      { title: "Raporty w kilka minut", desc: "Natychmiastowe wyniki bez żmudnych analiz i ręcznego liczenia arkuszy Excel." },
-                      { title: "Plan naprawczy", desc: "Nie tylko diagnozujemy problem, ale podajemy gotowy plan działań." },
-                      { title: "Kontekst zespołów", desc: "Diagnoza nastrojów w konkretnych działach, bez uogólnień dla całej firmy." },
-                      { title: "Wsparcie liderów", desc: "Scenariusze rozmów 1-on-1 i checklisty dla każdego menedżera." }
+                      { title: "Raporty w kilka minut", desc: "Natychmiastowe wyniki bez żmudnych analiz i ręcznego liczenia arkuszy Excel.", Icon: Zap },
+                      { title: "Plan naprawczy", desc: "Nie tylko diagnozujemy problem, ale podajemy gotowy plan działań.", Icon: Compass },
+                      { title: "Kontekst zespołów", desc: "Diagnoza nastrojów w konkretnych działach, bez uogólnień dla całej firmy.", Icon: Users2 },
+                      { title: "Wsparcie liderów", desc: "Scenariusze rozmów 1-on-1 i checklisty dla każdego menedżera.", Icon: Award }
                     ].map((item, idx) => (
                       <div 
                         key={idx} 
                         className="h-full bg-neutral-bg rounded-2xl p-5 border border-text-dark/5 shadow-[0_8px_30px_color-mix(in_oklab,var(--color-text-dark)_2%,transparent)] flex flex-col justify-between gap-4 hover:shadow-[0_8px_30px_color-mix(in_oklab,var(--color-text-dark)_6%,transparent)] hover:border-border-indigo/50 hover:translate-y-[-2px] transition-all duration-300"
                       >
                         <div className="p-2 bg-primary-light/60 text-indigo-primary rounded-xl w-fit border border-border-indigo/30">
-                          <CheckCircle2 className="w-4 h-4 text-indigo-primary" />
+                          <item.Icon className="w-4 h-4 text-indigo-primary" />
                         </div>
                         <div className="space-y-1">
                           <h3 className="font-display type-h3 text-text-dark uppercase">{item.title}</h3>
@@ -953,7 +948,7 @@ export default function App() {
                 </div>
               </section>
 
-              {/* SECTION: Metodologia / 11 obszarów (05) - DARK MARQUEE LAYOUT */}
+              {/* SECTION: Metodologia / 11 obszarów (06) - DARK MARQUEE LAYOUT */}
               <div className="bg-text-dark border border-indigo-primary/30 p-6 sm:p-10 lg:p-12 rounded-[32px] overflow-hidden relative bg-[radial-gradient(var(--color-indigo-primary)_1px,transparent_1px)] [background-size:24px_24px] section-dark">
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
@@ -961,10 +956,8 @@ export default function App() {
                   {/* Left Column: Purpose-built copy + indicators + CTA */}
                   <div className="lg:col-span-5 space-y-6 sm:space-y-8">
                     <div className="space-y-3.5">
-                      <span className="type-label font-mono text-on-dark-muted uppercase block">
-                        Metodologia Badania Satysfakcji i eNPS
-                      </span>
-                      <h2 className="font-sans type-h2 text-white uppercase">
+                      <SectionLabel number="06" tone="dark">Metodologia Badania Satysfakcji i eNPS</SectionLabel>
+                      <h2 className="font-display type-h2 text-white uppercase">
                         Badanie <span className="text-accent-apricot">11 obszarów</span>, które budują silną organizację.
                       </h2>
                       <p className="type-body-lg text-on-dark-body max-w-xl pt-2">
@@ -975,7 +968,7 @@ export default function App() {
                     {/* Grid of 4 key attributes inspired by the screenshot's subtext layout */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5 border-t border-indigo-primary/40 pt-6">
                       <div>
-                        <h3 className="font-sans type-h3 text-neutral-bg uppercase sm:min-h-[2.6em]">
+                        <h3 className="font-display type-h3 text-neutral-bg uppercase sm:min-h-[2.6em]">
                           Naukowa struktura
                         </h3>
                         <p className="type-body-sm text-on-dark-muted mt-1">
@@ -984,7 +977,7 @@ export default function App() {
                       </div>
 
                       <div>
-                        <h3 className="font-sans type-h3 text-neutral-bg uppercase sm:min-h-[2.6em]">
+                        <h3 className="font-display type-h3 text-neutral-bg uppercase sm:min-h-[2.6em]">
                           Mierzalny wpływ
                         </h3>
                         <p className="type-body-sm text-on-dark-muted mt-1">
@@ -993,7 +986,7 @@ export default function App() {
                       </div>
 
                       <div>
-                        <h3 className="font-sans type-h3 text-neutral-bg uppercase sm:min-h-[2.6em]">
+                        <h3 className="font-display type-h3 text-neutral-bg uppercase sm:min-h-[2.6em]">
                           Action Plan
                         </h3>
                         <p className="type-body-sm text-on-dark-muted mt-1">
@@ -1002,7 +995,7 @@ export default function App() {
                       </div>
 
                       <div>
-                        <h3 className="font-sans type-h3 text-neutral-bg uppercase sm:min-h-[2.6em]">
+                        <h3 className="font-display type-h3 text-neutral-bg uppercase sm:min-h-[2.6em]">
                           Szybka konfiguracja
                         </h3>
                         <p className="type-body-sm text-on-dark-muted mt-1">
@@ -1020,11 +1013,10 @@ export default function App() {
                   </div>
 
                   {/* Right Column: Auto-sliding column of cards (Continuous marquee) */}
-                  <div className="lg:col-span-7 relative h-[520px] sm:h-[580px] overflow-hidden marquee-viewport">
-                    
-                    {/* Decorative subtle top/bottom fade overlays to blend the scrolling seamlessly */}
-                    <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-text-dark via-text-dark/85 to-transparent z-10 pointer-events-none marquee-fade" />
-                    <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-text-dark via-text-dark/85 to-transparent z-10 pointer-events-none marquee-fade" />
+                  <div className="lg:col-span-7 relative h-[520px] sm:h-[580px] overflow-hidden rounded-2xl marquee-viewport">
+
+                    {/* FAZA 5.2: bez nakładek wygaszających — karty są przycinane twardo krawędzią
+                        `overflow-hidden` (zaokrągloną), żeby żadne słowo nie było półprzezroczyste. */}
 
                     {/* Marquee Container with duplicate list to loop perfectly */}
                     <div className="absolute w-full px-2 sm:px-4 py-6 flex flex-col gap-4 animate-marquee-scroll-up hover:[animation-play-state:paused] marquee-track">
@@ -1047,7 +1039,7 @@ export default function App() {
 
                             {/* Card text content */}
                             <div className="space-y-1 flex-1 min-w-0">
-                              <h3 className="font-sans type-h3 text-neutral-bg uppercase sm:truncate">
+                              <h3 className="font-display type-h3 text-neutral-bg uppercase sm:truncate">
                                 {area.title}
                               </h3>
 
@@ -1068,12 +1060,10 @@ export default function App() {
                 </div>
               </div>
 
-              {/* SECTION: Jak to działa (06) */}
+              {/* SECTION: Jak to działa (07) */}
               <section className="space-y-10 py-4" id="how-it-works">
                 <div className="text-center max-w-3xl mx-auto space-y-4">
-                  <span className="inline-flex items-center gap-1.5 bg-primary-light/60 text-indigo-primary px-3 py-1.5 rounded-full border border-border-indigo/35 type-label uppercase shadow-xs">
-                    06 · JAK TO DZIAŁA
-                  </span>
+                  <SectionLabel number="07">Jak to działa</SectionLabel>
                   <h2 className="font-display type-h2 text-text-dark uppercase">
                     Prosta ścieżka do dojrzałego HR
                   </h2>
@@ -1104,16 +1094,14 @@ export default function App() {
                 </div>
               </section>
 
-              {/* SECTION: CTA Końcowe (07) */}
+              {/* SECTION: CTA Końcowe (08) */}
               <section className="relative rounded-[32px] border border-white/10 bg-text-dark p-8 sm:p-12 text-center overflow-hidden shadow-2xl section-dark">
                 {/* Glowing radial circles */}
                 <div className="absolute -top-12 -left-12 w-64 h-64 bg-indigo-primary/40 rounded-full blur-3xl pointer-events-none" />
                 <div className="absolute -bottom-12 -right-12 w-64 h-64 bg-indigo-primary/40 rounded-full blur-3xl pointer-events-none" />
                 
                 <div className="max-w-2xl mx-auto space-y-6 relative z-10">
-                  <span className="inline-flex items-center gap-1.5 bg-accent-apricot/10 text-accent-apricot px-3.5 py-1.5 rounded-full border border-accent-apricot/20 type-label uppercase">
-                    07 · GOTOWI NA ZMIANĘ?
-                  </span>
+                  <SectionLabel number="08" tone="dark">Gotowi na zmianę?</SectionLabel>
                   
                   <h2 className="font-display type-h2 text-white uppercase">
                     Zbuduj zaangażowany zespół w 15 minut.

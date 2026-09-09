@@ -9,7 +9,7 @@ Lista zadań:
 - [x] FAZA 2 — Jedna skala typograficzna
 - [x] FAZA 3 — Jeden komponent przycisku (STOP 3.2 rozstrzygnięty: A2)
 - [x] FAZA 4 — Kolor: reguła zamiast przypadku
-- [ ] FAZA 5 — Bugi wizualne
+- [x] FAZA 5 — Bugi wizualne
 - [ ] FAZA 6 — Hero (STOP 6.3 warunkowy)
 - [ ] FAZA 7 — Social proof (STOP na treści)
 
@@ -327,3 +327,46 @@ Do decyzji właściciela:
 - Kropka legendy „Uznanie: 3.8” jest fioletowa, a linia EKG też — jeśli linia ma wrócić do brzoskwini (grafika, nie tekst), to jest jedna zmiana tokenu.
 - `warning-orange #B45309` na `warning-soft` = 4,51:1 (przechodzi bez zapasu); opcjonalnie `#9A3412` (6,0:1).
 - Hover linków footera zmienił się z brzoskwini na biały + podkreślenie (skutek reguły akcentu).
+
+---
+
+## FAZA 5 — Bugi wizualne   [ZROBIONE Z ODSTĘPSTWAMI]
+
+Zmienione pliki: `src/App.tsx` (blok home), `src/index.css` (blok `prefers-reduced-motion`), nowy `src/components/SectionLabel.tsx`. Podstrony, modal demo, header i footer — poza zakresem, nietknięte.
+
+### 5.1 Nagłówek w złym kroju
+- `h2` sekcji „Badanie 11 obszarów…”: `font-sans` → `font-display` (jedyny nagłówek sekcji w Inter).
+- Audyt wszystkich nagłówków bloku home: `h1` (1) i `h2` (7) miały już `font-display`; `h3` były niespójne — 3 karty sekcji 03 bez jawnego kroju (dziedziczyły Inter), 3 karty sekcji 04, 4 atrybuty i 11 (×2) kart marquee w sekcji 06 miały `font-sans`. Wszystkie 47 nagłówków bloku home są teraz w Plus Jakarta Sans (weryfikacja: zrzut computed style, `NAGŁÓWKI NIE-DISPLAY: brak`).
+
+### 5.2 Maska ucinająca treść
+- Obie nakładki `marquee-fade` (gradient navy→transparent, `h-24`) **usunięte z DOM**; z `index.css` znikła klasa `.marquee-fade` z bloku `prefers-reduced-motion` (został `.marquee-dup`).
+- Zamiast wygaszania: twarde cięcie krawędzią `overflow-hidden` + `rounded-2xl` na `.marquee-viewport`. Przy ciągłym przewijaniu każda nakładka (i `mask-image`) prędzej czy później wygasza tekst, więc jedyne rozwiązanie spełniające „żadne słowo nie jest półprzezroczyste” to ostry klip.
+- Weryfikacja: `mask-image` w `main` = 0, elementy tekstowe z `opacity` < 1 = 0, nakładki gradientowe w viewporcie marquee = 0; pod `prefers-reduced-motion` pełna, statyczna lista 11 kart (m.in. „…= +76% lojalności.” w całości nieprzezroczyste).
+
+### 5.3 Cztery identyczne ikony (sekcja „Co otrzymujesz”)
+`CheckCircle2` ×4 → `Zap` (Raporty w kilka minut), `Compass` (Plan naprawczy), `Users2` (Kontekst zespołów), `Award` (Wsparcie liderów). Wszystkie cztery były już importowane z `lucide-react` — zero nowych zależności. Ten sam kontener, rozmiar (16 px) i kolor (`text-indigo-primary`).
+
+### 5.4 Numeracja sekcji + komponent `SectionLabel`
+- Nowy `src/components/SectionLabel.tsx`: pill `inline-flex items-center gap-2 rounded-full px-3 py-1.5 type-label font-mono uppercase`, numer jest własnością komponentu (`{number} · {children}`), opcjonalna ikona 14 px, dwa tony — `light` (`bg-primary-light/60 text-indigo-primary border-border-indigo/35`) i `dark` (`bg-white/10 text-white border-white/15`).
+- Numeracja bez dziur: **01** hero (tekst z CMS `hero.badge`; helper `stripSectionNumber` zdejmuje prefiks „NN · ”, żeby numer nie dublował się przy zmianie treści w CMS) → **02** Pulpit demonstracyjny → **03** Od wyniku do działania → **04** Wyzwania, które rozwiązujemy → **05** Co otrzymujesz → **06** Metodologia badania satysfakcji i eNPS → **07** Jak to działa → **08** Gotowi na zmianę?. Komentarze sekcji w kodzie zaktualizowane do nowych numerów.
+- Trzy dotychczasowe style etykiet (pill + mono, pill + sans-bold z `shadow-xs`, goły mono na ciemnym) zastąpione jednym komponentem. Etykiety wewnątrz kart („Kluczowy wyróżnik”, „Naukowa struktura”) nie są etykietami sekcji — bez zmian.
+
+### Wynik skryptu
+```
+1440×900:  ROZMIARY 12,14,16,18,20,40,60 | WAGI 400,600,700,800 | KROJE Plus Jakarta Sans|Inter|JetBrains Mono
+           NAGŁÓWKI h1=1 h2=7 h3=39 h4=0 | CTA 34,36,38,40,48 / 0px,8px,12px / Inter | BŁĘDY KONTRASTU (0)
+390×844:   BŁĘDY KONTRASTU (0), scrollWidth = 390 (żadna etykieta nie wychodzi poza viewport)
+8 etykiet: 2 unikalne style (jasny/ciemny), wszystkie JetBrains Mono 12/600, ls 0.96px, padding 6/12, wysokość 31 px
+```
+Wszystko identyczne z FAZĄ 4 poza `KOLORY TEKSTU`: brzoskwinia ×2 → ×1 (patrz odstępstwo 1). Lint i build czyste.
+
+### Odstępstwa od planu i dlaczego
+1. **Pill sekcji 08 („Gotowi na zmianę?”) stracił brzoskwinię** — FAZA 4 zapisała go jako „jedyny akcent sekcji 07”, ale 5.4 wymaga jednego tła dla wszystkich ciemnych etykiet. Wygrała reguła FAZY 5; akcentem tej sekcji zostaje sam CTA. Do decyzji właściciela: przywrócić brzoskwinię jako trzeci ton `SectionLabel` (`tone="accent"`) albo zostawić.
+2. **Etykieta hero straciła `shadow-xs` i zmieniła krój na mono** — konsekwencja jednego stylu dla ośmiu etykiet (wcześniej Inter + cień).
+3. **Ujednolicenie `h3` w górę zakresu 5.1** — spec wymagał tylko `h2`; opisany w 5.1 audyt pokazał 21 `h3` w Inter przy 18 w Plus Jakarta Sans, więc wszystkie `h3` bloku home poszły na `font-display` (spójność serii kart).
+4. **Marquee tnie kartę w połowie wiersza** — świadomy skutek 5.2 (ostry klip zamiast wygaszania). Alternatywa (nakładki ≤ 16 px) nie działa przy przewijaniu ciągłym, a `mask-image` daje tę samą półprzezroczystość.
+5. **`stripSectionNumber` jako helper w `App.tsx`** — `hero.badge` przychodzi z CMS z własnym „01 · ”; bez zdejmowania prefiksu numer dublowałby się („01 · 01 · …”).
+
+Do decyzji właściciela:
+- Czy `hero.badge` w CMS ma stracić prefiks „01 · ” (wtedy helper można usunąć).
+- Ton akcentowy dla etykiety sekcji 08 (odstępstwo 1).

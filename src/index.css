@@ -224,7 +224,8 @@
   }
   .marquee-viewport { height: auto; overflow: visible; }
   .marquee-track { position: static; animation: none; }
-  .marquee-fade, .marquee-dup { display: none; }
+  /* FAZA 5.2: nakładki wygaszające (.marquee-fade) usunięte z DOM — zostaje tylko duplikat listy. */
+  .marquee-dup { display: none; }
   /* statyczna, pełna linia EKG w mockupie hero zamiast zatrzymanego fragmentu kreskowania */
   .pulse-wave-1, .pulse-wave-2 { stroke-dasharray: none; }
 }
