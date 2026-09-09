@@ -10,14 +10,32 @@
   --color-neutral-surface: #FFFFFF;
   --color-neutral-bg: #FBFAF8;
   --color-border-soft: #EFEAE1;
-  --color-faint-gray: #A39AB4;
   --color-muted-purple: #55506E;
+  --color-muted-indigo: #6A5E8C;
   --color-text-dark: #14183D;
-  --color-success-green: #047857;
-  --color-success-soft: #D1FAE5;
-  --color-warning-orange: #B45309;
-  --color-danger-red: #B91C1C;
   --color-focus: #3B2F8C;
+
+  /* FAZA 4 — ciemne powierzchnie (navy) i tekst na nich.
+     navy-deep: karty marquee (sekcja 05); navy-card-from/-to: gradient ciemnej karty w mockupie hero.
+     on-dark-body: treść na navy (zamiast gray-300, 13:1); on-dark-muted: etykiety/ikony/meta na navy
+     (zamiast gray-400 / #A39AB4, 9,4:1 na #14183D, 8,2:1 na #1D2254). */
+  --color-navy-deep: #1D2254;
+  --color-navy-card-from: #241F59;
+  --color-navy-card-to: #120E37;
+  --color-on-dark-body: var(--color-primary-light);
+  --color-on-dark-muted: var(--color-border-indigo);
+
+  /* FAZA 4 — statusy: JEDEN zielony na jasnym tle (5,5:1 na białym, 4,8:1 na success-soft),
+     osobny odcień tylko na navy (#34D399: 7,7:1 na #241F59). Ostrzeżenie/błąd ≥4,5:1 na białym i na -soft. */
+  --color-success: #047857;
+  --color-success-soft: #D1FAE5;
+  --color-success-on-dark: #34D399;
+  --color-warning-orange: #B45309;
+  --color-warning-soft: #FEF3C7;
+  --color-danger-red: #B91C1C;
+  --color-danger-soft: #FEE2E2;
+  /* jedyne użycie: ikona serca w ciemnej karcie mockupu hero (dekoracja, nie tekst) */
+  --color-accent-rose: #FF5A79;
 
   /* FAZA 3 — kolory komponentu Button (jedno źródło; STOP 3.2 = decyzja właściciela).
      primary na JASNYM tle — PLACEHOLDER = obecny fiolet; przy wyborze brzoskwini:
@@ -72,11 +90,11 @@
 
 @layer base {
   :where(a, button, [role="button"], input, select, textarea, summary, [tabindex]):focus-visible {
-    outline: 2px solid var(--color-focus, #3B2F8C);
+    outline: 2px solid var(--color-focus);
     outline-offset: 3px;
   }
   .section-dark :where(a, button, [role="button"], input, select, textarea, summary, [tabindex]):focus-visible {
-    outline-color: #F4A574;
+    outline-color: var(--color-accent-apricot);
   }
 }
 
@@ -86,8 +104,8 @@
 }
 
 @keyframes pulse-glowing {
-  0%, 100% { box-shadow: 0 0 15px rgba(244, 165, 116, 0.4); }
-  50% { box-shadow: 0 0 25px rgba(244, 165, 116, 0.82); }
+  0%, 100% { box-shadow: 0 0 15px color-mix(in oklab, var(--color-accent-apricot) 40%, transparent); }
+  50% { box-shadow: 0 0 25px color-mix(in oklab, var(--color-accent-apricot) 82%, transparent); }
 }
 
 @keyframes grid-move {
@@ -106,8 +124,8 @@
 
 .isometric-grid {
   background-image: 
-    linear-gradient(to right, rgba(196, 187, 222, 0.1) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(196, 187, 222, 0.1) 1px, transparent 1px);
+    linear-gradient(to right, color-mix(in oklab, var(--color-border-indigo) 10%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--color-border-indigo) 10%, transparent) 1px, transparent 1px);
   background-size: 40px 40px;
 }
 
@@ -118,32 +136,32 @@
 /* Geometric Balance Custom rules */
 .glow-border {
   position: relative;
-  background: linear-gradient(180deg, rgba(59, 47, 140, 0.05) 0%, rgba(59, 47, 140, 0) 100%);
-  border: 1px solid rgba(196, 187, 222, 0.3);
-  box-shadow: 0 0 20px rgba(59, 47, 140, 0.05);
+  background: linear-gradient(180deg, color-mix(in oklab, var(--color-indigo-primary) 5%, transparent) 0%, transparent 100%);
+  border: 1px solid color-mix(in oklab, var(--color-border-indigo) 30%, transparent);
+  box-shadow: 0 0 20px color-mix(in oklab, var(--color-indigo-primary) 5%, transparent);
 }
 
 .grid-pattern {
-  background-image: radial-gradient(rgba(196, 187, 222, 0.2) 1px, transparent 1px);
+  background-image: radial-gradient(color-mix(in oklab, var(--color-border-indigo) 20%, transparent) 1px, transparent 1px);
   background-size: 40px 40px;
 }
 
 .gradient-text {
-  background: linear-gradient(to right, #14183D 30%, #3B2F8C 100%);
+  background: linear-gradient(to right, var(--color-text-dark) 30%, var(--color-indigo-primary) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .glass-panel {
-  background: rgba(255, 255, 255, 0.85);
+  background: color-mix(in oklab, var(--color-neutral-surface) 85%, transparent);
   backdrop-filter: blur(8px);
-  border: 1px solid rgba(196, 187, 222, 0.3);
+  border: 1px solid color-mix(in oklab, var(--color-border-indigo) 30%, transparent);
 }
 
 .dark-glass-panel {
-  background: rgba(20, 24, 61, 0.95);
+  background: color-mix(in oklab, var(--color-text-dark) 95%, transparent);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(244, 165, 116, 0.15);
+  border: 1px solid color-mix(in oklab, var(--color-accent-apricot) 15%, transparent);
 }
 
 /* Pulse Wave SVG Animations */

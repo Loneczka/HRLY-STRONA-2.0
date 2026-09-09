@@ -513,10 +513,10 @@ export default function App() {
 
   return (
     <MotionConfig reducedMotion="user">
-    <div className="min-h-screen bg-[#FBFAF8] text-[#14183D] flex flex-col font-sans antialiased selection:bg-[#F4A574]/30 selection:text-[#14183D]">
+    <div className="min-h-screen bg-neutral-bg text-text-dark flex flex-col font-sans antialiased selection:bg-accent-apricot/30 selection:text-text-dark">
       
       {/* Top Elegant Sticky Navigation Header */}
-      <header className="w-full bg-[#FFFFFF]/80 backdrop-blur-md border-b border-[#EFEAE1]/60 sticky top-0 z-[9900] px-4 sm:px-6 py-3 shadow-xs">
+      <header className="w-full bg-neutral-surface/80 backdrop-blur-md border-b border-border-soft/60 sticky top-0 z-[9900] px-4 sm:px-6 py-3 shadow-xs">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           
           {/* Logo Brand Mark */}
@@ -532,29 +532,29 @@ export default function App() {
               aria-hidden="true"
             >
               {/* Outer concentric ring */}
-              <circle cx="50" cy="50" r="41" stroke="#E2E8F0" strokeWidth="1.8" fill="none" />
+              <circle cx="50" cy="50" r="41" stroke="var(--color-primary-light)" strokeWidth="1.8" fill="none" />
               {/* Middle concentric ring */}
-              <circle cx="50" cy="50" r="29" stroke="#CBD5E1" strokeWidth="2.4" fill="none" />
+              <circle cx="50" cy="50" r="29" stroke="var(--color-border-indigo)" strokeWidth="2.4" fill="none" />
               {/* Inner concentric ring */}
-              <circle cx="50" cy="50" r="17" stroke="#3B2F8C" strokeWidth="3" fill="none" />
+              <circle cx="50" cy="50" r="17" stroke="var(--color-indigo-primary)" strokeWidth="3" fill="none" />
               {/* Center dot */}
-              <circle cx="50" cy="50" r="5.5" fill="#3B2F8C" />
+              <circle cx="50" cy="50" r="5.5" fill="var(--color-indigo-primary)" />
             </svg>
             <div>
-              <span className="block font-display font-extrabold text-[#14183D] text-[20px] leading-none tracking-tighter lowercase">
+              <span className="block font-display font-extrabold text-text-dark text-[20px] leading-none tracking-tighter lowercase">
                 hrly
               </span>
             </div>
           </button>
 
           {/* Desktop Navigation Link Tabs */}
-          <nav className="hidden lg:flex items-center gap-1 bg-[#F4F1EC]/60 p-1 rounded-xl border border-[#EFEAE1]/40">
+          <nav className="hidden lg:flex items-center gap-1 bg-primary-faint/60 p-1 rounded-xl border border-border-soft/40">
             <button
               onClick={() => setActiveTab('features')}
               className={`px-4 py-1.5 rounded-lg type-body-sm font-semibold transition-all cursor-pointer ${
                 activeTab === 'features'
-                  ? 'bg-white text-[#3B2F8C] shadow-xs'
-                  : 'text-[#55506E] hover:text-[#14183D]'
+                  ? 'bg-white text-indigo-primary shadow-xs'
+                  : 'text-muted-purple hover:text-text-dark'
               }`}
             >
               Funkcje
@@ -563,8 +563,8 @@ export default function App() {
               onClick={() => setActiveTab('pricing')}
               className={`px-4 py-1.5 rounded-lg type-body-sm font-semibold transition-all cursor-pointer ${
                 activeTab === 'pricing'
-                  ? 'bg-white text-[#3B2F8C] shadow-xs'
-                  : 'text-[#55506E] hover:text-[#14183D]'
+                  ? 'bg-white text-indigo-primary shadow-xs'
+                  : 'text-muted-purple hover:text-text-dark'
               }`}
             >
               Cennik
@@ -573,8 +573,8 @@ export default function App() {
               onClick={() => setActiveTab('blog')}
               className={`px-4 py-1.5 rounded-lg type-body-sm font-semibold transition-all cursor-pointer ${
                 activeTab === 'blog'
-                  ? 'bg-white text-[#3B2F8C] shadow-xs'
-                  : 'text-[#55506E] hover:text-[#14183D]'
+                  ? 'bg-white text-indigo-primary shadow-xs'
+                  : 'text-muted-purple hover:text-text-dark'
               }`}
             >
               Baza wiedzy
@@ -583,8 +583,8 @@ export default function App() {
               onClick={() => setActiveTab('contact')}
               className={`px-4 py-1.5 rounded-lg type-body-sm font-semibold transition-all cursor-pointer ${
                 activeTab === 'contact'
-                  ? 'bg-white text-[#3B2F8C] shadow-xs'
-                  : 'text-[#55506E] hover:text-[#14183D]'
+                  ? 'bg-white text-indigo-primary shadow-xs'
+                  : 'text-muted-purple hover:text-text-dark'
               }`}
             >
               Kontakt
@@ -602,7 +602,7 @@ export default function App() {
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-expanded={mobileMenuOpen}
-            className="lg:hidden p-1.5 rounded-lg hover:bg-[#F4F1EC] text-[#14183D] cursor-pointer"
+            className="lg:hidden p-1.5 rounded-lg hover:bg-primary-faint text-text-dark cursor-pointer"
             aria-label={mobileMenuOpen ? "Zamknij menu nawigacyjne" : "Otwórz menu nawigacyjne"}
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -618,35 +618,35 @@ export default function App() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden bg-white border-b border-[#EFEAE1]/60 overflow-hidden sticky top-[61px] z-[9800]"
+            className="lg:hidden bg-white border-b border-border-soft/60 overflow-hidden sticky top-[61px] z-[9800]"
           >
             <nav className="flex flex-col p-4 space-y-2">
               <button 
                 onClick={() => { setActiveTab('features'); setMobileMenuOpen(false); }}
-                className={`p-3 text-left type-body-sm font-semibold rounded-lg cursor-pointer ${activeTab === 'features' ? 'bg-[#3B2F8C] text-white' : 'text-[#55506E]'}`}
+                className={`p-3 text-left type-body-sm font-semibold rounded-lg cursor-pointer ${activeTab === 'features' ? 'bg-indigo-primary text-white' : 'text-muted-purple'}`}
               >
                 Funkcje
               </button>
               <button 
                 onClick={() => { setActiveTab('pricing'); setMobileMenuOpen(false); }}
-                className={`p-3 text-left type-body-sm font-semibold rounded-lg cursor-pointer ${activeTab === 'pricing' ? 'bg-[#3B2F8C] text-white' : 'text-[#55506E]'}`}
+                className={`p-3 text-left type-body-sm font-semibold rounded-lg cursor-pointer ${activeTab === 'pricing' ? 'bg-indigo-primary text-white' : 'text-muted-purple'}`}
               >
                 Cennik
               </button>
               <button 
                 onClick={() => { setActiveTab('blog'); setMobileMenuOpen(false); }}
-                className={`p-3 text-left type-body-sm font-semibold rounded-lg cursor-pointer ${activeTab === 'blog' ? 'bg-[#3B2F8C] text-white' : 'text-[#55506E]'}`}
+                className={`p-3 text-left type-body-sm font-semibold rounded-lg cursor-pointer ${activeTab === 'blog' ? 'bg-indigo-primary text-white' : 'text-muted-purple'}`}
               >
                 Baza wiedzy
               </button>
               <button 
                 onClick={() => { setActiveTab('contact'); setMobileMenuOpen(false); }}
-                className={`p-3 text-left type-body-sm font-semibold rounded-lg cursor-pointer ${activeTab === 'contact' ? 'bg-[#3B2F8C] text-white' : 'text-[#55506E]'}`}
+                className={`p-3 text-left type-body-sm font-semibold rounded-lg cursor-pointer ${activeTab === 'contact' ? 'bg-indigo-primary text-white' : 'text-muted-purple'}`}
               >
                 Kontakt
               </button>
               
-              <div className="pt-3 border-t border-[#EFEAE1] flex flex-col gap-2">
+              <div className="pt-3 border-t border-border-soft flex flex-col gap-2">
                 <Button size="md" fullWidth onClick={() => { setActiveTab('pricing'); setMobileMenuOpen(false); }}>
                   Załóż darmowe konto
                 </Button>
@@ -672,32 +672,32 @@ export default function App() {
             >
               
               {/* Premium Hero Section */}
-              <section className="relative rounded-[32px] border border-[#C4BBDE]/35 bg-gradient-to-tr from-[#F4F1EC] via-[#FBFAF8] to-[#FFFFFF] p-6 sm:p-10 lg:p-14 flex flex-col items-center justify-between gap-12 overflow-hidden shadow-xl md:shadow-2xl">
+              <section className="relative rounded-[32px] border border-border-indigo/35 bg-gradient-to-tr from-primary-faint via-neutral-bg to-neutral-surface p-6 sm:p-10 lg:p-14 flex flex-col items-center justify-between gap-12 overflow-hidden shadow-xl md:shadow-2xl">
                 
                 {/* Glowing aesthetic blurs */}
-                <div className="absolute top-0 right-0 w-[420px] h-[420px] bg-[#F4A574]/10 rounded-full blur-3xl pointer-events-none -mr-32 -mt-32" />
-                <div className="absolute bottom-0 left-0 w-[420px] h-[420px] bg-[#E3DEEE]/30 rounded-full blur-3xl pointer-events-none -ml-32 -mb-32" />
+                <div className="absolute top-0 right-0 w-[420px] h-[420px] bg-primary-light/40 rounded-full blur-3xl pointer-events-none -mr-32 -mt-32" />
+                <div className="absolute bottom-0 left-0 w-[420px] h-[420px] bg-primary-light/30 rounded-full blur-3xl pointer-events-none -ml-32 -mb-32" />
                 
                 <div className="w-full flex flex-col lg:flex-row items-center justify-between gap-10 relative z-10">
                   <div className="space-y-6 max-w-xl text-center lg:text-left flex flex-col items-center lg:items-start">
                     
                     {/* Badge */}
-                    <div className="inline-flex items-center gap-2 bg-[#E3DEEE]/60 text-[#3B2F8C] px-3.5 py-1.5 rounded-full border border-[#C4BBDE]/40 type-label uppercase shadow-xs">
-                      <Sparkles className="w-3.5 h-3.5 text-[#F4A574]" />
+                    <div className="inline-flex items-center gap-2 bg-primary-light/60 text-indigo-primary px-3.5 py-1.5 rounded-full border border-border-indigo/40 type-label uppercase shadow-xs">
+                      <Sparkles className="w-3.5 h-3.5 text-indigo-primary" />
                       {config.hero.badge || "01 · ANALITYKA I REKOMENDACJE HR W KILKA MINUT"}
                     </div>
 
                     {/* Headline & Description */}
                     <div className="space-y-4">
-                      <h1 className="font-display type-display text-[#14183D] uppercase">
+                      <h1 className="font-display type-display text-text-dark uppercase">
                         {config.hero.headline.includes('a nie na domysłach') ? (
                           <>
                             Decyzje HR oparte <br />na danych, <br />
-                            <span className="text-[#3B2F8C] normal-case italic font-normal">a nie na domysłach.</span>
+                            <span className="text-indigo-primary normal-case italic font-normal">a nie na domysłach.</span>
                           </>
                         ) : config.hero.headline}
                       </h1>
-                      <p className="type-body-lg text-[#55506E] max-w-lg">
+                      <p className="type-body-lg text-muted-purple max-w-lg">
                         {config.hero.subheadline || "Automatyczna platforma HR Analytics, która bada nastroje zespołu, predykcyjnie wykrywa ryzyka odejść i dostarcza menedżerom gotowe plany działań oraz checklisty w kilka minut."}
                       </p>
                     </div>
@@ -714,17 +714,17 @@ export default function App() {
                     </div>
 
                     {/* Trust small indicators */}
-                    <div className="flex flex-wrap items-center justify-center lg:justify-start gap-x-5 gap-y-2 pt-4 border-t border-[#EFEAE1] type-label text-[#6A5E8C] font-mono w-full">
+                    <div className="flex flex-wrap items-center justify-center lg:justify-start gap-x-5 gap-y-2 pt-4 border-t border-border-soft type-label text-muted-indigo font-mono w-full">
                       <span className="flex items-center gap-1">
-                        <span className="text-emerald-500">✓</span>
+                        <span className="text-success">✓</span>
                         14 dni testu bez karty
                       </span>
                       <span className="flex items-center gap-1">
-                        <span className="text-emerald-500">✓</span>
+                        <span className="text-success">✓</span>
                         Pełna zgodność z RODO
                       </span>
                       <span className="flex items-center gap-1">
-                        <span className="text-emerald-500">✓</span>
+                        <span className="text-success">✓</span>
                         Wdrożenie w 15 minut
                       </span>
                     </div>
@@ -737,33 +737,33 @@ export default function App() {
                 </div>
 
                 {/* Dynamic Stats Row from CMS config */}
-                <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-6 pt-8 border-t border-[#EFEAE1]/60 mt-8 relative z-10">
-                  <div className="bg-white/80 border border-[#EFEAE1]/75 p-5 rounded-2xl shadow-2xs text-center hover:border-[#C4BBDE]/55 transition-all">
-                    <div className="type-h2 text-[#3B2F8C] font-mono">{config.stats.stat1Value || "58"}</div>
-                    <div className="type-label text-[#6A5E8C] font-mono uppercase mt-2">{config.stats.stat1Label || "Analizowanych czynników"}</div>
+                <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-6 pt-8 border-t border-border-soft/60 mt-8 relative z-10">
+                  <div className="bg-white/80 border border-border-soft/75 p-5 rounded-2xl shadow-2xs text-center hover:border-border-indigo/55 transition-all">
+                    <div className="type-h2 text-indigo-primary font-mono">{config.stats.stat1Value || "58"}</div>
+                    <div className="type-label text-muted-indigo font-mono uppercase mt-2">{config.stats.stat1Label || "Analizowanych czynników"}</div>
                   </div>
-                  <div className="bg-white/80 border border-[#EFEAE1]/75 p-5 rounded-2xl shadow-2xs text-center hover:border-[#C4BBDE]/55 transition-all">
-                    <div className="type-h2 text-[#F4A574] font-mono">{config.stats.stat2Value || "10×"}</div>
-                    <div className="type-label text-[#6A5E8C] font-mono uppercase mt-2">{config.stats.stat2Label || "Szybsze raportowanie"}</div>
+                  <div className="bg-white/80 border border-border-soft/75 p-5 rounded-2xl shadow-2xs text-center hover:border-border-indigo/55 transition-all">
+                    <div className="type-h2 text-indigo-primary font-mono">{config.stats.stat2Value || "10×"}</div>
+                    <div className="type-label text-muted-indigo font-mono uppercase mt-2">{config.stats.stat2Label || "Szybsze raportowanie"}</div>
                   </div>
-                  <div className="bg-white/80 border border-[#EFEAE1]/75 p-5 rounded-2xl shadow-2xs text-center hover:border-[#C4BBDE]/55 transition-all">
-                    <div className="type-h2 text-[#3B2F8C] font-mono">{config.stats.stat3Value || "+23%"}</div>
-                    <div className="type-label text-[#6A5E8C] font-mono uppercase mt-2">{config.stats.stat3Label || "Wzrost zaangażowania"}</div>
+                  <div className="bg-white/80 border border-border-soft/75 p-5 rounded-2xl shadow-2xs text-center hover:border-border-indigo/55 transition-all">
+                    <div className="type-h2 text-indigo-primary font-mono">{config.stats.stat3Value || "+23%"}</div>
+                    <div className="type-label text-muted-indigo font-mono uppercase mt-2">{config.stats.stat3Label || "Wzrost zaangażowania"}</div>
                   </div>
                 </div>
               </section>
 
               {/* SECTION: Interactive Demo Trigger Banner */}
-              <section className="bg-white border border-[#EFEAE1]/80 rounded-[32px] p-8 sm:p-12 text-center relative overflow-hidden shadow-xs">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-[#3B2F8C]/5 rounded-full blur-3xl pointer-events-none" />
+              <section className="bg-white border border-border-soft/80 rounded-[32px] p-8 sm:p-12 text-center relative overflow-hidden shadow-xs">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-primary/5 rounded-full blur-3xl pointer-events-none" />
                 <div className="max-w-2xl mx-auto space-y-6 relative z-10">
-                  <span className="inline-flex items-center gap-1.5 bg-[#E3DEEE]/60 text-[#3B2F8C] px-3 py-1.5 rounded-full border border-[#C4BBDE]/35 type-label uppercase shadow-xs">
+                  <span className="inline-flex items-center gap-1.5 bg-primary-light/60 text-indigo-primary px-3 py-1.5 rounded-full border border-border-indigo/35 type-label uppercase shadow-xs">
                     Pulpit demonstracyjny
                   </span>
-                  <h2 className="font-display type-h2 text-[#14183D] uppercase">
+                  <h2 className="font-display type-h2 text-text-dark uppercase">
                     Przetestuj interaktywny pulpit HRly
                   </h2>
-                  <p className="type-body-lg text-[#55506E] max-w-lg mx-auto">
+                  <p className="type-body-lg text-muted-purple max-w-lg mx-auto">
                     Przekonaj się, jak w prosty sposób diagnozujemy 58 czynników zaangażowania i automatycznie dostarczamy menedżerom gotowe plany działań.
                   </p>
                   <div className="flex flex-col items-center justify-center pt-4 relative">
@@ -775,7 +775,7 @@ export default function App() {
 
                       {/* Small floating pointer icon to suggest clicking */}
                       <motion.div
-                        className="absolute -right-4 -bottom-4 bg-[#14183D] border border-white/20 text-white w-7 h-7 rounded-full flex items-center justify-center shadow-lg pointer-events-none z-20"
+                        className="absolute -right-4 -bottom-4 bg-text-dark border border-white/20 text-white w-7 h-7 rounded-full flex items-center justify-center shadow-lg pointer-events-none z-20"
                         animate={{
                           y: [0, -4, 0],
                           x: [0, -4, 0],
@@ -787,13 +787,13 @@ export default function App() {
                           ease: "easeInOut"
                         }}
                       >
-                        <MousePointerClick className="w-3.5 h-3.5 text-[#F4A574] animate-pulse" />
+                        <MousePointerClick className="w-3.5 h-3.5 text-accent-apricot animate-pulse" />
                       </motion.div>
                     </div>
                     
                     {/* Interactive hint text below the button */}
-                    <span className="type-label text-[#6A5E8C] font-mono mt-4 flex items-center gap-1.5 uppercase">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
+                    <span className="type-label text-muted-indigo font-mono mt-4 flex items-center gap-1.5 uppercase">
+                      <span className="w-1.5 h-1.5 rounded-full bg-success animate-ping" />
                       Kliknij, aby przetestować na żywo
                     </span>
                   </div>
@@ -801,40 +801,40 @@ export default function App() {
               </section>
 
               {/* SECTION: Od wyniku do działania (02) */}
-              <section className="bg-white border border-[#EFEAE1] rounded-3xl p-8 sm:p-12 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+              <section className="bg-white border border-border-soft rounded-3xl p-8 sm:p-12 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
                 <div className="lg:col-span-4 space-y-4">
-                  <span className="type-label font-mono uppercase text-[#3B2F8C] bg-[#E3DEEE] px-2.5 py-1 rounded-full">
+                  <span className="type-label font-mono uppercase text-indigo-primary bg-primary-light px-2.5 py-1 rounded-full">
                     02 · OD WYNIKU DO DZIAŁANIA
                   </span>
-                  <h2 className="font-display type-h2 text-[#14183D] uppercase">
+                  <h2 className="font-display type-h2 text-text-dark uppercase">
                     Dane, które zamieniają się w decyzje.
                   </h2>
-                  <p className="type-body text-[#55506E]">
+                  <p className="type-body text-muted-purple">
                     HRly nie kończy pracy na wygenerowanym raporcie. Największa wartość pojawia się wtedy, gdy wyniki ankiety automatycznie przekładają się na konkretną rozmowę, strukturę motywacyjną i bezpośrednie kroki menedżera.
                   </p>
                 </div>
 
                 <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-3 gap-4 font-normal items-stretch">
-                  <div className="h-full p-5 rounded-2xl border border-[#EFEAE1] bg-[#FBFAF8]/40 space-y-3 hover:translate-y-[-2px] transition-transform">
-                    <span className="type-h3 text-[#C4672D] font-mono">01</span>
-                    <h3 className="type-h3 text-[#14183D] uppercase">Wynik</h3>
-                    <p className="type-body-sm text-[#55506E]">
+                  <div className="h-full p-5 rounded-2xl border border-border-soft bg-neutral-bg/40 space-y-3 hover:translate-y-[-2px] transition-transform">
+                    <span className="type-h3 text-indigo-primary font-mono">01</span>
+                    <h3 className="type-h3 text-text-dark uppercase">Wynik</h3>
+                    <p className="type-body-sm text-muted-purple">
                       Raport od razu i precyzyjnie wskazuje obszary z najniższą oceną kapitału ludzkiego. Od razu widać, gdzie w zespole narasta napięcie.
                     </p>
                   </div>
 
-                  <div className="h-full p-5 rounded-2xl border border-[#EFEAE1] bg-[#FBFAF8]/40 space-y-3 hover:translate-y-[-2px] transition-transform">
-                    <span className="type-h3 text-[#3B2F8C] font-mono">02</span>
-                    <h3 className="type-h3 text-[#14183D] uppercase">Priorytet</h3>
-                    <p className="type-body-sm text-[#55506E]">
+                  <div className="h-full p-5 rounded-2xl border border-border-soft bg-neutral-bg/40 space-y-3 hover:translate-y-[-2px] transition-transform">
+                    <span className="type-h3 text-indigo-primary font-mono">02</span>
+                    <h3 className="type-h3 text-text-dark uppercase">Priorytet</h3>
+                    <p className="type-body-sm text-muted-purple">
                       Intuicyjny algorytm pomaga ustalić hierarchię działań. Dokładnie wiesz, które negatywne czynniki wymagają reakcji w pierwszej kolejności.
                     </p>
                   </div>
 
-                  <div className="h-full p-5 rounded-2xl border border-[#EFEAE1] bg-[#FBFAF8]/40 space-y-3 hover:translate-y-[-2px] transition-transform">
-                    <span className="type-h3 text-[#3B2F8C] font-mono">03</span>
-                    <h3 className="type-h3 text-[#14183D] uppercase">Narzędzie</h3>
-                    <p className="type-body-sm text-[#55506E]">
+                  <div className="h-full p-5 rounded-2xl border border-border-soft bg-neutral-bg/40 space-y-3 hover:translate-y-[-2px] transition-transform">
+                    <span className="type-h3 text-indigo-primary font-mono">03</span>
+                    <h3 className="type-h3 text-text-dark uppercase">Narzędzie</h3>
+                    <p className="type-body-sm text-muted-purple">
                       Liderzy otrzymują kompletny toolkit wspierający ich w rozmowach z podwładnymi i tworzeniu jasnej odpowiedzi zwrotnej zespołowi.
                     </p>
                   </div>
@@ -847,13 +847,13 @@ export default function App() {
                   
                   {/* Left Column: Heading */}
                   <div className="lg:col-span-5 space-y-4">
-                    <span className="type-label font-mono uppercase text-[#3B2F8C] bg-[#E3DEEE]/60 px-2.5 py-1 rounded-full border border-[#C4BBDE]/30">
+                    <span className="type-label font-mono uppercase text-indigo-primary bg-primary-light/60 px-2.5 py-1 rounded-full border border-border-indigo/30">
                       03 · Wyzwania, które rozwiązujemy
                     </span>
-                    <h2 className="font-display type-h2 text-[#14183D] uppercase">
+                    <h2 className="font-display type-h2 text-text-dark uppercase">
                       Tradycyjne ankiety HR generują wykresy, a nie rozwiązania.
                     </h2>
-                    <p className="type-body-lg text-[#55506E]">
+                    <p className="type-body-lg text-muted-purple">
                       Większość firm bada pracowników raz w roku, otrzymując przestarzałe statystyki. HRly zamienia surowe dane w dynamiczne scenariusze działań dla liderów w czasie rzeczywistym.
                     </p>
                   </div>
@@ -862,39 +862,39 @@ export default function App() {
                   <div className="lg:col-span-7 space-y-4">
                     
                     {/* Problem 1: Rotacja */}
-                    <div className="bg-[#14183D] text-white p-6 rounded-2xl border border-white/5 shadow-md flex items-start gap-4 hover:translate-y-[-2px] transition-transform duration-200 section-dark">
-                      <div className="p-2 bg-[#F4A574]/20 text-[#F4A574] rounded-lg shrink-0 mt-0.5">
+                    <div className="bg-text-dark text-white p-6 rounded-2xl border border-white/5 shadow-md flex items-start gap-4 hover:translate-y-[-2px] transition-transform duration-200 section-dark">
+                      <div className="p-2 bg-accent-apricot/20 text-accent-apricot rounded-lg shrink-0 mt-0.5">
                         <Users className="w-5 h-5" />
                       </div>
                       <div className="space-y-1">
                         <h3 className="font-sans type-h3 text-white uppercase">Cicha rezygnacja i kosztowna rotacja</h3>
-                        <p className="type-body-sm text-gray-300">
+                        <p className="type-body-sm text-on-dark-body">
                           Wypalenie i rotacja talentów kosztuje firmy średnio 240 000 zł rocznie. Zazwyczaj dowiadujesz się o problemie dopiero wtedy, gdy wypowiedzenie ląduje na biurku.
                         </p>
                       </div>
                     </div>
 
                     {/* Problem 2: Brak danych i czasu */}
-                    <div className="bg-white border border-[#EFEAE1]/80 p-6 rounded-2xl shadow-xs flex items-start gap-4 hover:border-[#C4BBDE]/50 hover:translate-y-[-2px] transition-transform duration-200">
-                      <div className="p-2 bg-indigo-50 text-[#3B2F8C] rounded-lg shrink-0 mt-0.5">
+                    <div className="bg-white border border-border-soft/80 p-6 rounded-2xl shadow-xs flex items-start gap-4 hover:border-border-indigo/50 hover:translate-y-[-2px] transition-transform duration-200">
+                      <div className="p-2 bg-primary-light/60 text-indigo-primary rounded-lg shrink-0 mt-0.5">
                         <Clock className="w-5 h-5" />
                       </div>
                       <div className="space-y-1">
-                        <h3 className="font-sans type-h3 text-[#14183D] uppercase">Marnowanie czasu na tabelki</h3>
-                        <p className="type-body-sm text-[#55506E]">
+                        <h3 className="font-sans type-h3 text-text-dark uppercase">Marnowanie czasu na tabelki</h3>
+                        <p className="type-body-sm text-muted-purple">
                           Działy HR marnują tygodnie na przepisywanie arkuszy Excel. Zarząd oczekuje twardych decyzji biznesowych i wskaźników ROI, a Ty dysponujesz jedynie przeczuciem.
                         </p>
                       </div>
                     </div>
 
                     {/* Problem 3: Brak wdrożenia */}
-                    <div className="bg-white border border-[#EFEAE1]/80 p-6 rounded-2xl shadow-xs flex items-start gap-4 hover:border-[#C4BBDE]/50 hover:translate-y-[-2px] transition-transform duration-200">
-                      <div className="p-2 bg-indigo-50 text-[#3B2F8C] rounded-lg shrink-0 mt-0.5">
+                    <div className="bg-white border border-border-soft/80 p-6 rounded-2xl shadow-xs flex items-start gap-4 hover:border-border-indigo/50 hover:translate-y-[-2px] transition-transform duration-200">
+                      <div className="p-2 bg-primary-light/60 text-indigo-primary rounded-lg shrink-0 mt-0.5">
                         <HelpCircle className="w-5 h-5" />
                       </div>
                       <div className="space-y-1">
-                        <h3 className="font-sans type-h3 text-[#14183D] uppercase">Menedżerowie bez wsparcia</h3>
-                        <p className="type-body-sm text-[#55506E]">
+                        <h3 className="font-sans type-h3 text-text-dark uppercase">Menedżerowie bez wsparcia</h3>
+                        <p className="type-body-sm text-muted-purple">
                           Liderzy potrzebują konkretnych instrukcji, a nie kolejnej tabelki z wynikami zaangażowania. Brakuje narzędzi łączących ankiety z codziennymi rozmowami 1-on-1.
                         </p>
                       </div>
@@ -906,24 +906,24 @@ export default function App() {
               </section>
 
               {/* SECTION: Co otrzymujesz (04) */}
-              <section className="bg-white border border-[#EFEAE1] rounded-[32px] p-8 sm:p-12 relative overflow-hidden shadow-xs">
-                <div className="absolute top-0 right-0 w-80 h-80 bg-[#3B2F8C]/5 rounded-full blur-3xl pointer-events-none" />
+              <section className="bg-white border border-border-soft rounded-[32px] p-8 sm:p-12 relative overflow-hidden shadow-xs">
+                <div className="absolute top-0 right-0 w-80 h-80 bg-indigo-primary/5 rounded-full blur-3xl pointer-events-none" />
                 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
                   <div className="lg:col-span-5 space-y-5">
-                    <span className="inline-flex items-center gap-1.5 bg-[#E3DEEE]/60 text-[#3B2F8C] px-3 py-1.5 rounded-full border border-[#C4BBDE]/35 type-label uppercase">
+                    <span className="inline-flex items-center gap-1.5 bg-primary-light/60 text-indigo-primary px-3 py-1.5 rounded-full border border-border-indigo/35 type-label uppercase">
                       04 · CO OTRZYMUJESZ
                     </span>
-                    <h2 className="font-display type-h2 text-[#14183D] uppercase">
+                    <h2 className="font-display type-h2 text-text-dark uppercase">
                       Wzmocnij swoją pozycję. Mów językiem biznesu.
                     </h2>
-                    <p className="type-body-lg text-[#55506E]">
+                    <p className="type-body-lg text-muted-purple">
                       Zmień postrzeganie HR w firmie. Pokaż zarządowi twarde wskaźniki i poprowadź organizację do stabilnego wzrostu zaangażowania.
                     </p>
 
-                    <div className="bg-[#FBFAF8] border border-[rgba(15,17,41,0.05)] shadow-[0_8px_30px_rgb(0,0,0,0.02)] p-5 rounded-2xl space-y-2 hover:border-[#C4BBDE]/40 transition-colors">
-                      <span className="type-label uppercase font-mono text-[#6A5E8C] block">Kluczowy wyróżnik</span>
-                      <p className="type-body font-semibold text-[#14183D]">
+                    <div className="bg-neutral-bg border border-text-dark/5 shadow-[0_8px_30px_color-mix(in_oklab,var(--color-text-dark)_2%,transparent)] p-5 rounded-2xl space-y-2 hover:border-border-indigo/40 transition-colors">
+                      <span className="type-label uppercase font-mono text-muted-indigo block">Kluczowy wyróżnik</span>
+                      <p className="type-body font-semibold text-text-dark">
                         Język biznesu — przekładamy zaangażowanie na finanse, pokazując szacowany ubytek lub zysk dla budżetu firmy.
                       </p>
                     </div>
@@ -938,14 +938,14 @@ export default function App() {
                     ].map((item, idx) => (
                       <div 
                         key={idx} 
-                        className="h-full bg-[#FBFAF8] rounded-2xl p-5 border border-[rgba(15,17,41,0.05)] shadow-[0_8px_30px_rgb(0,0,0,0.02)] flex flex-col justify-between gap-4 hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:border-[#C4BBDE]/50 hover:translate-y-[-2px] transition-all duration-300"
+                        className="h-full bg-neutral-bg rounded-2xl p-5 border border-text-dark/5 shadow-[0_8px_30px_color-mix(in_oklab,var(--color-text-dark)_2%,transparent)] flex flex-col justify-between gap-4 hover:shadow-[0_8px_30px_color-mix(in_oklab,var(--color-text-dark)_6%,transparent)] hover:border-border-indigo/50 hover:translate-y-[-2px] transition-all duration-300"
                       >
-                        <div className="p-2 bg-[#E3DEEE]/60 text-[#3B2F8C] rounded-xl w-fit border border-[#C4BBDE]/30">
-                          <CheckCircle2 className="w-4 h-4 text-[#3B2F8C]" />
+                        <div className="p-2 bg-primary-light/60 text-indigo-primary rounded-xl w-fit border border-border-indigo/30">
+                          <CheckCircle2 className="w-4 h-4 text-indigo-primary" />
                         </div>
                         <div className="space-y-1">
-                          <h3 className="font-display type-h3 text-[#14183D] uppercase">{item.title}</h3>
-                          <p className="type-body-sm text-[#55506E]">{item.desc}</p>
+                          <h3 className="font-display type-h3 text-text-dark uppercase">{item.title}</h3>
+                          <p className="type-body-sm text-muted-purple">{item.desc}</p>
                         </div>
                       </div>
                     ))}
@@ -954,58 +954,58 @@ export default function App() {
               </section>
 
               {/* SECTION: Metodologia / 11 obszarów (05) - DARK MARQUEE LAYOUT */}
-              <div className="bg-[#14183D] border border-[#3B2F8C]/30 p-6 sm:p-10 lg:p-12 rounded-[32px] overflow-hidden relative bg-[radial-gradient(#3B2F8C_1px,transparent_1px)] [background-size:24px_24px] section-dark">
+              <div className="bg-text-dark border border-indigo-primary/30 p-6 sm:p-10 lg:p-12 rounded-[32px] overflow-hidden relative bg-[radial-gradient(var(--color-indigo-primary)_1px,transparent_1px)] [background-size:24px_24px] section-dark">
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
                   
                   {/* Left Column: Purpose-built copy + indicators + CTA */}
                   <div className="lg:col-span-5 space-y-6 sm:space-y-8">
                     <div className="space-y-3.5">
-                      <span className="type-label font-mono text-[#F4A574] uppercase block">
+                      <span className="type-label font-mono text-on-dark-muted uppercase block">
                         Metodologia Badania Satysfakcji i eNPS
                       </span>
                       <h2 className="font-sans type-h2 text-white uppercase">
-                        Badanie <span className="text-[#F4A574]">11 obszarów</span>, które budują silną organizację.
+                        Badanie <span className="text-accent-apricot">11 obszarów</span>, które budują silną organizację.
                       </h2>
-                      <p className="type-body-lg text-gray-300 max-w-xl pt-2">
+                      <p className="type-body-lg text-on-dark-body max-w-xl pt-2">
                         Nasz system analityczny pokrywa pełny przekrój doświadczenia zawodowego pracowników. Zamiast chaotycznych, pojedynczych ankiet, HRly bada 58 precyzyjnie dobranych czynników. Każde badanie automatycznie zasila centralny dashboard, pozwalając liderom natychmiast wychwycić rodzące się problemy.
                       </p>
                     </div>
 
                     {/* Grid of 4 key attributes inspired by the screenshot's subtext layout */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5 border-t border-[#3B2F8C]/40 pt-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5 border-t border-indigo-primary/40 pt-6">
                       <div>
-                        <h3 className="font-sans type-h3 text-[#FBFAF8] uppercase sm:min-h-[2.6em]">
+                        <h3 className="font-sans type-h3 text-neutral-bg uppercase sm:min-h-[2.6em]">
                           Naukowa struktura
                         </h3>
-                        <p className="type-body-sm text-gray-400 mt-1">
+                        <p className="type-body-sm text-on-dark-muted mt-1">
                           Metodologia oparta o standardy psychologii pracy, eNPS oraz kluczowe mierniki zaangażowania Gallupa.
                         </p>
                       </div>
 
                       <div>
-                        <h3 className="font-sans type-h3 text-[#FBFAF8] uppercase sm:min-h-[2.6em]">
+                        <h3 className="font-sans type-h3 text-neutral-bg uppercase sm:min-h-[2.6em]">
                           Mierzalny wpływ
                         </h3>
-                        <p className="type-body-sm text-gray-400 mt-1">
+                        <p className="type-body-sm text-on-dark-muted mt-1">
                           Każdy zbadany czynnik jest powiązany z symulowanym kosztem rotacji oraz wskaźnikami produktywności.
                         </p>
                       </div>
 
                       <div>
-                        <h3 className="font-sans type-h3 text-[#FBFAF8] uppercase sm:min-h-[2.6em]">
+                        <h3 className="font-sans type-h3 text-neutral-bg uppercase sm:min-h-[2.6em]">
                           Action Plan
                         </h3>
-                        <p className="type-body-sm text-gray-400 mt-1">
+                        <p className="type-body-sm text-on-dark-muted mt-1">
                           Menedżerowie nie otrzymują wyłącznie suchych liczb – system generuje natychmiastowe wskazówki operacyjne.
                         </p>
                       </div>
 
                       <div>
-                        <h3 className="font-sans type-h3 text-[#FBFAF8] uppercase sm:min-h-[2.6em]">
+                        <h3 className="font-sans type-h3 text-neutral-bg uppercase sm:min-h-[2.6em]">
                           Szybka konfiguracja
                         </h3>
-                        <p className="type-body-sm text-gray-400 mt-1">
+                        <p className="type-body-sm text-on-dark-muted mt-1">
                           Gotowe szablony badań pulse-check, kwartalnych i rocznych uruchomisz w mniej niż minutę.
                         </p>
                       </div>
@@ -1023,8 +1023,8 @@ export default function App() {
                   <div className="lg:col-span-7 relative h-[520px] sm:h-[580px] overflow-hidden marquee-viewport">
                     
                     {/* Decorative subtle top/bottom fade overlays to blend the scrolling seamlessly */}
-                    <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-[#14183D] via-[#14183D]/85 to-transparent z-10 pointer-events-none marquee-fade" />
-                    <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#14183D] via-[#14183D]/85 to-transparent z-10 pointer-events-none marquee-fade" />
+                    <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-text-dark via-text-dark/85 to-transparent z-10 pointer-events-none marquee-fade" />
+                    <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-text-dark via-text-dark/85 to-transparent z-10 pointer-events-none marquee-fade" />
 
                     {/* Marquee Container with duplicate list to loop perfectly */}
                     <div className="absolute w-full px-2 sm:px-4 py-6 flex flex-col gap-4 animate-marquee-scroll-up hover:[animation-play-state:paused] marquee-track">
@@ -1035,26 +1035,26 @@ export default function App() {
                           <div 
                             key={idx}
                             aria-hidden={isDup || undefined}
-                            className={`bg-[#1D2254] border border-[#3B2F8C]/30 hover:border-[#F4A574]/50 p-4.5 rounded-2xl shadow-xs hover:shadow-lg transition-all duration-300 flex items-center gap-4 select-none relative group${isDup ? ' marquee-dup' : ''}`}
+                            className={`bg-navy-deep border border-indigo-primary/30 hover:border-white/30 p-4.5 rounded-2xl shadow-xs hover:shadow-lg transition-all duration-300 flex items-center gap-4 select-none relative group${isDup ? ' marquee-dup' : ''}`}
                           >
                             {/* Accent indicator bar on the left */}
-                            <div className="absolute left-0 top-1/4 bottom-1/4 w-1 bg-transparent group-hover:bg-[#F4A574] rounded-r transition-all" />
+                            <div className="absolute left-0 top-1/4 bottom-1/4 w-1 bg-transparent group-hover:bg-primary-light rounded-r transition-all" />
 
                             {/* Icon container with soft colored background to mimic the screenshot's premium feel */}
-                            <div className="p-3 bg-[#14183D] border border-[#3B2F8C]/30 rounded-xl text-[#F4A574] shadow-xs group-hover:scale-105 transition-transform shrink-0">
+                            <div className="p-3 bg-text-dark border border-indigo-primary/30 rounded-xl text-on-dark-muted shadow-xs group-hover:scale-105 transition-transform shrink-0">
                               <AreaIcon className="w-5 h-5" />
                             </div>
 
                             {/* Card text content */}
                             <div className="space-y-1 flex-1 min-w-0">
-                              <h3 className="font-sans type-h3 text-[#FBFAF8] uppercase sm:truncate">
+                              <h3 className="font-sans type-h3 text-neutral-bg uppercase sm:truncate">
                                 {area.title}
                               </h3>
 
                               {/* Styled arrow sub-impact line matching screenshot */}
-                              <div className="flex items-start gap-1.5 type-body-sm text-gray-300">
-                                <span className="text-[#F4A574] font-bold shrink-0">↳</span>
-                                <span className="font-sans text-gray-300/90">
+                              <div className="flex items-start gap-1.5 type-body-sm text-on-dark-body">
+                                <span className="text-on-dark-muted font-bold shrink-0">↳</span>
+                                <span className="font-sans text-on-dark-body">
                                   {getScreenshotImpactText(area.num)}
                                 </span>
                               </div>
@@ -1071,13 +1071,13 @@ export default function App() {
               {/* SECTION: Jak to działa (06) */}
               <section className="space-y-10 py-4" id="how-it-works">
                 <div className="text-center max-w-3xl mx-auto space-y-4">
-                  <span className="inline-flex items-center gap-1.5 bg-[#E3DEEE]/60 text-[#3B2F8C] px-3 py-1.5 rounded-full border border-[#C4BBDE]/35 type-label uppercase shadow-xs">
+                  <span className="inline-flex items-center gap-1.5 bg-primary-light/60 text-indigo-primary px-3 py-1.5 rounded-full border border-border-indigo/35 type-label uppercase shadow-xs">
                     06 · JAK TO DZIAŁA
                   </span>
-                  <h2 className="font-display type-h2 text-[#14183D] uppercase">
+                  <h2 className="font-display type-h2 text-text-dark uppercase">
                     Prosta ścieżka do dojrzałego HR
                   </h2>
-                  <p className="type-body-lg text-[#55506E] max-w-2xl mx-auto">
+                  <p className="type-body-lg text-muted-purple max-w-2xl mx-auto">
                     Wdróż badanie zaangażowania w 3 prostych krokach. Bez instalowania skomplikowanego kodu i bez konieczności zatrudniania analityków.
                   </p>
                 </div>
@@ -1088,16 +1088,16 @@ export default function App() {
                     { num: "02", title: "Odbierz analizę", desc: "System automatycznie przetwarza wyniki, grupuje je w 11 kluczowych obszarów i precyzyjnie wskazuje słabe punkty." },
                     { num: "03", title: "Działaj z planem", desc: "Zarząd i menedżerowie otrzymują automatyczne plany działań, checklisty i scenariusze gotowe do natychmiastowego wdrożenia." }
                   ].map((step, sIdx) => (
-                    <div key={sIdx} className="h-full bg-white border border-[rgba(15,17,41,0.05)] shadow-[0_8px_30px_rgb(0,0,0,0.02)] p-6 rounded-2xl space-y-4 transition-all hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:border-[#C4BBDE]/50 hover:translate-y-[-2px] relative overflow-hidden group">
-                      <div className="absolute top-0 right-0 w-24 h-24 bg-[#F4A574]/5 rounded-full blur-xl pointer-events-none group-hover:bg-[#3B2F8C]/5 transition-colors" />
+                    <div key={sIdx} className="h-full bg-white border border-text-dark/5 shadow-[0_8px_30px_color-mix(in_oklab,var(--color-text-dark)_2%,transparent)] p-6 rounded-2xl space-y-4 transition-all hover:shadow-[0_8px_30px_color-mix(in_oklab,var(--color-text-dark)_6%,transparent)] hover:border-border-indigo/50 hover:translate-y-[-2px] relative overflow-hidden group">
+                      <div className="absolute top-0 right-0 w-24 h-24 bg-primary-light/5 rounded-full blur-xl pointer-events-none group-hover:bg-indigo-primary/5 transition-colors" />
                       
-                      <div className="w-10 h-10 rounded-xl bg-[#3B2F8C] text-white flex items-center justify-center type-body-sm font-bold font-mono shadow-sm">
+                      <div className="w-10 h-10 rounded-xl bg-indigo-primary text-white flex items-center justify-center type-body-sm font-bold font-mono shadow-sm">
                         {step.num}
                       </div>
                       
                       <div className="space-y-2">
-                        <h3 className="font-display type-h3 text-[#14183D] uppercase">{step.title}</h3>
-                        <p className="type-body-sm text-[#55506E]">{step.desc}</p>
+                        <h3 className="font-display type-h3 text-text-dark uppercase">{step.title}</h3>
+                        <p className="type-body-sm text-muted-purple">{step.desc}</p>
                       </div>
                     </div>
                   ))}
@@ -1105,13 +1105,13 @@ export default function App() {
               </section>
 
               {/* SECTION: CTA Końcowe (07) */}
-              <section className="relative rounded-[32px] border border-[#F4A574]/20 bg-[#14183D] p-8 sm:p-12 text-center overflow-hidden shadow-2xl section-dark">
+              <section className="relative rounded-[32px] border border-white/10 bg-text-dark p-8 sm:p-12 text-center overflow-hidden shadow-2xl section-dark">
                 {/* Glowing radial circles */}
-                <div className="absolute -top-12 -left-12 w-64 h-64 bg-[#3B2F8C]/40 rounded-full blur-3xl pointer-events-none" />
-                <div className="absolute -bottom-12 -right-12 w-64 h-64 bg-[#F4A574]/15 rounded-full blur-3xl pointer-events-none" />
+                <div className="absolute -top-12 -left-12 w-64 h-64 bg-indigo-primary/40 rounded-full blur-3xl pointer-events-none" />
+                <div className="absolute -bottom-12 -right-12 w-64 h-64 bg-indigo-primary/40 rounded-full blur-3xl pointer-events-none" />
                 
                 <div className="max-w-2xl mx-auto space-y-6 relative z-10">
-                  <span className="inline-flex items-center gap-1.5 bg-[#F4A574]/10 text-[#F4A574] px-3.5 py-1.5 rounded-full border border-[#F4A574]/20 type-label uppercase">
+                  <span className="inline-flex items-center gap-1.5 bg-accent-apricot/10 text-accent-apricot px-3.5 py-1.5 rounded-full border border-accent-apricot/20 type-label uppercase">
                     07 · GOTOWI NA ZMIANĘ?
                   </span>
                   
@@ -1119,7 +1119,7 @@ export default function App() {
                     Zbuduj zaangażowany zespół w 15 minut.
                   </h2>
 
-                  <p className="type-body-lg text-gray-300 max-w-lg mx-auto">
+                  <p className="type-body-lg text-on-dark-body max-w-lg mx-auto">
                     Rozpocznij darmowy test. Pierwsze badanie, diagnozę i plan działań dla menedżerów otrzymasz jeszcze dzisiaj.
                   </p>
 
@@ -1129,17 +1129,17 @@ export default function App() {
                     </Button>
                     
                     {/* Security credentials in white/gray */}
-                    <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 type-label text-gray-400 font-mono">
+                    <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 type-label text-on-dark-muted font-mono">
                       <span className="flex items-center gap-1">
-                        <span className="text-[#F4A574]">✓</span>
+                        <span className="text-on-dark-muted">✓</span>
                         14 dni testu bez zobowiązań
                       </span>
                       <span className="flex items-center gap-1">
-                        <span className="text-[#F4A574]">✓</span>
+                        <span className="text-on-dark-muted">✓</span>
                         Brak wymaganej karty płatniczej
                       </span>
                       <span className="flex items-center gap-1">
-                        <span className="text-[#F4A574]">✓</span>
+                        <span className="text-on-dark-muted">✓</span>
                         Pełne bezpieczeństwo RODO
                       </span>
                     </div>
@@ -2104,7 +2104,7 @@ export default function App() {
       </main>
 
       {/* ================= FOOTER COMPONENT SPEC (Page 3 & 10) ================= */}
-      <footer className="w-full bg-[#14183D] border-t border-[#3B2F8C]/35 mt-16 py-12 text-gray-300 section-dark">
+      <footer className="w-full bg-text-dark border-t border-indigo-primary/35 mt-16 py-12 text-on-dark-body section-dark">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-12 gap-8">
           
           {/* Brand block */}
@@ -2115,39 +2115,39 @@ export default function App() {
                 viewBox="0 0 100 100" 
                 xmlns="http://www.w3.org/2000/svg"
               >
-                <circle cx="50" cy="50" r="41" stroke="#3B2F8C" strokeWidth="1.8" fill="none" />
-                <circle cx="50" cy="50" r="29" stroke="#3B2F8C" strokeWidth="2.4" fill="none" opacity="0.6" />
-                <circle cx="50" cy="50" r="17" stroke="#F4A574" strokeWidth="2" fill="none" opacity="0.8" />
-                <circle cx="50" cy="50" r="5.5" fill="#F4A574" />
+                <circle cx="50" cy="50" r="41" stroke="var(--color-border-indigo)" strokeWidth="1.8" fill="none" />
+                <circle cx="50" cy="50" r="29" stroke="var(--color-border-indigo)" strokeWidth="2.4" fill="none" opacity="0.6" />
+                <circle cx="50" cy="50" r="17" stroke="var(--color-accent-apricot)" strokeWidth="2" fill="none" opacity="0.8" />
+                <circle cx="50" cy="50" r="5.5" fill="var(--color-accent-apricot)" />
               </svg>
               <span className="font-display font-extrabold text-white text-[18px] tracking-tighter lowercase">
                 hrly
               </span>
             </div>
             
-            <p className="type-body-sm max-w-sm text-gray-300">
+            <p className="type-body-sm max-w-sm text-on-dark-body">
               Inteligentna platforma analityki kapitału ludzkiego i pulsów zaangażowania pracowników firmy. Spójne raportowanie i toolkit menedżerski.
             </p>
 
-            <p className="type-label text-[#A5ADC6] font-mono">
+            <p className="type-label text-on-dark-muted font-mono">
               HRLY Sp. z o.o. • Made with Human Care in Poland • All rights reserved.
             </p>
           </div>
 
           {/* Quick link matrices */}
-          <div className="md:col-span-5 grid grid-cols-2 gap-4 text-center md:text-left type-body-sm font-semibold text-gray-300">
+          <div className="md:col-span-5 grid grid-cols-2 gap-4 text-center md:text-left type-body-sm font-semibold text-on-dark-body">
             <div className="space-y-1">
-              <span className="type-label text-[#F4A574] font-mono uppercase block mb-1">Opcje menu</span>
-              <button onClick={() => setActiveTab('features')} className="block py-2 hover:text-[#F4A574] w-full md:text-left transition-colors cursor-pointer">Funkcje</button>
-              <button onClick={() => setActiveTab('pricing')} className="block py-2 hover:text-[#F4A574] w-full md:text-left transition-colors cursor-pointer">Cennik</button>
-              <button onClick={() => setActiveTab('about')} className="block py-2 hover:text-[#F4A574] w-full md:text-left transition-colors cursor-pointer">O nas</button>
+              <span className="type-label text-on-dark-muted font-mono uppercase block mb-1">Opcje menu</span>
+              <button onClick={() => setActiveTab('features')} className="block py-2 hover:text-white hover:underline underline-offset-4 w-full md:text-left transition-colors cursor-pointer">Funkcje</button>
+              <button onClick={() => setActiveTab('pricing')} className="block py-2 hover:text-white hover:underline underline-offset-4 w-full md:text-left transition-colors cursor-pointer">Cennik</button>
+              <button onClick={() => setActiveTab('about')} className="block py-2 hover:text-white hover:underline underline-offset-4 w-full md:text-left transition-colors cursor-pointer">O nas</button>
             </div>
             <div className="space-y-1">
-              <span className="type-label text-[#F4A574] font-mono uppercase block mb-1">Baza wiedzy</span>
-              <button onClick={() => setActiveTab('blog')} className="block py-2 hover:text-[#F4A574] w-full md:text-left transition-colors cursor-pointer">Blog / Baza wiedzy</button>
-              <button onClick={() => setActiveTab('contact')} className="block py-2 hover:text-[#F4A574] w-full md:text-left transition-colors cursor-pointer">Kontakt z nami</button>
-              <a href="#privacy" className="block py-2 hover:text-[#F4A574] w-full md:text-left transition-colors cursor-not-allowed">Polityka prywatności</a>
-              <a href="#rules" className="block py-2 hover:text-[#F4A574] w-full md:text-left transition-colors cursor-not-allowed">Regulamin</a>
+              <span className="type-label text-on-dark-muted font-mono uppercase block mb-1">Baza wiedzy</span>
+              <button onClick={() => setActiveTab('blog')} className="block py-2 hover:text-white hover:underline underline-offset-4 w-full md:text-left transition-colors cursor-pointer">Blog / Baza wiedzy</button>
+              <button onClick={() => setActiveTab('contact')} className="block py-2 hover:text-white hover:underline underline-offset-4 w-full md:text-left transition-colors cursor-pointer">Kontakt z nami</button>
+              <a href="#privacy" className="block py-2 hover:text-white hover:underline underline-offset-4 w-full md:text-left transition-colors cursor-not-allowed">Polityka prywatności</a>
+              <a href="#rules" className="block py-2 hover:text-white hover:underline underline-offset-4 w-full md:text-left transition-colors cursor-not-allowed">Regulamin</a>
             </div>
           </div>
 
@@ -2244,7 +2244,7 @@ export default function App() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[99999] flex items-center justify-center bg-[#14183D]/80 backdrop-blur-md p-4 sm:p-6 md:p-10"
+            className="fixed inset-0 z-[99999] flex items-center justify-center bg-text-dark/80 backdrop-blur-md p-4 sm:p-6 md:p-10"
             onClick={() => setIsDashboardModalOpen(false)}
           >
             <motion.div
@@ -2252,13 +2252,13 @@ export default function App() {
               animate={{ scale: 1, y: 0, opacity: 1 }}
               exit={{ scale: 0.95, y: 15, opacity: 0 }}
               transition={{ type: "spring", duration: 0.5, bounce: 0.2 }}
-              className="relative bg-[#FBFAF8] w-full max-w-6xl max-h-[90vh] rounded-[32px] shadow-2xl border border-[#C4BBDE]/35 overflow-y-auto p-4 sm:p-6"
+              className="relative bg-neutral-bg w-full max-w-6xl max-h-[90vh] rounded-[32px] shadow-2xl border border-border-indigo/35 overflow-y-auto p-4 sm:p-6"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Close Button */}
               <button
                 onClick={() => setIsDashboardModalOpen(false)}
-                className="absolute top-5 right-5 p-2 rounded-full bg-white hover:bg-[#F4F1EC] text-[#14183D] border border-[#EFEAE1]/80 hover:border-gray-300 transition-colors shadow-xs z-50 cursor-pointer"
+                className="absolute top-5 right-5 p-2 rounded-full bg-white hover:bg-primary-faint text-text-dark border border-border-soft/80 hover:border-border-indigo transition-colors shadow-xs z-50 cursor-pointer"
                 aria-label="Zamknij"
               >
                 <X className="w-5 h-5" />
@@ -2267,9 +2267,9 @@ export default function App() {
               {/* Inside content */}
               <div className="pt-8">
                 <Suspense fallback={
-                  <div className="h-[70vh] flex flex-col items-center justify-center bg-[#FBFAF8]">
-                    <div className="w-10 h-10 border-4 border-[#3B2F8C] border-t-transparent rounded-full animate-spin"></div>
-                    <p className="type-body-sm text-[#55506E] mt-3 animate-pulse">Generowanie podglądu interaktywnego panelu...</p>
+                  <div className="h-[70vh] flex flex-col items-center justify-center bg-neutral-bg">
+                    <div className="w-10 h-10 border-4 border-indigo-primary border-t-transparent rounded-full animate-spin"></div>
+                    <p className="type-body-sm text-muted-purple mt-3 animate-pulse">Generowanie podglądu interaktywnego panelu...</p>
                   </div>
                 }>
                   <HrlyDashboardPreview />

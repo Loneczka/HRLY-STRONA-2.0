@@ -8,7 +8,7 @@ Lista zadań:
 - [x] FAZA 1 — Blokery dostępności
 - [x] FAZA 2 — Jedna skala typograficzna
 - [x] FAZA 3 — Jeden komponent przycisku (STOP 3.2 rozstrzygnięty: A2)
-- [ ] FAZA 4 — Kolor: reguła zamiast przypadku
+- [x] FAZA 4 — Kolor: reguła zamiast przypadku
 - [ ] FAZA 5 — Bugi wizualne
 - [ ] FAZA 6 — Hero (STOP 6.3 warunkowy)
 - [ ] FAZA 7 — Social proof (STOP na treści)
@@ -277,3 +277,53 @@ Lint (`tsc --noEmit`, teraz z prawdziwymi typami Reacta) i build czyste.
 Do decyzji właściciela:
 - Usunięcie „→” z tekstów CTA hero w `DEFAULT_CONFIG` (i w zapisanej konfiguracji CMS), żeby móc użyć ikony jak w headerze.
 - Czy linki footera / nav-pills mają przejść na `Button ghost` (spójny system, ale poza zakresem 6 CTA).
+
+---
+
+## FAZA 4 — Kolor: reguła zamiast przypadku   [ZROBIONE Z ODSTĘPSTWAMI]
+
+Zmienione pliki: `src/index.css` (tokeny + własny CSS na `var()`/`color-mix()`), `src/App.tsx` (header, menu, blok home, footer, wrapper modala), `src/components/HrlyHeroGraphic.tsx`, `src/components/HrlyDashboardPreview.tsx`. Podstrony, dialog demo (nieosiągalny) i fallback ładowania admina (App.tsx ~502) — poza zakresem, nietknięte.
+
+### 4.1 Kontrast
+- `10×` → fiolet (seria 58/10×/+23% w jednym kolorze); `01/02/03` (sekcja 02) → fiolet (seria; usuwa 3,88:1 na mobile); `✓` w hero, `+12% wzrostu`, `96.4% retencji`, „DANE LIVE” → `--color-success` `#047857` (5,5:1 na białym); `Wysokie` na ciemnej karcie → `--color-success-on-dark` `#34D399` (7,7:1 na `#241F59`); etykieta „Zaufanie w firmie” (`#6A5E8C` na navy = 2,5:1 — błąd, którego skrypt nie widział) → `on-dark-muted` (8,2:1).
+- Karty z gradientem dostały pod gradientem jednolite tło z tokenu, więc skrypt mierzy realne tło („94%” = 14,8:1 zamiast fałszywego 1,04:1) — zero zmian wizualnych.
+- Modal: ~40 błędów (`text-gray-400`, `#A39AB4` na navy, statusy emerald/amber/rose-600) → `muted-purple`/`on-dark-muted`, statusy na `success`/`warning-orange`/`danger-red` (+ tokeny `-soft` jako tła).
+- Ikony (skrypt ich nie mierzy): `ChevronRight` w liście obszarów `#A39AB4` (2,7:1) → `muted-indigo`; pierścienie logo w footerze → `border-indigo` (9,4:1 na navy).
+
+### 4.2 Reguła akcentu — co z brzoskwini ZOSTAJE (jeden akcent na sekcję, tylko na ciemnym)
+| Miejsce | Uzasadnienie |
+|---|---|
+| Baner demo: ikona kursora w granatowym kółku | jedyny akcent sekcji, na navy, ikona nie tekst |
+| Sekcja 03: ikona `Users` w ciemnej karcie | jedyny akcent sekcji, na navy; karta 1 jest celowo wyróżniona |
+| Sekcja 05: span „11 obszarów” w `h2` (40 px, 8,5:1) | jedyny akcent sekcji |
+| Sekcja 07: pill „07 · GOTOWI NA ZMIANĘ?” | jedyny akcent sekcji |
+| Footer: wewnętrzny pierścień i kropka logo | znak firmowy = akcent footera |
+| Modal: `92%` na ciemnym ribbonie | jedyny akcent ribbonu |
+| Hero-mockup: pasek 94% na ciemnej karcie | akcent mockupu (ciemna karta) |
+| Ring fokusu na `.section-dark`, `selection:` | funkcjonalne, nie treść |
+Zamienione (wszystkie pozostałe, ~25 wystąpień): ikona `Sparkles` w badge hero, poświaty/bloby (`bg-[#F4A574]/x` → `primary-light`), numerały serii, etykieta „Metodologia…” i 11 ikon + `↳` w marquee (→ `on-dark-muted`), hover border kart, blob i border sekcji 07, `✓`×3 w 07, nagłówki kolumn footera, `hover:text-[#F4A574]` na linkach footera (→ biały + podkreślenie), ikony na jasnych kartach modala (→ fiolet), linia EKG w mockupie (jasna karta → fiolet; drugi szereg `muted-indigo`).
+
+### 4.3 Tokeny (`@theme`, 36 tokenów koloru)
+Dodane: `muted-indigo #6A5E8C`, `navy-deep #1D2254`, `navy-card-from/to #241F59/#120E37`, `on-dark-body` (= `primary-light`), `on-dark-muted` (= `border-indigo`), `success #047857` (zmiana nazwy z `success-green`, 0 użyć), `success-on-dark #34D399`, `warning-soft #FEF3C7`, `danger-soft #FEE2E2`, `accent-rose #FF5A79` (ikona serca w mockupie). Usunięte z zakresu: `#00E5A3`, `#10B981`, `#8A82C7`, `#C4672D`, `#A5ADC6`, `#E2E8F0/#CBD5E1`, wszystkie `gray-*/emerald-*/amber-*/rose-*/indigo-50`, inline `[#hex]`, `[rgba()]`, hexy w atrybutach SVG i w `index.css` (poza `@theme`).
+
+### Wynik skryptu
+```
+1440×900:   BŁĘDY KONTRASTU (0)   KOLORY TEKSTU: #C4BBDE, #E3DEEE, #FBFAF8, #14183D, #55506E, #3B2F8C, #FFFFFF, #047857, #6A5E8C, #F4A574 (×2), #34D399 — wyłącznie tokeny
+390×844:    BŁĘDY KONTRASTU (0)
+1440+modal: BŁĘDY KONTRASTU (0)   (+ warning-orange #B45309, danger-red #B91C1C — tokeny statusów)
+ROZMIARY/WAGI/NAGŁÓWKI/CTA: bez zmian od FAZY 3 (12–60 / 400–800 / h1=1 h2=7 h3=39 h4=0 / 40,48 / Inter)
+rg hexów/domyślnej palety w HrlyHeroGraphic.tsx i HrlyDashboardPreview.tsx: 0; w App.tsx tylko poza zakresem (podstrony, dialog demo, fallback admina)
+```
+Lint i build czyste. Zrzuty 1440/390/modal: zmiany wyłącznie kolorów, wszystkie ikony widoczne.
+
+Odstępstwa od planu i dlaczego:
+1. Dodatkowe tokeny semantyczne `on-dark-body/-muted` jako aliasy `var()` (jedno źródło prawdy dla tekstu na navy) i `accent-rose` dla dekoracyjnej ikony serca (alternatywa: trzecia brzoskwinia w mockupie).
+2. Statusy modala na istniejących `warning-orange`/`danger-red` (700-level, ciemniejsze niż amber/rose-500) zamiast nowych `status-*` — paski i kropki statusów są przez to nieco ciemniejsze, spójne z tekstem.
+3. Linia EKG w mockupie: spec dopuszczał brzoskwinię, ale karta jest jasna — reguła 4.2 zastosowana dosłownie (fiolet); jedyny akcent mockupu to pasek 94% na ciemnej karcie.
+4. `--color-success-green` przemianowany na `--color-success` (0 użyć klas przed zmianą).
+5. Pierścienie logo w headerze (`primary-light`/`border-indigo` na białym, <3:1) — dekoracja znaku, bez zmian poza podmianą hexów na tokeny.
+
+Do decyzji właściciela:
+- Kropka legendy „Uznanie: 3.8” jest fioletowa, a linia EKG też — jeśli linia ma wrócić do brzoskwini (grafika, nie tekst), to jest jedna zmiana tokenu.
+- `warning-orange #B45309` na `warning-soft` = 4,51:1 (przechodzi bez zapasu); opcjonalnie `#9A3412` (6,0:1).
+- Hover linków footera zmienił się z brzoskwini na biały + podkreślenie (skutek reguły akcentu).

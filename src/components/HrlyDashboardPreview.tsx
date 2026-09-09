@@ -35,40 +35,40 @@ export const HrlyDashboardPreview: React.FC = () => {
       case 'Wysoki':
       case 'Dobry':
         return {
-          bg: 'bg-emerald-50 border-emerald-200/50',
-          text: 'text-emerald-800',
-          accent: 'text-emerald-500',
-          border: 'border-emerald-200',
-          badge: 'bg-emerald-100 text-emerald-800 border-emerald-200',
-          dot: 'bg-emerald-500'
+          bg: 'bg-success-soft border-success/20',
+          text: 'text-success',
+          accent: 'text-success',
+          border: 'border-success/20',
+          badge: 'bg-success-soft text-success border-success/20',
+          dot: 'bg-success'
         };
       case 'Średni':
         return {
-          bg: 'bg-amber-50 border-amber-200/50',
-          text: 'text-amber-800',
-          accent: 'text-amber-500',
-          border: 'border-amber-200',
-          badge: 'bg-amber-100 text-amber-800 border-amber-200',
-          dot: 'bg-amber-500'
+          bg: 'bg-warning-soft border-warning-orange/20',
+          text: 'text-warning-orange',
+          accent: 'text-warning-orange',
+          border: 'border-warning-orange/20',
+          badge: 'bg-warning-soft text-warning-orange border-warning-orange/20',
+          dot: 'bg-warning-orange'
         };
       case 'Niski':
       case 'Wymaga uwagi':
         return {
-          bg: 'bg-rose-50 border-rose-200/50',
-          text: 'text-rose-800',
-          accent: 'text-rose-500',
-          border: 'border-rose-200',
-          badge: 'bg-rose-100 text-rose-800 border-rose-200',
-          dot: 'bg-rose-500'
+          bg: 'bg-danger-soft border-danger-red/20',
+          text: 'text-danger-red',
+          accent: 'text-danger-red',
+          border: 'border-danger-red/20',
+          badge: 'bg-danger-soft text-danger-red border-danger-red/20',
+          dot: 'bg-danger-red'
         };
       default:
         return {
-          bg: 'bg-gray-50 border-gray-200/50',
-          text: 'text-gray-800',
-          accent: 'text-gray-500',
-          border: 'border-gray-200',
-          badge: 'bg-gray-100 text-gray-800 border-gray-200',
-          dot: 'bg-gray-500'
+          bg: 'bg-primary-faint border-border-soft',
+          text: 'text-text-dark',
+          accent: 'text-muted-purple',
+          border: 'border-border-soft',
+          badge: 'bg-primary-faint text-text-dark border-border-soft',
+          dot: 'bg-muted-purple'
         };
     }
   };
@@ -76,33 +76,33 @@ export const HrlyDashboardPreview: React.FC = () => {
   const overallAvgScore = Number((HR_AREAS.reduce((sum, a) => sum + a.averageScore, 0) / HR_AREAS.length).toFixed(1));
 
   return (
-    <div id="hrly-dashboard-preview" className="w-full bg-[#FBFAF8] border border-[#EFEAE1] rounded-3xl overflow-hidden shadow-sm">
+    <div id="hrly-dashboard-preview" className="w-full bg-neutral-bg border border-border-soft rounded-3xl overflow-hidden shadow-sm">
       
       {/* Dashboard Top Ribbon / Stats summary */}
-      <div className="bg-[#14183D] px-6 py-5 text-white flex flex-col md:flex-row items-center justify-between gap-6">
+      <div className="bg-text-dark px-6 py-5 text-white flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="space-y-1 text-center md:text-left">
-          <span className="type-label uppercase font-mono text-[#F4A574]">PULPIT ANALITYCZNY OPERACYJNY</span>
+          <span className="type-label uppercase font-mono text-on-dark-muted">PULPIT ANALITYCZNY OPERACYJNY</span>
           <h2 className="font-display type-h3">
             Wyniki Badania Zaangażowania Organizacji
           </h2>
         </div>
         
         <div className="flex flex-wrap items-center justify-center gap-6">
-          <div className="text-center md:text-right bg-[#3B2F8C]/40 px-4 py-2.5 rounded-xl border border-white/10">
-            <span className="block type-label font-mono text-[#A39AB4] uppercase">Wskaźnik ogólny</span>
+          <div className="text-center md:text-right bg-indigo-primary/40 px-4 py-2.5 rounded-xl border border-white/10">
+            <span className="block type-label font-mono text-on-dark-muted uppercase">Wskaźnik ogólny</span>
             <div className="flex items-center justify-center md:justify-end gap-1.5 mt-0.5">
               <span className="type-h3 font-display text-white">{overallAvgScore}</span>
-              <span className="type-body-sm text-[#A39AB4]">/5.0</span>
+              <span className="type-body-sm text-on-dark-muted">/5.0</span>
             </div>
           </div>
           
-          <div className="text-center md:text-right bg-[#3B2F8C]/40 px-4 py-2.5 rounded-xl border border-white/10">
-            <span className="block type-label font-mono text-[#A39AB4] uppercase">Udział w badaniu</span>
-            <span className="block type-h3 font-display text-[#F4A574] mt-0.5">92% <span className="type-body-sm text-white/60 font-mono">(46/50)</span></span>
+          <div className="text-center md:text-right bg-indigo-primary/40 px-4 py-2.5 rounded-xl border border-white/10">
+            <span className="block type-label font-mono text-on-dark-muted uppercase">Udział w badaniu</span>
+            <span className="block type-h3 font-display text-accent-apricot mt-0.5">92% <span className="type-body-sm text-on-dark-muted font-mono">(46/50)</span></span>
           </div>
 
-          <div className="text-center md:text-right bg-[#3B2F8C]/40 px-4 py-2.5 rounded-xl border border-white/10">
-            <span className="block type-label font-mono text-[#A39AB4] uppercase">Częstotliwość</span>
+          <div className="text-center md:text-right bg-indigo-primary/40 px-4 py-2.5 rounded-xl border border-white/10">
+            <span className="block type-label font-mono text-on-dark-muted uppercase">Częstotliwość</span>
             <span className="block type-label text-white mt-1 uppercase">Co kwartał (Q-Pulse)</span>
           </div>
         </div>
@@ -114,7 +114,7 @@ export const HrlyDashboardPreview: React.FC = () => {
           
           {/* Left Column: List of 11 Areas */}
           <div className="lg:col-span-5 space-y-3.5">
-            <label className="type-label uppercase font-mono text-[#A39AB4]">
+            <label className="type-label uppercase font-mono text-muted-purple">
               Obszary badania (Wybierz obszar, by zobaczyć szczegóły)
             </label>
             
@@ -124,7 +124,7 @@ export const HrlyDashboardPreview: React.FC = () => {
                 <select
                   value={selectedAreaId}
                   onChange={(e) => setSelectedAreaId(Number(e.target.value))}
-                  className="w-full p-4 rounded-2xl border border-[#C4BBDE]/35 bg-white type-body-sm font-semibold text-[#14183D] appearance-none cursor-pointer focus:ring-1 focus:ring-[#3B2F8C] shadow-xs"
+                  className="w-full p-4 rounded-2xl border border-border-indigo/35 bg-neutral-surface type-body-sm font-semibold text-text-dark appearance-none cursor-pointer focus:ring-1 focus:ring-indigo-primary shadow-xs"
                 >
                   {HR_AREAS.map((area) => (
                     <option key={area.id} value={area.id}>
@@ -132,8 +132,8 @@ export const HrlyDashboardPreview: React.FC = () => {
                     </option>
                   ))}
                 </select>
-                <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-gray-500">
-                  <ChevronDown className="w-4 h-4 text-[#3B2F8C]" />
+                <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-indigo-primary">
+                  <ChevronDown className="w-4 h-4 text-indigo-primary" />
                 </div>
               </div>
             </div>
@@ -151,23 +151,23 @@ export const HrlyDashboardPreview: React.FC = () => {
                     onClick={() => setSelectedAreaId(area.id)}
                     className={`w-full p-3.5 rounded-2xl border text-left flex items-center justify-between transition-all duration-200 cursor-pointer ${
                       isSelected 
-                        ? 'bg-white border-[#3B2F8C] shadow-sm ring-1 ring-[#3B2F8C]/15 translate-x-1' 
-                        : 'bg-white hover:bg-white/60 hover:border-gray-300 border-[#EFEAE1]/70'
+                        ? 'bg-neutral-surface border-indigo-primary shadow-sm ring-1 ring-indigo-primary/15 translate-x-1' 
+                        : 'bg-neutral-surface hover:bg-neutral-surface/60 hover:border-border-indigo border-border-soft/70'
                     }`}
                   >
                     <div className="flex items-center gap-3">
                       <div className={`p-2.5 rounded-xl transition-colors ${
-                        isSelected ? 'bg-[#3B2F8C] text-white' : 'bg-[#F4F1EC] text-[#14183D]'
+                        isSelected ? 'bg-indigo-primary text-white' : 'bg-primary-faint text-text-dark'
                       }`}>
                         <IconComponent className="w-4 h-4" />
                       </div>
                       <div className="space-y-0.5">
-                        <span className="block type-body-sm font-semibold text-[#14183D]">
+                        <span className="block type-body-sm font-semibold text-text-dark">
                           {area.title}
                         </span>
                         <div className="flex items-center gap-2">
                           <span className={`w-1.5 h-1.5 rounded-full ${statusColors.dot}`} />
-                          <span className="type-label text-gray-500 font-mono">
+                          <span className="type-label text-muted-purple font-mono">
                             Status: {area.overallStatus}
                           </span>
                         </div>
@@ -176,11 +176,11 @@ export const HrlyDashboardPreview: React.FC = () => {
 
                     <div className="flex items-center gap-1.5">
                       <span className={`type-body font-bold font-display ${
-                        area.averageScore >= 3.8 ? 'text-emerald-600' : area.averageScore >= 3.0 ? 'text-amber-600' : 'text-rose-600'
+                        area.averageScore >= 3.8 ? 'text-success' : area.averageScore >= 3.0 ? 'text-warning-orange' : 'text-danger-red'
                       }`}>
                         {area.averageScore.toFixed(1)}
                       </span>
-                      <ChevronRight className="w-4 h-4 text-gray-300" />
+                      <ChevronRight className="w-4 h-4 text-muted-indigo" />
                     </div>
                   </button>
                 );
@@ -192,28 +192,28 @@ export const HrlyDashboardPreview: React.FC = () => {
           <div className="lg:col-span-7 space-y-6">
             
             {/* 1. WYNIK (Header card displaying average score, status, and brief overview) */}
-            <div className="bg-white border border-[#EFEAE1] rounded-2xl p-6 space-y-4 shadow-xs relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-[#3B2F8C]/5 rounded-full blur-2xl pointer-events-none" />
+            <div className="bg-neutral-surface border border-border-soft rounded-2xl p-6 space-y-4 shadow-xs relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-primary/5 rounded-full blur-2xl pointer-events-none" />
               
-              <div className="flex items-center justify-between flex-wrap gap-4 border-b border-[#F4F1EC] pb-4">
+              <div className="flex items-center justify-between flex-wrap gap-4 border-b border-primary-faint pb-4">
                 <div className="flex items-center gap-3">
-                  <div className="p-3 bg-[#3B2F8C]/5 text-[#3B2F8C] rounded-xl border border-[#3B2F8C]/10">
-                    {React.createElement(iconMap[activeArea.iconName as IconName] || Info, { className: "w-5 h-5 text-[#F4A574]" })}
+                  <div className="p-3 bg-indigo-primary/5 text-indigo-primary rounded-xl border border-indigo-primary/10">
+                    {React.createElement(iconMap[activeArea.iconName as IconName] || Info, { className: "w-5 h-5 text-indigo-primary" })}
                   </div>
                   <div>
-                    <span className="block type-label text-gray-400 font-mono uppercase">Karta Wyniku Obszaru</span>
-                    <h3 className="font-display type-h3 text-[#14183D]">
+                    <span className="block type-label text-muted-purple font-mono uppercase">Karta Wyniku Obszaru</span>
+                    <h3 className="font-display type-h3 text-text-dark">
                       {activeArea.title}
                     </h3>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 bg-[#FBFAF8] px-3 py-1.5 rounded-xl border border-[#EFEAE1]/50">
+                <div className="flex items-center gap-3 bg-neutral-bg px-3 py-1.5 rounded-xl border border-border-soft/50">
                   <div className="text-right">
-                    <span className="block type-label uppercase font-mono text-gray-400">Wynik obszaru</span>
-                    <span className="type-h3 font-display text-[#3B2F8C]">
+                    <span className="block type-label uppercase font-mono text-muted-purple">Wynik obszaru</span>
+                    <span className="type-h3 font-display text-indigo-primary">
                       {activeArea.averageScore.toFixed(1)} 
-                      <span className="type-body-sm text-gray-400"> /5.0</span>
+                      <span className="type-body-sm text-muted-purple"> /5.0</span>
                     </span>
                   </div>
                   <span className={`type-label font-mono px-2.5 py-1 rounded-md border ${
@@ -225,8 +225,8 @@ export const HrlyDashboardPreview: React.FC = () => {
               </div>
 
               <div className="relative">
-                <span className="absolute -top-3 left-3 bg-white px-2 type-label font-mono uppercase text-gray-400">Diagnoza syntetyczna</span>
-                <p className="type-body-sm text-[#55506E] italic bg-gray-50/70 p-4 rounded-xl border border-gray-100/80">
+                <span className="absolute -top-3 left-3 bg-neutral-surface px-2 type-label font-mono uppercase text-muted-purple">Diagnoza syntetyczna</span>
+                <p className="type-body-sm text-muted-purple italic bg-neutral-bg/70 p-4 rounded-xl border border-border-soft/80">
                   "{activeArea.summaryText}"
                 </p>
               </div>
@@ -236,37 +236,37 @@ export const HrlyDashboardPreview: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               
               {/* 2. WPŁYW NA PRACOWNIKA */}
-              <div className="bg-white border border-[#EFEAE1] rounded-2xl p-5 space-y-3 shadow-xs relative overflow-hidden group hover:border-[#F4A574]/40 transition-colors">
-                <div className="flex items-center gap-2.5 text-[#14183D]">
-                  <div className="p-2 bg-rose-50 text-rose-600 rounded-lg">
+              <div className="bg-neutral-surface border border-border-soft rounded-2xl p-5 space-y-3 shadow-xs relative overflow-hidden group hover:border-indigo-primary/40 transition-colors">
+                <div className="flex items-center gap-2.5 text-text-dark">
+                  <div className="p-2 bg-indigo-primary/5 text-indigo-primary rounded-lg">
                     <Users className="w-4 h-4 shrink-0" />
                   </div>
                   <div>
-                    <span className="block type-label font-mono uppercase text-gray-400">Ludzie i zachowania</span>
-                    <h4 className="type-body font-bold uppercase text-[#14183D]">
+                    <span className="block type-label font-mono uppercase text-muted-purple">Ludzie i zachowania</span>
+                    <h4 className="type-body font-bold uppercase text-text-dark">
                       Wpływ na pracownika
                     </h4>
                   </div>
                 </div>
-                <p className="type-body-sm text-[#55506E]">
+                <p className="type-body-sm text-muted-purple">
                   {activeArea.employeeImpact}
                 </p>
               </div>
 
               {/* 3. WPŁYW NA BIZNES */}
-              <div className="bg-white border border-[#EFEAE1] rounded-2xl p-5 space-y-3 shadow-xs relative overflow-hidden group hover:border-[#3B2F8C]/40 transition-colors">
-                <div className="flex items-center gap-2.5 text-[#14183D]">
-                  <div className="p-2 bg-[#3B2F8C]/5 text-[#3B2F8C] rounded-lg">
-                    <Briefcase className="w-4 h-4 shrink-0 text-[#F4A574]" />
+              <div className="bg-neutral-surface border border-border-soft rounded-2xl p-5 space-y-3 shadow-xs relative overflow-hidden group hover:border-indigo-primary/40 transition-colors">
+                <div className="flex items-center gap-2.5 text-text-dark">
+                  <div className="p-2 bg-indigo-primary/5 text-indigo-primary rounded-lg">
+                    <Briefcase className="w-4 h-4 shrink-0 text-indigo-primary" />
                   </div>
                   <div>
-                    <span className="block type-label font-mono uppercase text-gray-400">Finanse i operacje</span>
-                    <h4 className="type-body font-bold uppercase text-[#14183D]">
+                    <span className="block type-label font-mono uppercase text-muted-purple">Finanse i operacje</span>
+                    <h4 className="type-body font-bold uppercase text-text-dark">
                       Wpływ na biznes
                     </h4>
                   </div>
                 </div>
-                <p className="type-body-sm text-[#55506E]">
+                <p className="type-body-sm text-muted-purple">
                   {activeArea.businessImpact}
                 </p>
               </div>
@@ -274,55 +274,55 @@ export const HrlyDashboardPreview: React.FC = () => {
             </div>
 
             {/* 4. REKOMENDACJE (Strategic recommendations) */}
-            <div className="bg-white border-l-4 border-emerald-500 border border-[#EFEAE1] rounded-r-2xl p-6 space-y-3 shadow-xs">
-              <div className="flex items-center gap-2 text-emerald-800">
-                <div className="p-1.5 bg-emerald-50 text-emerald-600 rounded-md">
+            <div className="bg-neutral-surface border-l-4 border-success border border-border-soft rounded-r-2xl p-6 space-y-3 shadow-xs">
+              <div className="flex items-center gap-2 text-success">
+                <div className="p-1.5 bg-success-soft text-success rounded-md">
                   <Lightbulb className="w-4 h-4 shrink-0" />
                 </div>
                 <div>
-                  <span className="block type-label font-mono uppercase text-gray-400">Rozwiązanie strategiczne</span>
-                  <h4 className="type-body font-bold uppercase text-[#14183D]">
+                  <span className="block type-label font-mono uppercase text-muted-purple">Rozwiązanie strategiczne</span>
+                  <h4 className="type-body font-bold uppercase text-text-dark">
                     Rekomendacja dla organizacji
                   </h4>
                 </div>
               </div>
               
-              <div className="bg-emerald-50/30 border border-emerald-100/80 rounded-xl p-4 space-y-2">
-                <p className="type-body-sm text-[#55506E]">
+              <div className="bg-success-soft/30 border border-success-soft/80 rounded-xl p-4 space-y-2">
+                <p className="type-body-sm text-muted-purple">
                   {activeArea.whatToDo}
                 </p>
                 
-                <div className="pt-2 border-t border-emerald-100/50 flex items-start gap-2 type-body-sm text-gray-500">
-                  <AlertCircle className="w-3.5 h-3.5 text-[#F4A574] shrink-0 mt-0.5" />
+                <div className="pt-2 border-t border-success-soft/50 flex items-start gap-2 type-body-sm text-muted-purple">
+                  <AlertCircle className="w-3.5 h-3.5 text-indigo-primary shrink-0 mt-0.5" />
                   <span>
-                    <strong className="text-gray-700">Główna bariera:</strong> {activeArea.whatIsWrong}
+                    <strong className="text-text-dark">Główna bariera:</strong> {activeArea.whatIsWrong}
                   </span>
                 </div>
               </div>
             </div>
 
             {/* 5. NARZĘDZIA DLA MANAGERA */}
-            <div className="bg-gradient-to-br from-[#14183D] to-[#231B5E] text-white rounded-2xl p-6 space-y-4 shadow-sm relative overflow-hidden">
-              <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-[#F4A574]/10 rounded-full blur-2xl pointer-events-none" />
+            <div className="bg-text-dark bg-gradient-to-br from-text-dark to-indigo-hover text-white rounded-2xl p-6 space-y-4 shadow-sm relative overflow-hidden">
+              <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-indigo-primary/30 rounded-full blur-2xl pointer-events-none" />
               
               <div className="flex flex-wrap gap-y-2 items-center justify-between border-b border-white/10 pb-3">
                 <div className="flex items-center gap-2">
-                  <div className="p-1.5 bg-white/10 text-[#F4A574] rounded-lg">
+                  <div className="p-1.5 bg-white/10 text-on-dark-muted rounded-lg">
                     <Sparkles className="w-4 h-4" />
                   </div>
                   <div>
-                    <span className="block type-label font-mono uppercase text-white/50">Menedżerski Toolkit</span>
+                    <span className="block type-label font-mono uppercase text-on-dark-muted">Menedżerski Toolkit</span>
                     <h4 className="type-body font-bold uppercase text-white">
                       Narzędzia dla managera
                     </h4>
                   </div>
                 </div>
-                <span className="type-label font-mono text-[#F4A574] bg-[#F4A574]/10 border border-[#F4A574]/25 px-2.5 py-0.5 rounded-full shrink-0 whitespace-nowrap">
+                <span className="type-label font-mono text-on-dark-muted bg-white/5 border border-white/15 px-2.5 py-0.5 rounded-full shrink-0 whitespace-nowrap">
                   PODGLĄD SZABLONÓW
                 </span>
               </div>
 
-              <p className="type-body-sm text-[#C4BBDE]">
+              <p className="type-body-sm text-on-dark-body">
                 Gotowe, operacyjne scenariusze do wdrożenia, pomagające liderom podjąć właściwy dialog z zespołem.
               </p>
 
@@ -333,7 +333,7 @@ export const HrlyDashboardPreview: React.FC = () => {
                       key={idx} 
                       className="bg-white/5 border border-white/10 p-3 rounded-xl flex items-start gap-3 hover:bg-white/10 hover:border-white/20 transition-all group"
                     >
-                      <div className="w-5 h-5 rounded-full bg-[#3B2F8C]/50 flex items-center justify-center font-mono type-label text-[#F4A574] shrink-0 mt-0.5">
+                      <div className="w-5 h-5 rounded-full bg-indigo-primary/50 flex items-center justify-center font-mono type-label text-on-dark-muted shrink-0 mt-0.5">
                         {idx + 1}
                       </div>
                       <span className="type-body-sm text-white">
@@ -345,10 +345,10 @@ export const HrlyDashboardPreview: React.FC = () => {
               </div>
 
               {/* Informacja o pełnej wersji */}
-              <div className="bg-[#F4A574]/15 border border-[#F4A574]/30 rounded-xl p-4 flex items-start gap-3 type-body-sm text-white">
-                <Info className="w-4 h-4 text-[#F4A574] shrink-0 mt-0.5" />
+              <div className="bg-white/5 border border-white/15 rounded-xl p-4 flex items-start gap-3 type-body-sm text-white">
+                <Info className="w-4 h-4 text-on-dark-muted shrink-0 mt-0.5" />
                 <div>
-                  <span className="font-bold text-[#F4A574] block mb-0.5">Narzędzia i pełne szablony</span>
+                  <span className="font-bold text-white block mb-0.5">Narzędzia i pełne szablony</span>
                   Wszystkie profesjonalne pliki PDF, interaktywne kwestionariusze, procedury oraz dedykowane scenariusze rozmów dla liderów są dostępne do pobrania bezpośrednio w pełnej wersji platformy HRly.
                 </div>
               </div>
@@ -356,19 +356,19 @@ export const HrlyDashboardPreview: React.FC = () => {
 
             {/* 6. ROZBICIE NA CZYNNIKI */}
             <div className="space-y-4">
-              <div className="flex flex-wrap gap-y-2 items-center justify-between border-b border-[#EFEAE1] pb-2">
+              <div className="flex flex-wrap gap-y-2 items-center justify-between border-b border-border-soft pb-2">
                 <div className="flex items-center gap-2">
-                  <div className="p-1.5 bg-[#F4F1EC] text-[#14183D] rounded-md">
+                  <div className="p-1.5 bg-primary-faint text-text-dark rounded-md">
                     <Sliders className="w-4 h-4 shrink-0" />
                   </div>
                   <div>
-                    <span className="block type-label font-mono uppercase text-gray-400">Szczegółowa analityka twarda</span>
-                    <h4 className="type-body font-bold uppercase text-[#14183D]">
+                    <span className="block type-label font-mono uppercase text-muted-purple">Szczegółowa analityka twarda</span>
+                    <h4 className="type-body font-bold uppercase text-text-dark">
                       Rozbicie na czynniki cząstkowe
                     </h4>
                   </div>
                 </div>
-                <span className="type-label font-mono text-gray-400 shrink-0 whitespace-nowrap">
+                <span className="type-label font-mono text-muted-purple shrink-0 whitespace-nowrap">
                   {activeArea.factors.length} czynniki analizowane
                 </span>
               </div>
@@ -376,35 +376,35 @@ export const HrlyDashboardPreview: React.FC = () => {
               <div className="space-y-3">
                 {activeArea.factors.map((factor, idx) => {
                   const factorColors = getStatusColors(factor.status);
-                  const progressColor = factor.score >= 3.8 ? 'bg-emerald-500' : factor.score >= 3.0 ? 'bg-amber-500' : 'bg-rose-500';
+                  const progressColor = factor.score >= 3.8 ? 'bg-success' : factor.score >= 3.0 ? 'bg-warning-orange' : 'bg-danger-red';
 
                   return (
-                    <div key={idx} className="bg-white border border-[#EFEAE1]/75 p-4 rounded-xl space-y-3 shadow-xs hover:border-[#C4BBDE]/50 transition-colors">
+                    <div key={idx} className="bg-neutral-surface border border-border-soft/75 p-4 rounded-xl space-y-3 shadow-xs hover:border-border-indigo/50 transition-colors">
                       <div className="flex justify-between items-center">
                         <div className="flex items-center gap-2">
                           <CheckCircle2 className={`w-3.5 h-3.5 ${factorColors.accent}`} />
-                          <span className="type-body-sm font-semibold text-[#14183D]">{factor.name}</span>
+                          <span className="type-body-sm font-semibold text-text-dark">{factor.name}</span>
                         </div>
                         <div className="flex items-center gap-2">
                           <span className={`type-body-sm font-mono font-bold ${
-                            factor.score >= 3.8 ? 'text-emerald-700' : factor.score >= 3.0 ? 'text-amber-700' : 'text-rose-700'
+                            factor.score >= 3.8 ? 'text-success' : factor.score >= 3.0 ? 'text-warning-orange' : 'text-danger-red'
                           }`}>
                             {factor.score.toFixed(1)}
                           </span>
-                          <span className="type-body-sm text-gray-300">/5.0</span>
+                          <span className="type-body-sm text-muted-purple">/5.0</span>
                         </div>
                       </div>
 
                       {/* Score indicator bar */}
-                      <div className="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden">
+                      <div className="w-full bg-primary-faint h-1.5 rounded-full overflow-hidden">
                         <div className={`${progressColor} h-full rounded-full transition-all duration-500`} style={{ width: `${(factor.score / 5) * 100}%` }} />
                       </div>
 
                       {/* Practical recommendation action */}
-                      <div className="bg-[#FBFAF8] p-3 rounded-lg border border-[#EFEAE1]/40 type-body-sm text-[#55506E] flex gap-2">
-                        <Sliders className="w-3.5 h-3.5 text-[#3B2F8C] shrink-0 mt-0.5" />
+                      <div className="bg-neutral-bg p-3 rounded-lg border border-border-soft/40 type-body-sm text-muted-purple flex gap-2">
+                        <Sliders className="w-3.5 h-3.5 text-indigo-primary shrink-0 mt-0.5" />
                         <span>
-                          <strong className="text-[#3B2F8C]">Dla lidera:</strong> {factor.actionableRecommendation}
+                          <strong className="text-indigo-primary">Dla lidera:</strong> {factor.actionableRecommendation}
                         </span>
                       </div>
                     </div>
