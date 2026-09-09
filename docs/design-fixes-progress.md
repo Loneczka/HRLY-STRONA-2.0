@@ -571,3 +571,32 @@ Zmienione pliki: `src/App.tsx`, `src/components/Button.tsx`, `src/components/Hrl
 Wynik skryptu (1440): rozmiary 12–60, wagi 400–800, h1=1 h2=7 h3=39 h4=0, BŁĘDY KONTRASTU 0; tab-walk 16/16 z ringiem (dwa martwe linki footera celowo poza tab-orderem). Lint i build czyste.
 
 Nie zrobione (decyzja): pill sekcji 08 zostaje bez brzoskwini (jedna reguła dla ciemnych etykiet).
+
+---
+
+## FAZA 8 (poza protokołem, na życzenie właściciela) — podstrony na nowy system   [ZROBIONE Z ODSTĘPSTWAMI]
+
+Zmienione pliki: `src/App.tsx` (trasy `#features`, `#pricing`, `#about`, `#contact`, nieosiągalny dialog demo, fallback ładowania admina), `src/components/HrlyMethodologyVisual.tsx`, `src/components/HrlyPricingCalculator.tsx` (z modalem rejestracji), `src/components/HrlyBlogSection.tsx` (lista, filtry, newsletter; popup artykułu nietknięty). Zero nowych tokenów, zero nowych plików, zero zmian copy poza numerami etykiet.
+
+- Typografia: wszystkie teksty na `type-*`; `h1` trasy `type-display`, `h2` `type-h2`, `h3` `type-h3`, etykiety `type-label`; inline `style={{fontSize…}}` w blogu zastąpione klasami.
+- Kolor: zero `[#hex]`, `rgba(`, `gray/slate/emerald/amber/rose` w zakresie; mapowanie na tokeny z FAZY 4; brzoskwinia tylko jako pojedynczy akcent na ciemnych panelach.
+- Przyciski: każdy CTA/przycisk na `<Button>` (baner features, enterprise w cenniku, para CTA „O nas”, submit i „Napisz kolejną” w kontakcie, dialog demo, plany cennika, modal rejestracji, filtry kategorii bloga z `aria-pressed`, newsletter); ikonowe „zamknij” zostają `<button aria-label>`.
+- `SectionLabel` per trasa od 01 (features 01/02, pricing 01/02, about 01/02/03, contact 01); kafelki makiety na `#features` z `h2` na `<p>` (dekoracja); `h2` kart → `h3`.
+- Makieta na `#features` przebudowana w pionowy zygzak (4 kafelki po 290 px, kontener 400 → 620 px), bo przy 12/14 px kafelki obok siebie nachodziłyby na siebie.
+
+### Wynik skryptu (1440, każda trasa)
+```
+#features: ROZMIARY 12,14,16,18,20,40,60  WAGI 400,600,700,800  h1=1 h2=3 h3=19 h4=0  CTA 40/48 Inter 12px  KONTRAST 0
+#pricing:  ROZMIARY 12,14,16,18,20,40,60  WAGI 400,600,700,800  h1=1 h2=2 h3=6  h4=0  CTA 40/48 Inter 12px  KONTRAST 0
+#about:    ROZMIARY 12,14,16,18,20,40,60  WAGI 400,600,700,800  h1=1 h2=3 h3=8  h4=0  CTA 40/48 Inter 12px  KONTRAST 0
+#contact:  ROZMIARY 12,14,16,18,20,40,60  WAGI 400,600,700,800  h1=1 h2=1 h3=0  h4=0  CTA 40/48 Inter 12px  KONTRAST 0
+#blog:     ROZMIARY 12,14,18,20,40,60     WAGI 400,600,700,800  h1=1 h2=1 h3=10 h4=0  CTA 40    Inter 12px  KONTRAST 0
+home:      bez zmian (kontrola)
+390: każda trasa ⊆ {12,14,15,16,18,20(logo),28,36}, kontrast 0, scrollWidth = 390
+```
+Lint i build czyste. Recenzja: akceptacja PASS (3 minor), regresja PASS (0).
+
+Odstępstwa od planu i dlaczego:
+1. Karta e-mail na `#contact` nie jest już w całości linkiem — `mailto:` obejmuje tylko adres (poprzednio cała karta była `<a>`); do ewentualnego przywrócenia.
+2. Etykiety paneli w `HrlyMethodologyVisual` („Silnik Diagnostyczny HRly” itp.) powtarzają klasy `SectionLabel` zamiast renderować komponent — komponent wymaga numeru, a to etykiety paneli, nie sekcji.
+3. Poza zakresem, do poprawy w treści CMS: tytuł posta z podwójnie zakodowanym `&amp;#8211;` w `useSiteConfig.ts` (~368) renderuje się dosłownie.

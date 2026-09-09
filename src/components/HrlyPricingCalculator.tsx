@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { HRLY_PLANS, HRlyPlan } from '../data/hrlyData';
-import { 
-  Check, Info, Sparkles, HelpCircle, ArrowRight, X, 
-  Send, Users, Mail, Building2, ChevronRight, CheckCircle2
-} from 'lucide-react';
+import { Check, ArrowRight, X, Users, Building2, CheckCircle2 } from 'lucide-react';
+import Button from './Button';
 
 export interface HrlyPricingCalculatorProps {
   onNavigate?: (tab: string) => void;
@@ -13,7 +11,7 @@ export const HrlyPricingCalculator: React.FC<HrlyPricingCalculatorProps> = ({ on
   const [employeeCount, setEmployeeCount] = useState<number>(15);
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
   const [checkoutStep, setCheckoutStep] = useState<number>(0); // 0=none, 1=form, 2=thank you
-  
+
   // Registration Form States
   const [rgName, setRgName] = useState("");
   const [rgEmail, setRgEmail] = useState("");
@@ -52,35 +50,37 @@ export const HrlyPricingCalculator: React.FC<HrlyPricingCalculatorProps> = ({ on
 
   return (
     <div className="space-y-10" id="pricing">
-      
+
       {/* Slider Widget: Dynamically calculate plan */}
-      <div className="bg-[#FBFAF8] border border-[#EFEAE1]/80 rounded-2xl p-6 md:p-8 space-y-6 shadow-sm relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-[#F4A574]/5 rounded-full blur-2xl pointer-events-none" />
-        
-        <div className="max-w-2xl text-center md:text-left space-y-1.5">
-          <span className="text-[10px] text-[#3B2F8C] uppercase font-bold tracking-wider font-mono">
+      <div className="bg-neutral-bg border border-border-soft/80 rounded-2xl p-6 md:p-8 space-y-6 shadow-sm relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-primary/5 rounded-full blur-2xl pointer-events-none" />
+
+        <div className="max-w-2xl text-center md:text-left space-y-2">
+          {/* FAZA 8: etykieta panelu wewnątrz sekcji `#pricing` z App.tsx — bez numeru,
+              żeby nie dublować numeracji SectionLabel należącej do trasy. */}
+          <span className="inline-flex items-center rounded-full px-3 py-1.5 type-label font-mono uppercase bg-primary-light/60 text-indigo-primary border border-border-indigo/35">
             Kalkulator zapotrzebowania
           </span>
-          <h2 className="font-sans font-black text-xl text-[#14183D] tracking-tight leading-none uppercase">
+          <h2 className="type-h2 font-display text-text-dark">
             Dobierz pakiet według rozmiaru zespołu
           </h2>
-          <p className="text-xs text-[#55506E] leading-relaxed">
+          <p className="type-body text-muted-purple">
             Zaczynamy od pakietu Lite dla mniejszych zespołów. Pakiety Standard i Premium systematycznie rozwijają współpracę z menedżerami w stale rosnących organizacjach. Przeciągnij suwak, by natychmiast sprawdzić rekomendowany plan.
           </p>
         </div>
 
         {/* The slider control */}
-        <div className="bg-white border border-[#EFEAE1] p-5 rounded-xl space-y-4 shadow-sm">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-[#F4F1EC] p-3.5 rounded-lg">
+        <div className="bg-neutral-surface border border-border-soft p-5 rounded-xl space-y-4 shadow-sm">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-primary-faint p-4 rounded-lg">
             <div className="flex items-center gap-2">
-              <Users className="w-5 h-5 text-[#3B2F8C]" />
-              <span className="text-xs font-semibold text-[#14183D]">Twój zespół operacyjny liczy:</span>
+              <Users className="w-5 h-5 text-indigo-primary shrink-0" aria-hidden="true" />
+              <span className="type-body font-semibold text-text-dark">Twój zespół operacyjny liczy:</span>
             </div>
             <div className="text-center sm:text-right">
-              <span className="font-mono text-xl font-black text-[#14183D]">
+              <span className="font-mono type-h3 text-text-dark block">
                 {employeeCount >= 300 ? '250+' : `${employeeCount} osób`}
               </span>
-              <span className="text-[10px] text-[#6A5E8C] block leading-none mt-1">pracowników na etacie / B2B</span>
+              <span className="type-body-sm text-muted-purple block mt-1">pracowników na etacie / B2B</span>
             </div>
           </div>
 
@@ -91,10 +91,11 @@ export const HrlyPricingCalculator: React.FC<HrlyPricingCalculatorProps> = ({ on
               max="300"
               step="1"
               value={employeeCount}
+              aria-label="Liczba pracowników"
               onChange={(e) => setEmployeeCount(Number(e.target.value))}
-              className="w-full h-2.5 bg-[#EFEAE1] rounded-lg appearance-none cursor-pointer accent-[#3B2F8C]"
+              className="w-full h-2.5 bg-border-soft rounded-lg appearance-none cursor-pointer accent-indigo-primary"
             />
-            <div className="flex justify-between text-[9px] text-[#6A5E8C] font-mono leading-none pt-1">
+            <div className="flex flex-wrap justify-between gap-x-4 gap-y-1 type-label font-mono text-muted-purple pt-1">
               <span>Do 20 (Lite)</span>
               <span>21-100 (Standard)</span>
               <span>101-250 (Premium)</span>
@@ -105,84 +106,86 @@ export const HrlyPricingCalculator: React.FC<HrlyPricingCalculatorProps> = ({ on
 
         {/* Live Recommendation Badge */}
         {recommendedPlan && (
-          <div className="bg-[#3B2F8C]/5 border border-[#3B2F8C]/20 p-4.5 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-4 animate-fade-in ring-1 ring-[#F4A574]/15">
+          <div className="bg-indigo-primary/5 border border-indigo-primary/20 p-5 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-4 animate-fade-in ring-1 ring-indigo-primary/15">
             <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-full bg-white border border-[#C4BBDE] flex items-center justify-center font-bold text-lg text-[#3B2F8C] shrink-0">
+              <span className="w-10 h-10 rounded-full bg-neutral-surface border border-border-indigo flex items-center justify-center type-h3 text-indigo-primary shrink-0" aria-hidden="true">
                 ⭐
-              </div>
-              <div>
-                <p className="text-[10px] font-mono font-bold text-[#F4A574]">AUTOPILOT SUGERUJE DLA CIEBIE:</p>
-                <h3 className="text-sm font-black text-[#14183D] flex items-baseline gap-1.5 mt-0.5">
+              </span>
+              <div className="space-y-1">
+                <p className="type-label font-mono uppercase text-indigo-primary">AUTOPILOT SUGERUJE DLA CIEBIE:</p>
+                <h3 className="type-h3 font-display text-text-dark flex flex-wrap items-baseline gap-x-2">
                   {recommendedPlan.name}
-                  <span className="text-xs text-[#55506E] font-medium">({recommendedPlan.price})</span>
+                  <span className="type-body-sm text-muted-purple">({recommendedPlan.price})</span>
                 </h3>
-                <p className="text-[11px] text-[#55506E] mt-0.5">
+                <p className="type-body-sm text-muted-purple">
                   {recommendedPlan.forWhom}
                 </p>
               </div>
             </div>
 
-            <button
+            <Button
+              variant="primary"
+              size="md"
+              className="w-full sm:w-auto shrink-0"
+              icon={<ArrowRight />}
               onClick={() => handleOpenRegistration(recommendedPlan)}
-              className="w-full sm:w-auto py-2.5 px-5 bg-[#3B2F8C] hover:bg-[#231B5E] text-white rounded-xl text-xs font-bold tracking-tight shadow-sm hover:shadow transition-colors flex items-center justify-center gap-1 cursor-pointer whitespace-nowrap"
             >
               Skonfiguruj pakiet próbny
-              <ArrowRight className="w-4 h-4 text-[#F4A574]" />
-            </button>
+            </Button>
           </div>
         )}
       </div>
 
       {/* Grid of the 4 standard plan cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 items-stretch">
         {HRLY_PLANS.map((plan) => {
           const isOptimal = recommendedPlan?.id === plan.id;
           const isEnterprise = plan.id === 'enterprise';
-          
+
           return (
             <div
               key={plan.id}
-              className={`bg-white border rounded-2xl flex flex-col justify-between transition-all duration-300 relative ${
-                isOptimal 
-                  ? 'border-[#3B2F8C] ring-2 ring-[#3B2F8C] shadow-lg scale-[1.01]' 
-                  : 'border-[#EFEAE1] hover:border-[#C4BBDE] hover:shadow-md'
+              className={`bg-neutral-surface border rounded-2xl h-full flex flex-col justify-between transition-all duration-300 relative ${
+                isOptimal
+                  ? 'border-indigo-primary ring-2 ring-indigo-primary shadow-lg'
+                  : 'border-border-soft hover:border-border-indigo hover:shadow-md'
               }`}
             >
               {plan.recommended && (
-                <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[9px] uppercase font-bold tracking-widest bg-[#F4A574] text-white px-3 py-1 rounded-full shadow-sm">
+                <span className="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap type-label font-mono uppercase bg-text-dark text-white px-3 py-1 rounded-full shadow-sm">
                   Rekomendowany
                 </span>
               )}
               {isOptimal && !plan.recommended && (
-                <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[9px] uppercase font-bold tracking-widest bg-[#3B2F8C] text-white px-3 py-1 rounded-full shadow-sm font-mono flex items-center gap-1">
+                <span className="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap type-label font-mono uppercase bg-indigo-primary text-white px-3 py-1 rounded-full shadow-sm">
                   💡 DOPASOWANY DO SUWAKA
                 </span>
               )}
 
               {/* Card top details */}
-              <div className="p-5.5 space-y-4">
+              <div className="p-5 pt-6 space-y-4">
                 <div className="space-y-1">
-                  <h3 className="font-sans font-black text-base text-[#14183D] tracking-tight">{plan.name}</h3>
-                  <p className="text-[10px] text-[#6A5E8C] font-medium leading-none">{plan.forWhom}</p>
+                  <h3 className="type-h3 font-display text-text-dark">{plan.name}</h3>
+                  <p className="type-body-sm text-muted-purple">{plan.forWhom}</p>
                 </div>
 
-                <div className="pt-2 border-b border-[#EFEAE1] pb-3">
-                  <div className="flex flex-col gap-1">
+                <div className="pt-2 border-b border-border-soft pb-3">
+                  <div className="flex flex-col gap-1.5">
                     {plan.originalPrice && (
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-[11px] text-[#6A5E8C] line-through font-mono font-medium leading-none">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="type-label font-mono text-muted-purple line-through">
                           {plan.originalPrice}
                         </span>
-                        <span className="text-[9px] font-mono font-bold text-[#F4A574] bg-[#F4A574]/10 px-1.5 py-0.5 rounded uppercase tracking-wider leading-none">
+                        <span className="type-label font-mono uppercase text-indigo-primary bg-primary-light px-2 py-0.5 rounded">
                           PROMO -50%
                         </span>
                       </div>
                     )}
-                    <div className="flex items-baseline gap-1">
-                      <span className="font-sans font-black text-3xl text-[#14183D] tracking-tight">
+                    <div className="flex flex-wrap items-baseline gap-x-2">
+                      <span className="type-h2 font-display text-text-dark">
                         {plan.price}
                       </span>
-                      <span className="text-[10px] text-[#55506E] font-medium">
+                      <span className="type-body-sm text-muted-purple">
                         {plan.priceDetails}
                       </span>
                     </div>
@@ -190,10 +193,10 @@ export const HrlyPricingCalculator: React.FC<HrlyPricingCalculatorProps> = ({ on
                 </div>
 
                 {/* Features Checklist */}
-                <ul className="space-y-2 pt-2">
+                <ul className="space-y-2.5 pt-2">
                   {plan.features.map((feature, fIdx) => (
-                    <li key={fIdx} className="flex items-start gap-2 text-[11px] text-[#55506E] leading-relaxed">
-                      <Check className="w-3.5 h-3.5 text-[#3B2F8C] shrink-0 mt-0.5" />
+                    <li key={fIdx} className="flex items-start gap-2 type-body-sm text-muted-purple">
+                      <Check className="w-4 h-4 text-indigo-primary shrink-0 mt-0.5" aria-hidden="true" />
                       <span>{feature}</span>
                     </li>
                   ))}
@@ -201,20 +204,18 @@ export const HrlyPricingCalculator: React.FC<HrlyPricingCalculatorProps> = ({ on
               </div>
 
               {/* Card bottom trigger */}
-              <div className="p-5 bg-[#FBFAF8] border-t border-[#EFEAE1] rounded-b-2xl">
-                <button
+              <div className="p-5 bg-neutral-bg border-t border-border-soft rounded-b-2xl">
+                <Button
+                  variant={isOptimal ? 'primary' : 'secondary'}
+                  size="lg"
+                  fullWidth
                   onClick={() => handleOpenRegistration(plan)}
-                  className={`w-full py-2.5 px-4 text-xs font-bold tracking-tight rounded-xl transition-all cursor-pointer text-center block ${
-                    isOptimal 
-                      ? 'bg-[#3B2F8C] text-white hover:bg-[#231B5E]' 
-                      : 'bg-white border border-[#C4BBDE] hover:bg-[#F4F1EC] text-[#3B2F8C]'
-                  }`}
                 >
-                  {isEnterprise 
-                    ? 'Skontaktuj się z nami' 
+                  {isEnterprise
+                    ? 'Skontaktuj się z nami'
                     : 'Wybierz ten plan'
                   }
-                </button>
+                </Button>
               </div>
 
             </div>
@@ -224,113 +225,126 @@ export const HrlyPricingCalculator: React.FC<HrlyPricingCalculatorProps> = ({ on
 
       {/* Pricing / Demo Booking Popup Modal */}
       {checkoutStep > 0 && activePlan && (
-        <div className="fixed inset-0 bg-[#14183D]/65 backdrop-blur-sm flex items-center justify-center p-4 z-[9999] animate-fade-in">
-          <div className="bg-white border border-[#EFEAE1] rounded-2xl max-w-md w-full p-6 space-y-5 shadow-2xl relative">
-            
-            <button 
+        <div className="fixed inset-0 bg-text-dark/65 backdrop-blur-sm flex items-center justify-center p-4 z-[9999] animate-fade-in overflow-y-auto">
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label={checkoutStep === 1 ? 'Rejestracja konta testowego' : 'Zgłoszenie przyjęte'}
+            className="bg-neutral-surface border border-border-soft rounded-2xl max-w-md w-full p-6 pt-12 space-y-5 shadow-2xl relative my-auto"
+          >
+
+            <button
+              type="button"
               onClick={resetForm}
-              className="absolute top-4 right-4 p-1.5 hover:bg-[#F4F1EC] text-[#55506E] rounded-full cursor-pointer"
+              className="absolute top-4 right-4 p-1.5 hover:bg-primary-faint text-muted-purple rounded-full cursor-pointer"
+              aria-label="Zamknij formularz"
               title="Zamknij formularz"
             >
-              <X className="w-5 h-5" />
+              <X className="w-5 h-5" aria-hidden="true" />
             </button>
 
             {checkoutStep === 1 ? (
               <form onSubmit={handleFormSubmit} className="space-y-4">
-                <div className="space-y-1">
-                  <span className="text-[9px] uppercase font-bold tracking-widest text-[#F4A574]">Zasymulowana Rejestracja</span>
-                  <h2 className="font-display font-extrabold text-base text-[#14183D] tracking-tight">
-                    Inicjujesz pakiet: <span className="text-[#3B2F8C]">{activePlan.name}</span>
-                  </h2>
-                  <p className="text-[11px] text-[#6A5E8C] leading-relaxed">
+                <div className="space-y-2">
+                  <span className="inline-flex items-center rounded-full px-3 py-1.5 type-label font-mono uppercase bg-primary-light/60 text-indigo-primary border border-border-indigo/35">
+                    Zasymulowana Rejestracja
+                  </span>
+                  <h3 className="type-h3 font-display text-text-dark">
+                    Inicjujesz pakiet: <span className="text-indigo-primary">{activePlan.name}</span>
+                  </h3>
+                  <p className="type-body-sm text-muted-purple">
                     Wspierasz budowanie zaangażowanych zespołów. Wpisz szczegóły konta testowego, by wejść do konfiguratora.
                   </p>
                 </div>
 
                 <div className="space-y-3 pt-2">
                   <div className="space-y-1">
-                    <label className="text-[10px] uppercase font-bold text-[#55506E]">Twoje Imię i Nazwisko *</label>
+                    <label htmlFor="rg-name" className="type-label uppercase text-muted-purple block">Twoje Imię i Nazwisko *</label>
                     <input
+                      id="rg-name"
                       type="text"
                       required
                       placeholder="np. Anna Kępczyńska"
                       value={rgName}
                       onChange={(e) => setRgName(e.target.value)}
-                      className="w-full text-xs bg-[#FBFAF8] border border-[#EFEAE1] rounded-lg p-2.5 text-[#14183D] focus:border-[#3B2F8C]"
+                      className="w-full type-body-sm bg-neutral-bg border border-border-soft rounded-lg p-3 text-text-dark focus:border-indigo-primary"
                     />
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-[10px] uppercase font-bold text-[#55506E]">Adres E-mail Służbowy *</label>
+                    <label htmlFor="rg-email" className="type-label uppercase text-muted-purple block">Adres E-mail Służbowy *</label>
                     <input
+                      id="rg-email"
                       type="email"
                       required
                       placeholder="kontakt@twojafirma.pl"
                       value={rgEmail}
                       onChange={(e) => setRgEmail(e.target.value)}
-                      className="w-full text-xs bg-[#FBFAF8] border border-[#EFEAE1] rounded-lg p-2.5 text-[#14183D] focus:border-[#3B2F8C]"
+                      className="w-full type-body-sm bg-neutral-bg border border-border-soft rounded-lg p-3 text-text-dark focus:border-indigo-primary"
                     />
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-[10px] uppercase font-bold text-[#55506E]">Nazwa Organizacji / Spółki *</label>
+                    <label htmlFor="rg-company" className="type-label uppercase text-muted-purple block">Nazwa Organizacji / Spółki *</label>
                     <div className="relative">
                       <input
+                        id="rg-company"
                         type="text"
                         required
                         placeholder="HRLY Sp. z o.o."
                         value={rgCompany}
                         onChange={(e) => setRgCompany(e.target.value)}
-                        className="w-full text-xs bg-[#FBFAF8] border border-[#EFEAE1] rounded-lg pl-9 pr-3 p-2.5 text-[#14183D] focus:border-[#3B2F8C]"
+                        className="w-full type-body-sm bg-neutral-bg border border-border-soft rounded-lg pl-10 pr-3 p-3 text-text-dark focus:border-indigo-primary"
                       />
-                      <Building2 className="w-4 h-4 text-[#6A5E8C] absolute left-3 top-3.5" />
+                      <Building2 className="w-4 h-4 text-muted-purple absolute left-3 top-1/2 -translate-y-1/2" aria-hidden="true" />
                     </div>
                   </div>
 
-                  <div className="flex items-start gap-2 pt-1.5">
+                  <div className="flex items-start gap-2.5 pt-1.5">
                     <input
                       type="checkbox"
                       id="consent"
                       required
                       checked={rgConsent}
                       onChange={(e) => setRgConsent(e.target.checked)}
-                      className="w-4 h-4 rounded border-[#EFEAE1] text-[#3B2F8C] focus:ring-[#3B2F8C] cursor-pointer mt-0.5"
+                      className="w-4 h-4 rounded border-border-soft accent-indigo-primary cursor-pointer mt-1 shrink-0"
                     />
-                    <label htmlFor="consent" className="text-[10px] text-[#55506E] leading-normal select-none cursor-pointer">
+                    <label htmlFor="consent" className="type-body-sm text-muted-purple select-none cursor-pointer">
                       Wyrażam zgodę na przetwarzanie moich danych osobowych przez HRLY Sp. z o.o. w celu utworzenia konta testowego zgodnie z polityką prywatności platformy.
                     </label>
                   </div>
                 </div>
 
-                <button
+                <Button
                   type="submit"
+                  variant="primary"
+                  size="lg"
+                  fullWidth
                   disabled={!rgConsent}
-                  className="w-full py-2.5 px-4 bg-[#3B2F8C] hover:bg-[#231B5E] text-white rounded-xl text-xs font-bold tracking-tight shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  icon={<ArrowRight />}
                 >
                   Uruchom Sandbox Organizacji
-                  <ArrowRight className="w-4 h-4 text-[#F4A574]" />
-                </button>
+                </Button>
               </form>
             ) : (
               <div className="text-center py-6 space-y-4">
-                <div className="w-12 h-12 bg-emerald-100 text-[#047857] rounded-full flex items-center justify-center mx-auto">
-                  <CheckCircle2 className="w-6 h-6" />
+                <div className="w-12 h-12 bg-success-soft text-success rounded-full flex items-center justify-center mx-auto">
+                  <CheckCircle2 className="w-6 h-6" aria-hidden="true" />
                 </div>
 
-                <div className="space-y-1">
-                  <span className="text-[10px] uppercase font-bold tracking-widest text-[#047857]">Zgłoszenie Poprawne!</span>
-                  <h2 className="font-display font-black text-lg text-[#14183D] tracking-tight">Witaj na pokładzie HRly, {rgName}!</h2>
-                  <p className="text-xs text-[#55506E] leading-relaxed max-w-xs mx-auto">
-                    Konto dla organizacji <strong>{rgCompany}</strong> zostało pomyślnie zadeklarowane w bazie. Na podany e-mail <strong>{rgEmail}</strong> wysłaliśmy panel logowania i darmową instrukcję wdrożenia analityki HR w kilka minut.
+                <div className="space-y-2">
+                  <span className="inline-flex items-center rounded-full px-3 py-1.5 type-label font-mono uppercase bg-success-soft text-success">
+                    Zgłoszenie Poprawne!
+                  </span>
+                  <h3 className="type-h3 font-display text-text-dark">Witaj na pokładzie HRly, {rgName}!</h3>
+                  <p className="type-body-sm text-muted-purple max-w-xs mx-auto">
+                    Konto dla organizacji <strong className="text-text-dark font-semibold">{rgCompany}</strong> zostało pomyślnie zadeklarowane w bazie. Na podany e-mail <strong className="text-text-dark font-semibold">{rgEmail}</strong> wysłaliśmy panel logowania i darmową instrukcję wdrożenia analityki HR w kilka minut.
                   </p>
                 </div>
 
-                <button
-                  onClick={resetForm}
-                  className="px-6 py-2 bg-[#F4F1EC] hover:bg-[#EFEAE1] text-[#3B2F8C] text-xs font-bold rounded-xl transition-colors cursor-pointer"
-                >
+                <Button variant="ghost" size="md" onClick={resetForm}>
                   Powróć do cennika
-                </button>
+                </Button>
               </div>
             )}
 

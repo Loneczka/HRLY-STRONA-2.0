@@ -4,6 +4,14 @@ import {
   User, Layers, Award, Activity, Target, Check, 
   TrendingUp, Heart, BookOpen, Compass, Scale, Shield, Sparkles
 } from 'lucide-react';
+import Button from './Button';
+
+/* FAZA 8: layout-only override dla <Button> — wrapper treści staje się elastycznym rzędem
+   (ikona teorii + nazwa), dzięki czemu długie nazwy się przycinają zamiast rozpychać pigułkę. */
+const THEORY_BTN =
+  'w-full justify-between text-left ' +
+  '[&>span:first-child]:flex [&>span:first-child]:items-center [&>span:first-child]:gap-3 ' +
+  '[&>span:first-child]:min-w-0 [&>span:first-child]:flex-1';
 
 interface TheoryItem {
   id: string;
@@ -209,58 +217,57 @@ export function HrlyMethodologyVisual() {
   const satisfactionList = theories.filter(t => t.category === 'satisfaction');
 
   return (
-    <div className="bg-[#101435] border border-white/10 rounded-[32px] p-6 lg:p-10 text-white shadow-2xl relative overflow-hidden section-dark">
+    <div className="bg-text-dark border border-white/10 rounded-[32px] p-6 lg:p-10 text-white shadow-2xl relative overflow-hidden section-dark">
       {/* Decors */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-[#3B2F8C]/15 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#F4A574]/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-primary/15 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-80 h-80 bg-accent-apricot/5 rounded-full blur-3xl pointer-events-none" />
 
       {/* Grid: 12-column setup for maximum readability and space */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 relative z-10">
-        
+
         {/* Left Column: Full readable lists of all 11 theories (lg:col-span-5) */}
         <div className="lg:col-span-5 space-y-6 flex flex-col h-full justify-start border-b lg:border-b-0 lg:border-r border-white/10 pb-6 lg:pb-0 lg:pr-8">
-          
-          <div className="space-y-2">
-            <span className="text-[10px] font-mono font-bold uppercase text-[#F4A574] tracking-widest block">
+
+          <div className="space-y-3">
+            {/* FAZA 8: etykieta panelu wewnątrz sekcji `#features` z App.tsx — styl SectionLabel (tone dark),
+                ale bez numeru, żeby nie dublować numeracji sekcji należącej do trasy. */}
+            <span className="inline-flex items-center rounded-full px-3 py-1.5 type-label font-mono uppercase bg-white/10 text-white border border-white/15">
               Silnik Diagnostyczny HRly
             </span>
-            <h2 className="font-display font-black text-xl text-white uppercase tracking-tight">
+            {/* FAZA 8: panel jest podsekcją sekcji `#features` (jej `h2` żyje w App.tsx) — stąd `h3`. */}
+            <h3 className="type-h3 font-display text-white">
               11 Naukowych Teorii
-            </h2>
-            <p className="text-xs text-gray-300">
+            </h3>
+            <p className="type-body-sm text-on-dark-body">
               Przełączaj i sprawdź, jak zintegrowaliśmy klasyczną wiedzę psychologiczną z praktycznymi pytaniami badawczymi w naszej aplikacji.
             </p>
           </div>
 
           {/* Group 1: Zaangażowanie (4) */}
           <div className="space-y-2.5">
-            <span className="text-[9px] font-mono font-bold uppercase text-[#F4A574]/80 tracking-wider block flex items-center gap-1.5">
-              <TrendingUp className="w-3.5 h-3.5" /> Teorie Zaangażowania ({engagementList.length})
+            <span className="type-label font-mono uppercase text-on-dark-muted flex items-center gap-2">
+              <TrendingUp className="w-3.5 h-3.5 shrink-0" aria-hidden="true" /> Teorie Zaangażowania ({engagementList.length})
             </span>
             <div className="space-y-1.5">
               {engagementList.map((theory) => {
                 const TIcon = theory.icon;
                 const isSelected = activeTab === theory.id;
                 return (
-                  <button
+                  <Button
                     key={theory.id}
+                    variant={isSelected ? 'secondary' : 'ghost'}
+                    size="md"
+                    tone="dark"
+                    aria-pressed={isSelected}
                     onClick={() => setActiveTab(theory.id)}
-                    className={`w-full py-2.5 px-3.5 rounded-xl text-left text-xs transition-all duration-200 cursor-pointer flex items-center justify-between border ${
-                      isSelected 
-                        ? 'bg-[#1D2254] text-white border-[#F4A574]/30 shadow-md font-bold' 
-                        : 'bg-transparent text-gray-400 border-transparent hover:text-white hover:bg-white/5'
-                    }`}
+                    className={THEORY_BTN}
+                    icon={isSelected ? <span className="block w-1.5 h-1.5 rounded-full bg-accent-apricot" /> : undefined}
                   >
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className={`p-1.5 rounded-lg shrink-0 ${isSelected ? 'bg-[#F4A574]/25 text-[#F4A574]' : 'bg-white/5 text-gray-400'}`}>
-                        <TIcon className="w-3.5 h-3.5" />
-                      </div>
-                      <span className="font-sans font-black text-white text-[11.5px] uppercase tracking-tight truncate">
-                        {theory.name}
-                      </span>
-                    </div>
-                    {isSelected && <span className="w-1.5 h-1.5 rounded-full bg-[#F4A574]" />}
-                  </button>
+                    <span className={`p-1.5 rounded-lg shrink-0 ${isSelected ? 'bg-accent-apricot/25 text-accent-apricot' : 'bg-white/10 text-on-dark-muted'}`}>
+                      <TIcon className="w-3.5 h-3.5" aria-hidden="true" />
+                    </span>
+                    <span className="truncate">{theory.name}</span>
+                  </Button>
                 );
               })}
             </div>
@@ -268,33 +275,29 @@ export function HrlyMethodologyVisual() {
 
           {/* Group 2: Satysfakcja (7) */}
           <div className="space-y-2.5">
-            <span className="text-[9px] font-mono font-bold uppercase text-[#F4A574]/80 tracking-wider block flex items-center gap-1.5">
-              <Heart className="w-3.5 h-3.5" /> Teorie Satysfakcji ({satisfactionList.length})
+            <span className="type-label font-mono uppercase text-on-dark-muted flex items-center gap-2">
+              <Heart className="w-3.5 h-3.5 shrink-0" aria-hidden="true" /> Teorie Satysfakcji ({satisfactionList.length})
             </span>
             <div className="space-y-1.5">
               {satisfactionList.map((theory) => {
                 const TIcon = theory.icon;
                 const isSelected = activeTab === theory.id;
                 return (
-                  <button
+                  <Button
                     key={theory.id}
+                    variant={isSelected ? 'secondary' : 'ghost'}
+                    size="md"
+                    tone="dark"
+                    aria-pressed={isSelected}
                     onClick={() => setActiveTab(theory.id)}
-                    className={`w-full py-2.5 px-3.5 rounded-xl text-left text-xs transition-all duration-200 cursor-pointer flex items-center justify-between border ${
-                      isSelected 
-                        ? 'bg-[#1D2254] text-white border-[#F4A574]/30 shadow-md font-bold' 
-                        : 'bg-transparent text-gray-400 border-transparent hover:text-white hover:bg-white/5'
-                    }`}
+                    className={THEORY_BTN}
+                    icon={isSelected ? <span className="block w-1.5 h-1.5 rounded-full bg-accent-apricot" /> : undefined}
                   >
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className={`p-1.5 rounded-lg shrink-0 ${isSelected ? 'bg-[#F4A574]/25 text-[#F4A574]' : 'bg-white/5 text-gray-400'}`}>
-                        <TIcon className="w-3.5 h-3.5" />
-                      </div>
-                      <span className="font-sans font-black text-white text-[11.5px] uppercase tracking-tight truncate">
-                        {theory.name}
-                      </span>
-                    </div>
-                    {isSelected && <span className="w-1.5 h-1.5 rounded-full bg-[#F4A574]" />}
-                  </button>
+                    <span className={`p-1.5 rounded-lg shrink-0 ${isSelected ? 'bg-accent-apricot/25 text-accent-apricot' : 'bg-white/10 text-on-dark-muted'}`}>
+                      <TIcon className="w-3.5 h-3.5" aria-hidden="true" />
+                    </span>
+                    <span className="truncate">{theory.name}</span>
+                  </Button>
                 );
               })}
             </div>
@@ -314,209 +317,209 @@ export function HrlyMethodologyVisual() {
               className="space-y-6"
             >
               {/* Active theory identity badge */}
-              <div className="p-5 bg-[#14183D]/60 border border-white/5 rounded-[24px] space-y-3">
+              <div className="p-5 bg-navy-deep/60 border border-white/5 rounded-[24px] space-y-3">
                 <div className="flex items-center gap-3">
-                  <div className="p-2.5 rounded-xl bg-[#F4A574]/15 text-[#F4A574] border border-white/10 shrink-0">
-                    <IconComponent className="w-5 h-5" />
+                  <div className="p-2.5 rounded-xl bg-accent-apricot/15 text-accent-apricot border border-white/10 shrink-0">
+                    <IconComponent className="w-5 h-5" aria-hidden="true" />
                   </div>
-                  <div>
-                    <span className="text-[10px] font-mono font-bold text-[#F4A574] uppercase tracking-wider block">
+                  <div className="space-y-1 min-w-0">
+                    <span className="type-label font-mono uppercase text-on-dark-muted block">
                       {active.subtitle}
                     </span>
-                    <h3 className="font-display font-black text-sm uppercase text-white tracking-tight mt-0.5 leading-none">
+                    <h3 className="type-h3 font-display text-white">
                       {active.name}
                     </h3>
                   </div>
                 </div>
-                <p className="text-[11.5px] text-gray-300 leading-relaxed font-normal">
+                <p className="type-body-sm text-on-dark-body">
                   {active.description}
                 </p>
               </div>
 
               {/* Graphical Concept Showcase (Strictly no sliders, just static polished graphics representing the concept) */}
-              <div className="bg-[#090C22] border border-white/5 rounded-[24px] p-5 space-y-4">
-                <span className="text-[9px] font-mono uppercase text-gray-400 block border-b border-white/5 pb-2">
+              <div className="bg-navy-card-to border border-white/5 rounded-[24px] p-5 space-y-4">
+                <span className="type-label font-mono uppercase text-on-dark-muted block border-b border-white/5 pb-2">
                   Graficzny zarys modelu i powiązań
                 </span>
 
                 {active.id === 'kahn' && (
-                  <div className="grid grid-cols-3 gap-3 text-center text-[10px] pt-1">
-                    <div className="p-3 bg-[#3B2F8C]/15 border border-white/10 rounded-xl space-y-1">
-                      <span className="block font-black text-white text-[10.5px] uppercase">Wymiar Fizyczny</span>
-                      <span className="text-[8.5px] text-gray-400 block">Witalność, energia i codzienne działanie</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center pt-1">
+                    <div className="p-3 bg-indigo-primary/25 border border-white/10 rounded-xl space-y-1">
+                      <span className="block type-label uppercase text-white">Wymiar Fizyczny</span>
+                      <span className="block type-body-sm text-on-dark-muted">Witalność, energia i codzienne działanie</span>
                     </div>
-                    <div className="p-3 bg-[#F4A574]/15 border border-white/10 rounded-xl space-y-1">
-                      <span className="block font-black text-[#F4A574] text-[10.5px] uppercase">Wymiar Poznawczy</span>
-                      <span className="text-[8.5px] text-gray-400 block">Jasność roli zawodowej i jej granic</span>
+                    <div className="p-3 bg-accent-apricot/15 border border-white/10 rounded-xl space-y-1">
+                      <span className="block type-label uppercase text-accent-apricot">Wymiar Poznawczy</span>
+                      <span className="block type-body-sm text-on-dark-muted">Jasność roli zawodowej i jej granic</span>
                     </div>
-                    <div className="p-3 bg-[#10B981]/15 border border-white/10 rounded-xl space-y-1">
-                      <span className="block font-black text-[#10B981] text-[10.5px] uppercase">Wymiar Emocjonalny</span>
-                      <span className="text-[8.5px] text-gray-400 block">Silne więzi z zespołem i liderem</span>
+                    <div className="p-3 bg-success-on-dark/15 border border-white/10 rounded-xl space-y-1">
+                      <span className="block type-label uppercase text-success-on-dark">Wymiar Emocjonalny</span>
+                      <span className="block type-body-sm text-on-dark-muted">Silne więzi z zespołem i liderem</span>
                     </div>
                   </div>
                 )}
 
                 {active.id === 'maslow_eng' && (
                   <div className="flex flex-col gap-1.5 pt-1 max-w-sm mx-auto w-full">
-                    <div className="py-1 px-3 bg-[#F4A574] text-[9px] text-white font-extrabold uppercase rounded-lg text-center w-[60%] mx-auto shadow-md">
+                    <div className="py-1.5 px-3 bg-accent-apricot type-label uppercase text-text-dark rounded-lg text-center w-[70%] mx-auto shadow-md">
                       Samorealizacja (Wpływ)
                     </div>
-                    <div className="py-1 px-3 bg-[#E08F5A] text-[9px] text-white font-extrabold uppercase rounded-lg text-center w-[75%] mx-auto shadow-md">
+                    <div className="py-1.5 px-3 bg-border-indigo type-label uppercase text-text-dark rounded-lg text-center w-[85%] mx-auto shadow-md">
                       Szacunek i Uznanie
                     </div>
-                    <div className="py-1 px-3 bg-[#3B2F8C] text-[9px] text-white font-extrabold uppercase rounded-lg text-center w-[90%] mx-auto shadow-md">
-                      Zabezpieczenie społeczne & stabilność
+                    <div className="py-1.5 px-3 bg-indigo-primary type-label uppercase text-white rounded-lg text-center w-full mx-auto shadow-md">
+                      Zabezpieczenie społeczne &amp; stabilność
                     </div>
                   </div>
                 )}
 
                 {active.id === 'aon_hewitt' && (
-                  <div className="grid grid-cols-3 gap-2.5 pt-1 text-center">
-                    <div className="p-2.5 bg-white/5 border border-white/10 rounded-xl space-y-0.5">
-                      <span className="block font-bold text-xs text-white">SAY</span>
-                      <span className="text-[8px] text-gray-400 uppercase font-mono">Mów pozytywnie</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1 text-center">
+                    <div className="p-2.5 bg-white/5 border border-white/10 rounded-xl space-y-1">
+                      <span className="block type-body font-bold text-white">SAY</span>
+                      <span className="block type-label font-mono uppercase text-on-dark-muted">Mów pozytywnie</span>
                     </div>
-                    <div className="p-2.5 bg-white/5 border border-white/10 rounded-xl space-y-0.5">
-                      <span className="block font-bold text-xs text-white">STAY</span>
-                      <span className="text-[8px] text-gray-400 uppercase font-mono">Pozostań</span>
+                    <div className="p-2.5 bg-white/5 border border-white/10 rounded-xl space-y-1">
+                      <span className="block type-body font-bold text-white">STAY</span>
+                      <span className="block type-label font-mono uppercase text-on-dark-muted">Pozostań</span>
                     </div>
-                    <div className="p-2.5 bg-[#F4A574]/20 border border-white/10 rounded-xl space-y-0.5">
-                      <span className="block font-bold text-xs text-[#F4A574]">STRIVE</span>
-                      <span className="text-[8px] text-gray-300 uppercase font-mono">Przekraczaj oczekiwania</span>
+                    <div className="p-2.5 bg-accent-apricot/20 border border-white/10 rounded-xl space-y-1">
+                      <span className="block type-body font-bold text-accent-apricot">STRIVE</span>
+                      <span className="block type-label font-mono uppercase text-on-dark-body">Przekraczaj oczekiwania</span>
                     </div>
                   </div>
                 )}
 
                 {active.id === 'zinger' && (
-                  <div className="grid grid-cols-3 gap-2 pt-1 text-center text-[10px]">
-                    <div className="p-2.5 bg-[#10B981]/15 border border-[#10B981]/25 rounded-xl">
-                      <span className="block font-bold text-[#10B981] mb-0.5 uppercase tracking-wide">1. Dobrostan</span>
-                      <span className="text-[8px] text-gray-400">Komfort psychiczny</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1 text-center">
+                    <div className="p-2.5 bg-success-on-dark/15 border border-success-on-dark/25 rounded-xl space-y-1">
+                      <span className="block type-label uppercase text-success-on-dark">1. Dobrostan</span>
+                      <span className="block type-body-sm text-on-dark-muted">Komfort psychiczny</span>
                     </div>
-                    <div className="p-2.5 bg-[#F4A574]/15 border border-[#F4A574]/25 rounded-xl">
-                      <span className="block font-bold text-[#F4A574] mb-0.5 uppercase tracking-wide">2. Energia</span>
-                      <span className="text-[8px] text-gray-400">Pasja operacyjna</span>
+                    <div className="p-2.5 bg-accent-apricot/15 border border-accent-apricot/25 rounded-xl space-y-1">
+                      <span className="block type-label uppercase text-accent-apricot">2. Energia</span>
+                      <span className="block type-body-sm text-on-dark-muted">Pasja operacyjna</span>
                     </div>
-                    <div className="p-2.5 bg-[#3B82F6]/15 border border-[#3B82F6]/25 rounded-xl">
-                      <span className="block font-bold text-[#3B82F6] mb-0.5 uppercase tracking-wide">3. Znaczenie</span>
-                      <span className="text-[8px] text-gray-400">Zrozumienie celu</span>
+                    <div className="p-2.5 bg-white/10 border border-white/20 rounded-xl space-y-1">
+                      <span className="block type-label uppercase text-white">3. Znaczenie</span>
+                      <span className="block type-body-sm text-on-dark-muted">Zrozumienie celu</span>
                     </div>
                   </div>
                 )}
 
                 {active.id === 'herzberg' && (
-                  <div className="grid grid-cols-2 gap-3 pt-1 text-[10px]">
-                    <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-xl space-y-1">
-                      <span className="block font-black uppercase text-[9px] text-red-400">Czynniki Higieny</span>
-                      <p className="text-[8.5px] text-gray-300">Bezpieczeństwo zatrudnienia, warunki socjalne, wynagrodzenie zasadnicze.</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                    <div className="p-3 bg-danger-red/20 border border-danger-red/40 rounded-xl space-y-1">
+                      <span className="block type-label uppercase text-white">Czynniki Higieny</span>
+                      <p className="type-body-sm text-on-dark-body">Bezpieczeństwo zatrudnienia, warunki socjalne, wynagrodzenie zasadnicze.</p>
                     </div>
-                    <div className="p-3 bg-[#10B981]/10 border border-[#10B981]/20 rounded-xl space-y-1">
-                      <span className="block font-black uppercase text-[9px] text-[#10B981]">Motywatory Właściwe</span>
-                      <p className="text-[8.5px] text-gray-300">Awans, osobisty rozwój kompetencji, treść zadań i publiczne docenienie.</p>
+                    <div className="p-3 bg-success-on-dark/10 border border-success-on-dark/25 rounded-xl space-y-1">
+                      <span className="block type-label uppercase text-success-on-dark">Motywatory Właściwe</span>
+                      <p className="type-body-sm text-on-dark-body">Awans, osobisty rozwój kompetencji, treść zadań i publiczne docenienie.</p>
                     </div>
                   </div>
                 )}
 
                 {active.id === 'jcm' && (
                   <div className="space-y-3 pt-1">
-                    <div className="grid grid-cols-5 gap-1.5 text-center text-[8.5px] font-bold">
-                      <div className="p-1 bg-white/5 border border-white/5 rounded">Różnorodność</div>
-                      <div className="p-1 bg-white/5 border border-white/5 rounded">Tożsamość</div>
-                      <div className="p-1 bg-white/5 border border-white/5 rounded">Znaczenie</div>
-                      <div className="p-1 bg-white/5 border border-white/5 rounded">Autonomia</div>
-                      <div className="p-1 bg-white/5 border border-white/5 rounded">Feedback</div>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-1.5 text-center type-label text-on-dark-body">
+                      <div className="p-2 bg-white/5 border border-white/5 rounded-lg">Różnorodność</div>
+                      <div className="p-2 bg-white/5 border border-white/5 rounded-lg">Tożsamość</div>
+                      <div className="p-2 bg-white/5 border border-white/5 rounded-lg">Znaczenie</div>
+                      <div className="p-2 bg-white/5 border border-white/5 rounded-lg">Autonomia</div>
+                      <div className="p-2 bg-white/5 border border-white/5 rounded-lg">Feedback</div>
                     </div>
-                    <div className="h-1 bg-white/10 rounded-full flex items-center justify-between px-3">
-                      <span className="w-2 h-2 rounded-full bg-[#F4A574]" />
+                    <div className="h-1 bg-white/10 rounded-full flex items-center justify-between px-3" aria-hidden="true">
+                      <span className="w-2 h-2 rounded-full bg-accent-apricot" />
                       <span className="w-2 h-2 rounded-full bg-white/30" />
-                      <span className="w-2 h-2 rounded-full bg-[#10B981]" />
+                      <span className="w-2 h-2 rounded-full bg-success-on-dark" />
                     </div>
                   </div>
                 )}
 
                 {active.id === 'cognitive_eval' && (
                   <div className="space-y-2 pt-1">
-                    <div className="flex justify-between text-[10px] font-bold">
-                      <span className="text-[#F4A574] uppercase">Zewnętrzne (Premie, benefity)</span>
-                      <span className="text-[#10B981] uppercase">Wewnętrzne (Pasja, sprawczość)</span>
+                    <div className="flex flex-wrap justify-between gap-x-4 gap-y-1 type-label">
+                      <span className="text-accent-apricot uppercase">Zewnętrzne (Premie, benefity)</span>
+                      <span className="text-success-on-dark uppercase">Wewnętrzne (Pasja, sprawczość)</span>
                     </div>
-                    <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-                      <div className="h-full bg-gradient-to-r from-[#F4A574] to-[#10B981] w-[60%]" />
+                    <div className="h-2 bg-white/10 rounded-full overflow-hidden" aria-hidden="true">
+                      <div className="h-full bg-gradient-to-r from-accent-apricot to-success-on-dark w-[60%]" />
                     </div>
                   </div>
                 )}
 
                 {active.id === 'equity' && (
-                  <div className="grid grid-cols-2 gap-4 text-center text-[10px] pt-1">
-                    <div className="p-3 bg-white/5 border border-white/10 rounded-xl">
-                      <span className="block font-bold text-white uppercase tracking-wider mb-0.5">WKŁAD</span>
-                      <p className="text-[8.5px] text-gray-400">Czas, wiedza, lojalność, pasja, wysiłek</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-center pt-1">
+                    <div className="p-3 bg-white/5 border border-white/10 rounded-xl space-y-1">
+                      <span className="block type-label uppercase text-white">WKŁAD</span>
+                      <p className="type-body-sm text-on-dark-muted">Czas, wiedza, lojalność, pasja, wysiłek</p>
                     </div>
-                    <div className="p-3 bg-[#F59E0B]/10 border border-[#F59E0B]/20 rounded-xl">
-                      <span className="block font-bold text-[#F59E0B] uppercase tracking-wider mb-0.5">REZULTAT</span>
-                      <p className="text-[8.5px] text-gray-300">Płaca, docenienie, awans, warunki</p>
+                    <div className="p-3 bg-accent-apricot/15 border border-accent-apricot/25 rounded-xl space-y-1">
+                      <span className="block type-label uppercase text-accent-apricot">REZULTAT</span>
+                      <p className="type-body-sm text-on-dark-body">Płaca, docenienie, awans, warunki</p>
                     </div>
                   </div>
                 )}
 
                 {active.id === 'vroom' && (
-                  <div className="flex items-center justify-center gap-2 pt-1 font-mono text-[10px] text-gray-300">
-                    <div className="p-2 bg-white/5 border border-white/10 rounded-lg text-center">
-                      <span className="block text-[8px] text-gray-400 uppercase font-mono">Wysiłek → Wynik</span>
-                      <span className="font-bold text-white text-[11px]">OCZEKIWANIE</span>
+                  <div className="flex flex-wrap items-center justify-center gap-2 pt-1 font-mono">
+                    <div className="p-2 bg-white/5 border border-white/10 rounded-lg text-center space-y-1">
+                      <span className="block type-label font-mono uppercase text-on-dark-muted">Wysiłek → Wynik</span>
+                      <span className="block type-label font-mono text-white">OCZEKIWANIE</span>
                     </div>
-                    <span className="text-gray-400 font-bold">×</span>
-                    <div className="p-2 bg-white/5 border border-white/10 rounded-lg text-center">
-                      <span className="block text-[8px] text-gray-400 uppercase font-mono">Wynik → Nagroda</span>
-                      <span className="font-bold text-white text-[11px]">INSTRUMENTALNOŚĆ</span>
+                    <span className="type-label font-mono text-on-dark-muted" aria-hidden="true">×</span>
+                    <div className="p-2 bg-white/5 border border-white/10 rounded-lg text-center space-y-1">
+                      <span className="block type-label font-mono uppercase text-on-dark-muted">Wynik → Nagroda</span>
+                      <span className="block type-label font-mono text-white">INSTRUMENTALNOŚĆ</span>
                     </div>
-                    <span className="text-gray-400 font-bold">×</span>
-                    <div className="p-2 bg-[#F4A574]/15 border border-[#F4A574]/30 rounded-lg text-center">
-                      <span className="block text-[8px] text-gray-400 uppercase font-mono">Wartość Nagrody</span>
-                      <span className="font-bold text-[#F4A574] text-[11px]">WALENCJA</span>
+                    <span className="type-label font-mono text-on-dark-muted" aria-hidden="true">×</span>
+                    <div className="p-2 bg-accent-apricot/15 border border-accent-apricot/30 rounded-lg text-center space-y-1">
+                      <span className="block type-label font-mono uppercase text-on-dark-muted">Wartość Nagrody</span>
+                      <span className="block type-label font-mono text-accent-apricot">WALENCJA</span>
                     </div>
                   </div>
                 )}
 
                 {active.id === 'maslow_sat' && (
                   <div className="flex flex-col gap-1.5 pt-1 max-w-sm mx-auto w-full">
-                    <div className="py-1 px-3 bg-[#F4A574] text-[9px] text-white font-extrabold uppercase rounded-lg text-center w-[60%] mx-auto shadow-md">
+                    <div className="py-1.5 px-3 bg-accent-apricot type-label uppercase text-text-dark rounded-lg text-center w-[70%] mx-auto shadow-md">
                       Potrzeby Samorealizacji (Rozwój)
                     </div>
-                    <div className="py-1 px-3 bg-[#3B2F8C] text-[9px] text-white font-extrabold uppercase rounded-lg text-center w-[85%] mx-auto shadow-md">
+                    <div className="py-1.5 px-3 bg-border-indigo type-label uppercase text-text-dark rounded-lg text-center w-[88%] mx-auto shadow-md">
                       Relacje rówieśnicze i klimat społeczny
                     </div>
-                    <div className="py-1 px-3 bg-[#18124A] text-[9px] text-white font-extrabold uppercase rounded-lg text-center w-full shadow-md">
-                      Bezpieczeństwo & ergonomia pracy
+                    <div className="py-1.5 px-3 bg-indigo-primary type-label uppercase text-white rounded-lg text-center w-full shadow-md">
+                      Bezpieczeństwo &amp; ergonomia pracy
                     </div>
                   </div>
                 )}
 
                 {active.id === 'jdr' && (
                   <div className="space-y-2 pt-1">
-                    <div className="flex justify-between text-[8px] font-mono text-gray-400">
+                    <div className="flex flex-wrap justify-between gap-x-4 gap-y-1 type-label font-mono text-on-dark-muted">
                       <span>Wymagania i stresory zawodowe</span>
                       <span>Zasoby wspierające pracownika</span>
                     </div>
-                    <div className="h-1.5 bg-white/10 rounded-full relative overflow-hidden">
-                      <div className="absolute top-0 bottom-0 left-0 bg-gradient-to-r from-red-400 to-[#10B981] w-[50%]" />
+                    <div className="h-1.5 bg-white/10 rounded-full relative overflow-hidden" aria-hidden="true">
+                      <div className="absolute top-0 bottom-0 left-0 bg-gradient-to-r from-danger-red to-success-on-dark w-[50%]" />
                     </div>
                   </div>
                 )}
 
                 {active.id === 'sdt' && (
-                  <div className="grid grid-cols-3 gap-2.5 pt-1 text-center text-[10px]">
-                    <div className="p-2.5 bg-white/5 border border-white/10 rounded-xl">
-                      <span className="block font-black text-[#06B6D4] text-[11px] uppercase">Autonomia</span>
-                      <span className="text-[8px] text-gray-400 block mt-1">Poczucie sprawczości</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1 text-center">
+                    <div className="p-2.5 bg-white/5 border border-white/10 rounded-xl space-y-1">
+                      <span className="block type-label uppercase text-success-on-dark">Autonomia</span>
+                      <span className="block type-body-sm text-on-dark-muted">Poczucie sprawczości</span>
                     </div>
-                    <div className="p-2.5 bg-white/5 border border-white/10 rounded-xl">
-                      <span className="block font-black text-indigo-400 text-[11px] uppercase">Kompetencje</span>
-                      <span className="text-[8px] text-gray-400 block mt-1">Strefa rozwoju</span>
+                    <div className="p-2.5 bg-white/5 border border-white/10 rounded-xl space-y-1">
+                      <span className="block type-label uppercase text-white">Kompetencje</span>
+                      <span className="block type-body-sm text-on-dark-muted">Strefa rozwoju</span>
                     </div>
-                    <div className="p-2.5 bg-white/5 border border-white/10 rounded-xl">
-                      <span className="block font-black text-[#F4A574] text-[11px] uppercase">Relacje</span>
-                      <span className="text-[8px] text-gray-400 block mt-1">Integracja & Team</span>
+                    <div className="p-2.5 bg-white/5 border border-white/10 rounded-xl space-y-1">
+                      <span className="block type-label uppercase text-accent-apricot">Relacje</span>
+                      <span className="block type-body-sm text-on-dark-muted">Integracja &amp; Team</span>
                     </div>
                   </div>
                 )}
@@ -525,18 +528,18 @@ export function HrlyMethodologyVisual() {
 
               {/* Aspects breakdown listing (Fully visible, clean layout) */}
               <div className="space-y-2.5">
-                <span className="text-[9px] font-mono font-bold uppercase text-[#F4A574] tracking-widest block border-b border-white/5 pb-1">
+                <span className="type-label font-mono uppercase text-on-dark-muted block border-b border-white/5 pb-1">
                   Badane aspekty i czynniki szczegółowe:
                 </span>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 items-stretch">
                   {active.points.map((point, idx) => (
-                    <div key={idx} className="bg-white/5 border border-white/10 p-3 rounded-xl flex items-start gap-2.5">
-                      <Check className="w-3.5 h-3.5 text-[#F4A574] shrink-0 mt-0.5" />
-                      <div className="text-[10px]">
-                        <span className="font-bold text-white uppercase text-[8.5px] tracking-wide block mb-0.5">
+                    <div key={idx} className="bg-white/5 border border-white/10 p-3 rounded-xl flex items-start gap-2.5 h-full">
+                      <Check className="w-4 h-4 text-success-on-dark shrink-0 mt-0.5" aria-hidden="true" />
+                      <div className="space-y-1 min-w-0">
+                        <span className="type-label uppercase text-white block">
                           {point.title}
                         </span>
-                        <p className="text-gray-300 leading-normal font-normal text-[9.5px]">
+                        <p className="type-body-sm text-on-dark-body">
                           {point.text}
                         </p>
                       </div>
@@ -546,11 +549,11 @@ export function HrlyMethodologyVisual() {
               </div>
 
               {/* Real World Translation */}
-              <div className="p-4.5 bg-gradient-to-r from-[#14183D] to-[#1F2450] border border-white/10 rounded-[20px] space-y-1.5">
-                <span className="text-[8.5px] font-mono font-bold uppercase text-[#F4A574] tracking-wider block">
+              <div className="p-5 bg-gradient-to-r from-text-dark to-navy-deep bg-navy-deep border border-white/10 rounded-[20px] space-y-2">
+                <span className="type-label font-mono uppercase text-on-dark-muted block">
                   Praktyczne zastosowanie w diagnostyce HRly:
                 </span>
-                <p className="text-[11px] text-gray-200 leading-relaxed font-normal">
+                <p className="type-body-sm text-on-dark-body">
                   {active.hrlyText}
                 </p>
               </div>

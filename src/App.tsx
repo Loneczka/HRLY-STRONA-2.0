@@ -6,7 +6,7 @@ import {
   Activity, ArrowUpRight, Award, ChevronRight, HelpCircle,
   FileSpreadsheet, FileQuestion, Users2, Landmark, Compass, Target,
   ChevronDown, ChevronUp, Coins, Laptop, Heart, Coffee, GraduationCap, Zap, Key,
-  User, Building, MousePointerClick
+  User, Building, MousePointerClick, Quote
 } from 'lucide-react';
 import { HrlyHeroGraphic } from './components/HrlyHeroGraphic';
 import { Button } from './components/Button';
@@ -510,10 +510,10 @@ export default function App() {
   if (activeTab === 'admin') {
     return (
       <Suspense fallback={
-        <div className="min-h-screen bg-[#FBFAF8] flex flex-col items-center justify-center">
+        <div className="min-h-screen bg-neutral-bg flex flex-col items-center justify-center">
           <div className="flex flex-col items-center gap-3">
-            <div className="w-10 h-10 border-4 border-[#3B2F8C] border-t-transparent rounded-full animate-spin"></div>
-            <p className="text-sm font-medium text-[#55506E] animate-pulse">Ładowanie panelu administracyjnego...</p>
+            <div className="w-10 h-10 border-4 border-indigo-primary border-t-transparent rounded-full animate-spin"></div>
+            <p className="type-body-sm text-muted-purple animate-pulse">Ładowanie panelu administracyjnego...</p>
           </div>
         </div>
       }>
@@ -1112,94 +1112,96 @@ export default function App() {
               className="space-y-12 animate-fade-in"
             >
               {/* Premium Features Hero Section */}
-              <div className="relative rounded-[32px] border border-[#C4BBDE]/55 bg-gradient-to-tr from-[#F4F1EC] via-[#FBFAF8] to-[#FFFFFF] p-6 sm:p-10 lg:p-14 overflow-hidden shadow-xl bg-[linear-gradient(to_right,rgba(196,187,222,0.12)_1px,transparent_1px),linear-gradient(to_bottom,rgba(196,187,222,0.12)_1px,transparent_1px)] bg-[size:24px_24px]">
-                
+              <div className="relative rounded-[32px] border border-border-indigo/55 bg-gradient-to-tr from-primary-faint via-neutral-bg to-neutral-surface p-6 sm:p-10 lg:p-14 overflow-hidden shadow-xl bg-[linear-gradient(to_right,color-mix(in_oklab,var(--color-border-indigo)_12%,transparent)_1px,transparent_1px),linear-gradient(to_bottom,color-mix(in_oklab,var(--color-border-indigo)_12%,transparent)_1px,transparent_1px)] bg-[size:24px_24px]">
+
                 {/* Glowing aesthetic blurs */}
-                <div className="absolute top-0 right-0 w-[420px] h-[420px] bg-[#F4A574]/15 rounded-full blur-3xl pointer-events-none -mr-32 -mt-32" />
-                <div className="absolute bottom-0 left-0 w-[420px] h-[420px] bg-[#E3DEEE]/40 rounded-full blur-3xl pointer-events-none -ml-32 -mb-32" />
-                
+                <div className="absolute top-0 right-0 w-[420px] h-[420px] bg-accent-apricot/15 rounded-full blur-3xl pointer-events-none -mr-32 -mt-32" />
+                <div className="absolute bottom-0 left-0 w-[420px] h-[420px] bg-primary-light/40 rounded-full blur-3xl pointer-events-none -ml-32 -mb-32" />
+
                 <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-10">
                   <div className="space-y-6 max-w-xl text-center lg:text-left flex flex-col items-center lg:items-start">
-                    
-                    {/* Badge */}
-                    <div className="inline-flex items-center gap-2 bg-[#E3DEEE]/85 text-[#3B2F8C] px-3.5 py-1.5 rounded-full border border-[#C4BBDE]/60 text-[10px] font-bold uppercase tracking-wider shadow-xs leading-none">
-                      <Sparkles className="w-3.5 h-3.5 text-[#F4A574]" />
-                      02 · PEŁNA ELASTYCZNOŚĆ BADAŃ
-                    </div>
 
-                    <h1 className="font-display font-black text-2xl sm:text-4xl lg:text-[42px] text-[#14183D] tracking-tight leading-[1.1] uppercase">
+                    {/* Etykieta sekcji 01 (numeracja per trasa; numer dokłada SectionLabel) */}
+                    <SectionLabel number="01" icon={<Sparkles />}>
+                      Pełna elastyczność badań
+                    </SectionLabel>
+
+                    <h1 className="font-display type-display text-text-dark uppercase">
                       Głębokie zrozumienie <br />
                       <span className="relative inline-block normal-case">
-                        <span className="font-script italic font-medium text-[#3B2F8C] text-[1.12em] tracking-normal lowercase relative z-10 select-none">
+                        <span className="italic font-normal text-indigo-primary lowercase relative z-10 select-none">
                           potrzeb Twoich ludzi
                         </span>
-                        <svg 
-                          className="absolute -bottom-1.5 left-0 w-full h-[8px] text-[#F4A574] opacity-80 pointer-events-none" 
-                          viewBox="0 0 100 10" 
+                        <svg
+                          className="absolute -bottom-1.5 left-0 w-full h-[8px] text-accent-apricot opacity-80 pointer-events-none"
+                          viewBox="0 0 100 10"
                           preserveAspectRatio="none"
                         >
-                          <path 
-                            d="M 3,6 Q 50,9 97,4" 
-                            fill="none" 
-                            stroke="currentColor" 
-                            strokeWidth="3.5" 
-                            strokeLinecap="round" 
+                          <path
+                            d="M 3,6 Q 50,9 97,4"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="3.5"
+                            strokeLinecap="round"
                           />
                         </svg>
                       </span>
                     </h1>
 
-                    <p className="text-xs sm:text-sm text-[#55506E] leading-relaxed">
+                    <p className="type-body-lg text-muted-purple">
                       HRly dostarcza w pełni konfigurowalne narzędzia badawcze dostosowane do rytmu Twojej firmy. Od precyzyjnych badań kwartalnych o wysokiej frekwencji, przez elastyczne i szybkie pulse-checki, aż po dedykowane ankiety onboardingowe. Wszystko zaprojektowane tak, by gwarantować bezpieczeństwo i zachęcać do szczerego feedbacku.
                     </p>
 
                     {/* Trust indicators */}
-                    <div className="flex flex-wrap items-center justify-center lg:justify-start gap-x-5 gap-y-2 pt-4 border-t border-[#EFEAE1] text-[11px] text-[#6A5E8C] font-mono w-full">
-                      <span className="flex items-center gap-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
+                    <div className="flex flex-wrap items-center justify-center lg:justify-start gap-x-5 gap-y-2 pt-4 border-t border-border-soft type-label text-muted-indigo font-mono w-full">
+                      <span className="flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-success" />
                         Pełna swoboda konfiguracji
                       </span>
-                      <span className="flex items-center gap-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
+                      <span className="flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-success" />
                         Dowolna długość i skala pytań
                       </span>
-                      <span className="flex items-center gap-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
+                      <span className="flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-success" />
                         Naukowa metodologia
                       </span>
                     </div>
                   </div>
 
-                  {/* Modern Abstract Floating Features Area */}
-                  <div className="w-full lg:w-[440px] shrink-0 h-[400px] relative overflow-visible">
-                    
+                  {/* Modern Abstract Floating Features Area.
+                      FAZA 8: tytuły kafelków to `p` (dekoracja makiety, nie struktura nagłówków),
+                      teksty podniesione do skali (12/14 px), więc kafelki są szersze i ułożone
+                      w pionowy zygzak — przy 440 px dwa kafelki obok siebie by na siebie nachodziły. */}
+                  <div className="w-full lg:w-[440px] shrink-0 h-[620px] relative overflow-visible">
+
                     {/* Decorative grid layers */}
-                    <div className="absolute inset-0 bg-[radial-gradient(#C4BBDE_1px,transparent_1px)] [background-size:20px_20px] opacity-25 pointer-events-none" />
-                    <div className="absolute w-72 h-72 border border-dashed border-[#C4BBDE]/15 rounded-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
-                    
+                    <div className="absolute inset-0 bg-[radial-gradient(var(--color-border-indigo)_1px,transparent_1px)] [background-size:20px_20px] opacity-25 pointer-events-none" />
+                    <div className="absolute w-72 h-72 border border-dashed border-border-indigo/15 rounded-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
+
                     {/* 1. GOTOWE SZABLONY */}
                     <motion.div
                       animate={{ y: [-4, 4] }}
                       transition={{ repeat: Infinity, repeatType: "reverse", duration: 3.4, ease: "easeInOut" }}
-                      className="absolute left-[3%] top-[4%] w-[200px] bg-white border border-[#EFEAE1] rounded-2xl p-3 shadow-md hover:border-[#C4BBDE] hover:shadow-lg transition-all"
+                      className="absolute left-0 top-0 w-[290px] bg-white border border-border-soft rounded-2xl p-4 shadow-md hover:border-border-indigo hover:shadow-lg transition-all"
                     >
-                      <div className="flex items-center gap-2 mb-1.5">
-                        <div className="p-1 rounded-lg bg-[#E3DEEE]/50 text-[#3B2F8C]">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="p-1 rounded-lg bg-primary-light/50 text-indigo-primary">
                           <FileQuestion className="w-3.5 h-3.5" />
                         </div>
-                        <span className="text-[9px] font-mono text-[#6A5E8C] font-bold uppercase">Gotowe Szablony</span>
+                        <span className="type-label font-mono text-muted-indigo uppercase">Gotowe Szablony</span>
                       </div>
-                      <h2 className="font-sans font-black text-[11px] text-[#14183D] uppercase leading-tight">
+                      <p className="font-sans type-body-sm font-bold text-text-dark uppercase">
                         Naukowa baza pytań
-                      </h2>
-                      <div className="mt-1.5 space-y-1">
-                        <div className="flex items-center justify-between text-[8.5px] font-mono text-[#55506E] bg-[#FBFAF8] px-1.5 py-0.5 rounded border border-[#EFEAE1]/40">
-                          <span>• eNPS & Satysfakcja</span>
-                          <span className="text-[#047857] font-bold">Standard</span>
+                      </p>
+                      <div className="mt-2 space-y-1">
+                        <div className="flex items-center justify-between gap-2 type-label font-mono text-muted-purple bg-neutral-bg px-2 py-1 rounded border border-border-soft/40">
+                          <span>• eNPS &amp; Satysfakcja</span>
+                          <span className="text-success">Standard</span>
                         </div>
-                        <div className="flex items-center justify-between text-[8.5px] font-mono text-[#55506E] bg-[#FBFAF8] px-1.5 py-0.5 rounded border border-[#EFEAE1]/40">
+                        <div className="flex items-center justify-between gap-2 type-label font-mono text-muted-purple bg-neutral-bg px-2 py-1 rounded border border-border-soft/40">
                           <span>• Puls Atmosfery</span>
-                          <span className="text-[#047857] font-bold">Quick</span>
+                          <span className="text-success">Quick</span>
                         </div>
                       </div>
                     </motion.div>
@@ -1208,22 +1210,22 @@ export default function App() {
                     <motion.div
                       animate={{ y: [4, -4] }}
                       transition={{ repeat: Infinity, repeatType: "reverse", duration: 3.8, ease: "easeInOut" }}
-                      className="absolute right-[3%] top-[12%] w-[190px] bg-[#3B2F8C] text-white border border-[#3B2F8C] rounded-2xl p-3 shadow-md hover:shadow-lg transition-all"
+                      className="absolute right-0 top-[165px] w-[290px] bg-indigo-primary text-white border border-indigo-primary rounded-2xl p-4 shadow-md hover:shadow-lg transition-all section-dark"
                     >
-                      <div className="flex items-center gap-2 mb-1.5">
-                        <div className="p-1 rounded-lg bg-white/20 text-[#F4A574]">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="p-1 rounded-lg bg-white/20 text-accent-apricot">
                           <Sparkles className="w-3.5 h-3.5" />
                         </div>
-                        <span className="text-[9px] font-mono text-white/70 font-bold uppercase">Rekomendacje</span>
+                        <span className="type-label font-mono text-on-dark-muted uppercase">Rekomendacje</span>
                       </div>
-                      <h2 className="font-sans font-black text-[11px] text-white uppercase leading-tight">
+                      <p className="font-sans type-body-sm font-bold text-white uppercase">
                         Action Plan
-                      </h2>
-                      <p className="text-[9px] text-[#E3DEEE] leading-normal mt-1 italic">
+                      </p>
+                      <p className="type-body-sm text-on-dark-body mt-1 italic">
                         "Wprowadź Dzień Skupienia bez spotkań w środę"
                       </p>
-                      <div className="mt-1.5 flex items-center gap-1 text-[8px] font-mono text-[#047857]">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#047857] animate-pulse" />
+                      <div className="mt-2 flex items-center gap-1.5 type-label font-mono text-success-on-dark">
+                        <span className="w-1.5 h-1.5 rounded-full bg-success-on-dark animate-pulse" />
                         Zalecana akcja HR
                       </div>
                     </motion.div>
@@ -1232,24 +1234,24 @@ export default function App() {
                     <motion.div
                       animate={{ y: [-5, 5] }}
                       transition={{ repeat: Infinity, repeatType: "reverse", duration: 4.2, ease: "easeInOut", delay: 0.3 }}
-                      className="absolute left-[4%] bottom-[5%] w-[205px] bg-white border border-[#EFEAE1] rounded-2xl p-3 shadow-md hover:border-[#C4BBDE] hover:shadow-lg transition-all"
+                      className="absolute left-0 top-[350px] w-[290px] bg-white border border-border-soft rounded-2xl p-4 shadow-md hover:border-border-indigo hover:shadow-lg transition-all"
                     >
-                      <div className="flex items-center gap-2 mb-1.5">
-                        <div className="p-1 rounded-lg bg-[#D1FAE5] text-[#047857]">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="p-1 rounded-lg bg-success-soft text-success">
                           <Users2 className="w-3.5 h-3.5" />
                         </div>
-                        <span className="text-[9px] font-mono text-[#6A5E8C] font-bold uppercase">Narzędzia Lidera</span>
+                        <span className="type-label font-mono text-muted-indigo uppercase">Narzędzia Lidera</span>
                       </div>
-                      <h2 className="font-sans font-black text-[11px] text-[#14183D] uppercase leading-tight">
+                      <p className="font-sans type-body-sm font-bold text-text-dark uppercase">
                         Wsparcie Managerów
-                      </h2>
-                      <div className="mt-1.5 text-[9px] text-[#55506E] space-y-1">
+                      </p>
+                      <div className="mt-2 type-body-sm text-muted-purple space-y-1">
                         <div className="flex items-center gap-1.5">
-                          <CheckCircle2 className="w-3 h-3 text-[#047857] shrink-0" />
+                          <CheckCircle2 className="w-3.5 h-3.5 text-success shrink-0" />
                           <span>Checklisty 1-on-1</span>
                         </div>
                         <div className="flex items-center gap-1.5">
-                          <CheckCircle2 className="w-3 h-3 text-[#047857] shrink-0" />
+                          <CheckCircle2 className="w-3.5 h-3.5 text-success shrink-0" />
                           <span>Wskazówki managerskie</span>
                         </div>
                       </div>
@@ -1259,25 +1261,25 @@ export default function App() {
                     <motion.div
                       animate={{ y: [3, -3] }}
                       transition={{ repeat: Infinity, repeatType: "reverse", duration: 3.6, ease: "easeInOut", delay: 0.6 }}
-                      className="absolute right-[4%] bottom-[14%] w-[180px] bg-white border border-[#EFEAE1] rounded-2xl p-3 shadow-md hover:border-[#C4BBDE] hover:shadow-lg transition-all"
+                      className="absolute right-0 bottom-0 w-[290px] bg-white border border-border-soft rounded-2xl p-4 shadow-md hover:border-border-indigo hover:shadow-lg transition-all"
                     >
-                      <div className="flex items-center gap-2 mb-1">
-                        <div className="p-1 rounded-lg bg-[#B45309]/10 text-[#B45309]">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="p-1 rounded-lg bg-warning-soft text-warning-orange">
                           <Activity className="w-3.5 h-3.5" />
                         </div>
-                        <span className="text-[9px] font-mono text-[#6A5E8C] font-bold uppercase">Raporty</span>
+                        <span className="type-label font-mono text-muted-indigo uppercase">Raporty</span>
                       </div>
-                      <h2 className="font-sans font-black text-[11px] text-[#14183D] uppercase leading-tight">
+                      <p className="font-sans type-body-sm font-bold text-text-dark uppercase">
                         Statystyki i trendy
-                      </h2>
-                      
-                      <div className="mt-2 space-y-1">
-                        <div className="flex justify-between text-[8px] font-mono text-[#55506E] mb-0.5">
+                      </p>
+
+                      <div className="mt-2 space-y-1.5">
+                        <div className="flex justify-between gap-2 type-label font-mono text-muted-purple">
                           <span>Wskaźnik eNPS</span>
-                          <span className="font-bold text-[#3B2F8C]">+42</span>
+                          <span className="text-indigo-primary">+42</span>
                         </div>
-                        <div className="h-1.5 w-full bg-[#EFEAE1] rounded-full overflow-hidden">
-                          <div className="h-full bg-[#3B2F8C] rounded-full" style={{ width: '75%' }} />
+                        <div className="h-1.5 w-full bg-border-soft rounded-full overflow-hidden">
+                          <div className="h-full bg-indigo-primary rounded-full" style={{ width: '75%' }} />
                         </div>
                       </div>
                     </motion.div>
@@ -1288,11 +1290,11 @@ export default function App() {
 
               {/* Kluczowe funkcje list copy */}
               <div className="space-y-6 pt-4">
-                <h2 className="text-xs uppercase font-extrabold tracking-wider text-[#6A5E8C] font-mono border-b border-[#EFEAE1] pb-2">
+                <h2 className="font-display type-h2 text-text-dark uppercase border-b border-border-soft pb-4">
                   Kluczowe funkcje, które zmieniają sposób delegacji pracy
                 </h2>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
                   {[
                     { num: "01", title: "Inteligentna analiza", desc: "Zintegrowane badanie 58 czynników w 11 obszarach — zaangażowanie, satysfakcja, preferowany styl zarządzania, komunikacja operacyjna, ścieżki rozwoju i wiele więcej." },
                     { num: "02", title: "Rekomendacje działań", desc: "Sztuczna inteligencja dostarcza konkretne, opracowane scenariusze działań, checklisty i narzędzia dla liderów dostosowane do najgłębszych symptomów." },
@@ -1300,23 +1302,23 @@ export default function App() {
                     { num: "04", title: "Predykcja wypalenia", desc: "Analiza predykcyjna pozwala wykryć kluczowe ryzyka kadrowe znacznie wcześniej — rotację, wypalenie zawodowe czy narastające spięcia międzyoddziałowe." },
                     { num: "05", title: "Gotowe ankiety naukowe", desc: "Błyskawiczne uruchomienie standardowych badań: badanie miesięczne (17 pytań) • kwartalne (25 pytań) • roczne badanie głębokie (72 pytania)." }
                   ].map((feat, fidx) => (
-                    <div key={fidx} className="bg-white border border-[#EFEAE1] p-6 rounded-2xl space-y-3 shadow-sm hover:border-[#C4BBDE] transition-colors relative">
-                      <span className="text-sm font-bold text-[#C4672D] font-mono block">/ {feat.num}</span>
-                      <h3 className="font-sans font-black text-sm text-[#14183D] uppercase tracking-tight">{feat.title}</h3>
-                      <p className="text-xs text-[#55506E] leading-relaxed">{feat.desc}</p>
+                    <div key={fidx} className="h-full bg-white border border-border-soft p-6 rounded-2xl space-y-3 shadow-sm hover:border-border-indigo transition-colors relative">
+                      <span className="type-h3 text-indigo-primary font-mono block">/ {feat.num}</span>
+                      <h3 className="font-display type-h3 text-text-dark uppercase">{feat.title}</h3>
+                      <p className="type-body-sm text-muted-purple">{feat.desc}</p>
                     </div>
                   ))}
                 </div>
               </div>
 
               {/* Naukowa metodologia badawcza - 11 teorii */}
-              <div className="space-y-4">
-                <h2 className="text-xs uppercase font-extrabold tracking-wider text-[#6A5E8C] font-mono border-b border-[#EFEAE1] pb-2">
+              <div className="space-y-6">
+                <h2 className="font-display type-h2 text-text-dark uppercase border-b border-border-soft pb-4">
                   Fundamenty naukowe platformy
                 </h2>
                 <Suspense fallback={
-                  <div className="h-48 flex flex-col items-center justify-center bg-white/50 rounded-2xl border border-[#EFEAE1]/60">
-                    <div className="w-8 h-8 border-3 border-[#3B2F8C] border-t-transparent rounded-full animate-spin"></div>
+                  <div className="h-48 flex flex-col items-center justify-center bg-white/50 rounded-2xl border border-border-soft/60">
+                    <div className="w-8 h-8 border-3 border-indigo-primary border-t-transparent rounded-full animate-spin"></div>
                   </div>
                 }>
                   <HrlyMethodologyVisual />
@@ -1324,53 +1326,51 @@ export default function App() {
               </div>
 
               {/* 11 areas overview block - GRID LAYOUT */}
-              <section className="bg-[#F4F1EC]/40 border border-[#EFEAE1] p-6 sm:p-10 lg:p-12 rounded-[32px] relative overflow-hidden space-y-10">
+              <section className="bg-primary-faint/40 border border-border-soft p-6 sm:p-10 lg:p-12 rounded-[32px] relative overflow-hidden space-y-10">
                 {/* Decors */}
-                <div className="absolute top-0 right-0 w-80 h-80 bg-[#3B2F8C]/5 rounded-full blur-3xl pointer-events-none" />
-                <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#F4A574]/5 rounded-full blur-3xl pointer-events-none" />
+                <div className="absolute top-0 right-0 w-80 h-80 bg-indigo-primary/5 rounded-full blur-3xl pointer-events-none" />
+                <div className="absolute bottom-0 left-0 w-80 h-80 bg-accent-apricot/5 rounded-full blur-3xl pointer-events-none" />
 
                 {/* Header Info */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-end border-b border-[#EFEAE1] pb-8 relative z-10">
-                  <div className="lg:col-span-8 space-y-3">
-                    <span className="inline-flex items-center gap-1.5 bg-[#E3DEEE]/85 text-[#3B2F8C] px-3.5 py-1.5 rounded-full border border-[#C4BBDE]/35 text-[10px] font-bold uppercase tracking-wider leading-none shadow-xs">
-                      05 · Metodologia Badania Satysfakcji i eNPS
-                    </span>
-                    <h2 className="font-display font-black text-2xl sm:text-4xl text-[#14183D] tracking-tight uppercase leading-[1.05]">
-                      Badanie <span className="text-[#3B2F8C]">11 obszarów</span>, które budują silną organizację.
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-end border-b border-border-soft pb-8 relative z-10">
+                  <div className="lg:col-span-8 space-y-4">
+                    <SectionLabel number="02">Metodologia Badania Satysfakcji i eNPS</SectionLabel>
+                    <h2 className="font-display type-h2 text-text-dark uppercase">
+                      Badanie <span className="text-indigo-primary">11 obszarów</span>, które budują silną organizację.
                     </h2>
                   </div>
                   <div className="lg:col-span-4">
-                    <p className="text-xs text-[#55506E] leading-relaxed">
+                    <p className="type-body text-muted-purple">
                       Nasz system analityczny pokrywa pełny przekrój doświadczenia zawodowego pracowników. Zamiast chaotycznych ankiet, HRly bada 58 precyzyjnie dobranych czynników naukowych.
                     </p>
                   </div>
                 </div>
 
                 {/* 11 Areas Cards Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10 items-stretch">
                   {RESEARCH_AREAS.map((area, idx) => {
                     return (
-                      <div 
+                      <div
                         key={idx}
-                        className="bg-white border border-[#EFEAE1]/90 rounded-2xl p-5 sm:p-6 shadow-xs hover:shadow-md hover:border-[#C4BBDE] transition-all flex flex-col justify-between"
+                        className="h-full bg-white border border-border-soft/90 rounded-2xl p-5 sm:p-6 shadow-xs hover:shadow-md hover:border-border-indigo transition-all flex flex-col justify-between"
                       >
                         {/* Top Info */}
                         <div className="space-y-2">
-                          <span className="text-[9px] font-mono font-bold tracking-widest text-[#6A5E8C] uppercase block">
+                          <span className="type-label font-mono text-muted-indigo uppercase block">
                             Obszar {area.num}
                           </span>
-                          <h3 className="font-display font-black text-base text-[#14183D] uppercase tracking-tight leading-tight">
+                          <h3 className="font-display type-h3 text-text-dark uppercase">
                             {area.title}
                           </h3>
-                          <p className="text-[11.5px] text-[#55506E] leading-relaxed min-h-[36px]">
+                          <p className="type-body-sm text-muted-purple min-h-[44px]">
                             {area.question}
                           </p>
                         </div>
 
                         {/* Bottom Impact Box (Beige box with Left Border) */}
-                        <div className="mt-4 bg-[#FBFAF8] border-l-2 border-[#3B2F8C] p-3.5 rounded-r-xl rounded-l-xs text-[11px] text-[#14183D] leading-relaxed">
-                          <span className="font-bold text-[#3B2F8C] block mb-0.5 uppercase tracking-wide text-[9px] font-mono">Wpływ:</span>
-                          <span className="text-slate-700 font-sans font-medium">
+                        <div className="mt-4 bg-neutral-bg border-l-2 border-indigo-primary p-3.5 rounded-r-xl rounded-l-xs">
+                          <span className="type-label font-mono uppercase text-indigo-primary block mb-1">Wpływ:</span>
+                          <span className="type-body-sm font-sans text-muted-purple">
                             {getScreenshotImpactText(area.num)}
                           </span>
                         </div>
@@ -1383,18 +1383,14 @@ export default function App() {
 
 
               {/* Quick Call to Action features banner */}
-              <div className="bg-[#F4F1EC] p-6 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div>
-                  <h3 className="text-xs font-black text-[#14183D] uppercase">Poznaj wszystkie zaawansowane funkcje HRly</h3>
-                  <p className="text-[11px] text-[#55506E] mt-0.5">Wdrożenie zajmuje mniej niż godzinę. Brak ukrytych barier wejściowych.</p>
+              <div className="bg-primary-faint p-6 sm:p-8 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-6">
+                <div className="space-y-1">
+                  <h3 className="font-display type-h3 text-text-dark uppercase">Poznaj wszystkie zaawansowane funkcje HRly</h3>
+                  <p className="type-body-sm text-muted-purple">Wdrożenie zajmuje mniej niż godzinę. Brak ukrytych barier wejściowych.</p>
                 </div>
-                <button
-                  onClick={() => setActiveTab('pricing')}
-                  className="px-5 py-2.5 bg-[#3B2F8C] hover:bg-[#231B5E] text-white text-xs font-bold rounded-xl transition-colors cursor-pointer flex items-center gap-1.5 shrink-0"
-                >
+                <Button size="lg" icon={<ArrowRight />} className="w-full sm:w-auto shrink-0" onClick={() => setActiveTab('pricing')}>
                   Załóż darmowe konto
-                  <ArrowRight className="w-4 h-4 text-[#F4A574]" />
-                </button>
+                </Button>
               </div>
 
             </motion.div>
@@ -1411,91 +1407,90 @@ export default function App() {
               className="space-y-12"
             >
               {/* Premium Pricing Hero Section */}
-              <div className="relative rounded-[32px] border border-[#C4BBDE]/55 bg-gradient-to-tr from-[#F4F1EC] via-[#FBFAF8] to-[#FFFFFF] p-6 sm:p-10 lg:p-14 overflow-hidden shadow-xl bg-[linear-gradient(to_right,rgba(196,187,222,0.12)_1px,transparent_1px),linear-gradient(to_bottom,rgba(196,187,222,0.12)_1px,transparent_1px)] bg-[size:24px_24px]">
-                
+              <div className="relative rounded-[32px] border border-border-indigo/55 bg-gradient-to-tr from-primary-faint via-neutral-bg to-neutral-surface p-6 sm:p-10 lg:p-14 overflow-hidden shadow-xl bg-[linear-gradient(to_right,color-mix(in_oklab,var(--color-border-indigo)_12%,transparent)_1px,transparent_1px),linear-gradient(to_bottom,color-mix(in_oklab,var(--color-border-indigo)_12%,transparent)_1px,transparent_1px)] bg-[size:24px_24px]">
+
                 {/* Glowing aesthetic blurs */}
-                <div className="absolute top-0 right-0 w-[420px] h-[420px] bg-[#F4A574]/15 rounded-full blur-3xl pointer-events-none -mr-32 -mt-32" />
-                <div className="absolute bottom-0 left-0 w-[420px] h-[420px] bg-[#E3DEEE]/40 rounded-full blur-3xl pointer-events-none -ml-32 -mb-32" />
-                
+                <div className="absolute top-0 right-0 w-[420px] h-[420px] bg-accent-apricot/15 rounded-full blur-3xl pointer-events-none -mr-32 -mt-32" />
+                <div className="absolute bottom-0 left-0 w-[420px] h-[420px] bg-primary-light/40 rounded-full blur-3xl pointer-events-none -ml-32 -mb-32" />
+
                 <div className="relative z-10 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-10">
                   <div className="space-y-6 max-w-xl text-center lg:text-left flex flex-col items-center lg:items-start">
-                    
-                    {/* Badge */}
-                    <div className="inline-flex items-center gap-2 bg-[#E3DEEE]/85 text-[#3B2F8C] px-3.5 py-1.5 rounded-full border border-[#C4BBDE]/60 text-[10px] font-bold uppercase tracking-wider shadow-xs leading-none">
-                      <Sparkles className="w-3.5 h-3.5 text-[#F4A574]" />
-                      Cennik i Pakiety HRly
-                    </div>
 
-                    <h1 className="font-display font-black text-2xl sm:text-4xl lg:text-[42px] text-[#14183D] tracking-tight leading-[1.1] uppercase">
+                    {/* Etykieta sekcji 01 (numeracja per trasa; numer dokłada SectionLabel) */}
+                    <SectionLabel number="01" icon={<Sparkles />}>
+                      Cennik i Pakiety HRly
+                    </SectionLabel>
+
+                    <h1 className="font-display type-display text-text-dark uppercase">
                       Proste plany dopasowane do <br />
                       <span className="relative inline-block normal-case">
-                        <span className="font-script italic font-medium text-[#3B2F8C] text-[1.12em] tracking-normal lowercase relative z-10 select-none">
+                        <span className="italic font-normal text-indigo-primary lowercase relative z-10 select-none">
                           rozmiaru Twojego zespołu
                         </span>
-                        <svg 
-                          className="absolute -bottom-1.5 left-0 w-full h-[8px] text-[#F4A574] opacity-80 pointer-events-none" 
-                          viewBox="0 0 100 10" 
+                        <svg
+                          className="absolute -bottom-1.5 left-0 w-full h-[8px] text-accent-apricot opacity-80 pointer-events-none"
+                          viewBox="0 0 100 10"
                           preserveAspectRatio="none"
                         >
-                          <path 
-                            d="M 3,6 Q 50,9 97,4" 
-                            fill="none" 
-                            stroke="currentColor" 
-                            strokeWidth="3.5" 
-                            strokeLinecap="round" 
+                          <path
+                            d="M 3,6 Q 50,9 97,4"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="3.5"
+                            strokeLinecap="round"
                           />
                         </svg>
                       </span>
                     </h1>
 
-                    <p className="text-xs sm:text-sm text-[#55506E] leading-relaxed">
+                    <p className="type-body-lg text-muted-purple">
                       Zmień kulturę organizacyjną w oparciu o rzetelne badania zaangażowania i satysfakcji. Zacznij od optymalnego pakietu dla Twojego zespołu. Ceny są całkowicie transparentne i nie zawierają ukrytych opłat.
                     </p>
 
                     {/* Trust indicators */}
-                    <div className="flex flex-wrap items-center justify-center lg:justify-start gap-x-5 gap-y-2 pt-4 border-t border-[#EFEAE1] text-[11px] text-[#6A5E8C] font-mono w-full">
-                      <span className="flex items-center gap-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
+                    <div className="flex flex-wrap items-center justify-center lg:justify-start gap-x-5 gap-y-2 pt-4 border-t border-border-soft type-label text-muted-indigo font-mono w-full">
+                      <span className="flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-success" />
                         Elastyczna zmiana planu
                       </span>
-                      <span className="flex items-center gap-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
+                      <span className="flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-success" />
                         Miesięczna subskrypcja
                       </span>
-                      <span className="flex items-center gap-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
+                      <span className="flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-success" />
                         Pełna faktura VAT
                       </span>
                     </div>
                   </div>
 
                   {/* Promo Banner Card inside Hero */}
-                  <div className="w-full lg:w-80 bg-[#FBFAF8]/95 border border-[#C4BBDE]/60 rounded-2xl p-5 sm:p-6 shadow-lg relative shrink-0 backdrop-blur-xs flex flex-col justify-between">
-                    <div className="absolute -top-3 -right-2.5 bg-[#F4A574] text-white text-[9px] font-mono font-bold px-2.5 py-1 rounded-md shadow-md uppercase tracking-wider animate-bounce">
+                  <div className="w-full lg:w-96 bg-neutral-bg/95 border border-border-indigo/60 rounded-2xl p-5 sm:p-6 shadow-lg relative shrink-0 backdrop-blur-xs flex flex-col justify-between">
+                    <div className="absolute -top-3 -right-2.5 bg-accent-apricot text-text-dark type-label font-mono px-2.5 py-1 rounded-md shadow-md uppercase animate-bounce">
                       LIMITOWANA PROMOCJA
                     </div>
                     <div className="space-y-4">
                       <div className="flex items-center gap-1.5">
-                        <span className="text-[10px] font-mono font-bold text-[#F4A574] bg-[#F4A574]/10 px-2 py-0.5 rounded uppercase tracking-wider">
+                        <span className="type-label font-mono text-warning-orange bg-warning-soft px-2 py-1 rounded uppercase">
                           Gwarancja Ceny -50%
                         </span>
                       </div>
-                      <div className="space-y-1">
-                        <h2 className="font-sans font-black text-[#14183D] text-sm sm:text-base uppercase tracking-tight leading-tight">
+                      <div className="space-y-2">
+                        <h3 className="font-display type-h3 text-text-dark uppercase">
                           Zapisz się dziś, zachowaj rabat na zawsze
-                        </h2>
-                        <p className="text-[11px] text-[#55506E] leading-relaxed">
-                          Dołącz do grona zadowolonych klientów korzystających ze specjalnej, długoterminowej zniżki <strong>50%</strong>. Ceny promocyjne zostaną przypisane do Twojego konta na stałe.
+                        </h3>
+                        <p className="type-body-sm text-muted-purple">
+                          Dołącz do grona zadowolonych klientów korzystających ze specjalnej, długoterminowej zniżki <strong className="font-semibold text-text-dark">50%</strong>. Ceny promocyjne zostaną przypisane do Twojego konta na stałe.
                         </p>
                       </div>
-                      
-                      <div className="pt-3 border-t border-[#EFEAE1]/80 space-y-2 text-[10px] text-[#6A5E8C] font-mono">
+
+                      <div className="pt-3 border-t border-border-soft/80 space-y-2 type-label text-muted-indigo font-mono">
                         <div className="flex items-center gap-2">
-                          <CheckCircle2 className="w-4 h-4 text-[#10B981] shrink-0" />
+                          <CheckCircle2 className="w-4 h-4 text-success shrink-0" />
                           <span>Brak długoterminowych zobowiązań</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <CheckCircle2 className="w-4 h-4 text-[#10B981] shrink-0" />
+                          <CheckCircle2 className="w-4 h-4 text-success shrink-0" />
                           <span>14-dniowy okres gwarancyjny</span>
                         </div>
                       </div>
@@ -1506,33 +1501,30 @@ export default function App() {
 
               {/* Calculator component containing standard plans cards and slider */}
               <Suspense fallback={
-                <div className="h-96 flex flex-col items-center justify-center bg-white border border-[#EFEAE1] rounded-2xl">
-                  <div className="w-10 h-10 border-4 border-[#3B2F8C] border-t-transparent rounded-full animate-spin"></div>
-                  <p className="text-xs text-[#55506E] mt-3 animate-pulse">Ładowanie kalkulatora cennika...</p>
+                <div className="h-96 flex flex-col items-center justify-center bg-white border border-border-soft rounded-2xl">
+                  <div className="w-10 h-10 border-4 border-indigo-primary border-t-transparent rounded-full animate-spin"></div>
+                  <p className="type-body-sm text-muted-purple mt-3 animate-pulse">Ładowanie kalkulatora cennika...</p>
                 </div>
               }>
                 <HrlyPricingCalculator onNavigate={(tab) => setActiveTab(tab as PageRoute)} />
               </Suspense>
 
               {/* Contact Box copy from page 6 */}
-              <section className="bg-white border border-[#EFEAE1] rounded-2xl p-6 sm:p-8 grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
-                <div className="md:col-span-8 space-y-2">
-                  <span className="text-[10px] uppercase font-bold tracking-widest text-[#F4A574]">Złożona struktura?</span>
-                  <h2 className="font-display font-black text-lg text-[#14183D] uppercase tracking-tight leading-tight">
+              <section className="bg-white border border-border-soft rounded-2xl p-6 sm:p-8 grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+                <div className="md:col-span-8 space-y-4">
+                  <SectionLabel number="02">Złożona struktura?</SectionLabel>
+                  <h2 className="font-display type-h2 text-text-dark uppercase">
                     POTRZEBUJESZ DOPASOWANIA PLANU DLA DUŻEGO BIZNESU?
                   </h2>
-                  <p className="text-xs text-[#55506E] leading-relaxed">
+                  <p className="type-body text-muted-purple">
                     Porozmawiajmy o dedykowanym planie dla Twojej organizacji. Pomożemy dobrać precyzyjny zakres HRly do liczby pracowników na pokładzie, specyfiki przeprowadzania badań i wymaganego poziomu wsparcia analitycznego.
                   </p>
                 </div>
 
-                <div className="md:col-span-4 text-center md:text-right">
-                  <button
-                    onClick={() => setActiveTab('contact')}
-                    className="w-full md:w-auto py-3.5 px-6 bg-[#3B2F8C] hover:bg-[#231B5E] text-white text-xs font-display font-extrabold uppercase tracking-wider rounded-xl shadow-md transition-all active:scale-[0.98] duration-200 cursor-pointer"
-                  >
-                    Skontaktuj się z nami →
-                  </button>
+                <div className="md:col-span-4 flex justify-center md:justify-end">
+                  <Button size="lg" icon={<ArrowRight />} className="w-full md:w-auto" onClick={() => setActiveTab('contact')}>
+                    Skontaktuj się z nami
+                  </Button>
                 </div>
               </section>
 
@@ -1547,94 +1539,92 @@ export default function App() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -15 }}
               transition={{ duration: 0.3 }}
-              className="space-y-12 animate-fade-in text-xs leading-relaxed text-[#55506E]"
+              className="space-y-12 animate-fade-in type-body text-muted-purple"
             >
               {/* Premium About Us Hero Section */}
-              <div className="relative rounded-[32px] border border-[#C4BBDE]/55 bg-gradient-to-tr from-[#F4F1EC] via-[#FBFAF8] to-[#FFFFFF] p-6 sm:p-10 lg:p-14 overflow-hidden shadow-xl bg-[linear-gradient(to_right,rgba(196,187,222,0.12)_1px,transparent_1px),linear-gradient(to_bottom,rgba(196,187,222,0.12)_1px,transparent_1px)] bg-[size:24px_24px]">
-                
+              <div className="relative rounded-[32px] border border-border-indigo/55 bg-gradient-to-tr from-primary-faint via-neutral-bg to-neutral-surface p-6 sm:p-10 lg:p-14 overflow-hidden shadow-xl bg-[linear-gradient(to_right,color-mix(in_oklab,var(--color-border-indigo)_12%,transparent)_1px,transparent_1px),linear-gradient(to_bottom,color-mix(in_oklab,var(--color-border-indigo)_12%,transparent)_1px,transparent_1px)] bg-[size:24px_24px]">
+
                 {/* Glowing aesthetic blurs */}
-                <div className="absolute top-0 right-0 w-[420px] h-[420px] bg-[#F4A574]/15 rounded-full blur-3xl pointer-events-none -mr-32 -mt-32" />
-                <div className="absolute bottom-0 left-0 w-[420px] h-[420px] bg-[#3B2F8C]/10 rounded-full blur-3xl pointer-events-none -ml-32 -mb-32" />
-                
+                <div className="absolute top-0 right-0 w-[420px] h-[420px] bg-accent-apricot/15 rounded-full blur-3xl pointer-events-none -mr-32 -mt-32" />
+                <div className="absolute bottom-0 left-0 w-[420px] h-[420px] bg-indigo-primary/10 rounded-full blur-3xl pointer-events-none -ml-32 -mb-32" />
+
                 <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
                   {/* Left content block */}
                   <div className="lg:col-span-7 space-y-6 text-left flex flex-col items-start">
-                    
-                    {/* Badge */}
-                    <div className="inline-flex items-center gap-2 bg-[#E3DEEE]/85 text-[#3B2F8C] px-3.5 py-1.5 rounded-full border border-[#C4BBDE]/60 text-[10px] font-bold uppercase tracking-wider shadow-xs leading-none">
-                      <Users className="w-3.5 h-3.5 text-[#F4A574]" />
-                      POZNAJ NASZĄ HISTORIĘ • O NAS
-                    </div>
 
-                    <h1 className="font-display font-black text-2xl sm:text-4xl lg:text-[40px] text-[#14183D] tracking-tight leading-[1.1] uppercase">
+                    {/* Etykieta sekcji 01 (numeracja per trasa; numer dokłada SectionLabel) */}
+                    <SectionLabel number="01" icon={<Users />}>
+                      POZNAJ NASZĄ HISTORIĘ • O NAS
+                    </SectionLabel>
+
+                    <h1 className="font-display type-display text-text-dark uppercase">
                       Stworzone przez <br />
-                      <span className="text-[#3B2F8C]">praktyków HR</span> dla tych,<br />
+                      <span className="text-indigo-primary">praktyków HR</span> dla tych,<br />
                       którzy napędzają biznes
                     </h1>
 
-                    <p className="text-xs sm:text-sm text-[#55506E] leading-relaxed max-w-xl">
+                    <p className="type-body-lg text-muted-purple max-w-xl">
                       Założyliśmy HRly, ponieważ sami przez lata siedzieliśmy po Twojej stronie biurka. Widzieliśmy na własne oczy, jak organizacje toną w morzu surowych danych i chaotycznych ankiet, które nigdy nie przekładają się na merytoryczne działania operacyjne. Naszą misją jest dać liderom gotowe, zwięzłe odpowiedzi.
                     </p>
 
-                    <div className="flex flex-wrap gap-3 pt-2">
-                      <button
-                        onClick={() => setActiveTab('contact')}
-                        className="py-3 px-5 bg-[#3B2F8C] hover:bg-[#231B5E] text-white text-xs font-display font-extrabold uppercase tracking-wider rounded-xl transition-all active:scale-[0.98] duration-200 cursor-pointer shadow-md"
-                      >
+                    <div className="flex flex-col sm:flex-row flex-wrap gap-3 pt-2 w-full sm:w-auto">
+                      <Button size="lg" className="w-full sm:w-auto" onClick={() => setActiveTab('contact')}>
                         Napisz do nas
-                      </button>
-                      <button
+                      </Button>
+                      <Button
+                        variant="secondary"
+                        size="lg"
+                        className="w-full sm:w-auto"
                         onClick={() => {
                           setActiveTab('home');
                           setIsDashboardModalOpen(true);
                         }}
-                        className="py-3 px-5 bg-white border border-[#C4BBDE] hover:bg-[#F4F1EC] text-[#3B2F8C] text-xs font-display font-extrabold uppercase tracking-wider rounded-xl transition-all active:scale-[0.98] duration-200 cursor-pointer shadow-sm"
                       >
                         Uruchom demo
-                      </button>
+                      </Button>
                     </div>
                   </div>
 
                   {/* Right side: Modern Key Pillars block */}
                   <div className="lg:col-span-5 space-y-3.5">
-                    
-                    <div className="bg-white/90 border border-[#C4BBDE]/50 rounded-2xl p-5 shadow-md backdrop-blur-xs flex items-start gap-4">
-                      <div className="p-2.5 bg-[#F4A574]/10 rounded-xl text-[#F4A574] shrink-0">
+
+                    <div className="bg-white/90 border border-border-indigo/50 rounded-2xl p-5 shadow-md backdrop-blur-xs flex items-start gap-4">
+                      <div className="p-2.5 bg-primary-light/60 rounded-xl text-indigo-primary shrink-0">
                         <Heart className="w-5 h-5" />
                       </div>
                       <div className="space-y-1">
-                        <h2 className="font-sans font-extrabold text-[#14183D] text-xs uppercase tracking-wider">
+                        <h3 className="font-display type-h3 text-text-dark uppercase">
                           Ludzkie podejście, twarde liczby
-                        </h2>
-                        <p className="text-[11px] text-[#55506E] leading-relaxed">
+                        </h3>
+                        <p className="type-body-sm text-muted-purple">
                           Łączymy ekspercką wiedzę z psychologii organizacji z twardą statystyką i wskaźnikami ROI.
                         </p>
                       </div>
                     </div>
 
-                    <div className="bg-white/90 border border-[#C4BBDE]/50 rounded-2xl p-5 shadow-md backdrop-blur-xs flex items-start gap-4">
-                      <div className="p-2.5 bg-[#3B2F8C]/10 rounded-xl text-[#3B2F8C] shrink-0">
+                    <div className="bg-white/90 border border-border-indigo/50 rounded-2xl p-5 shadow-md backdrop-blur-xs flex items-start gap-4">
+                      <div className="p-2.5 bg-indigo-primary/10 rounded-xl text-indigo-primary shrink-0">
                         <Zap className="w-5 h-5" />
                       </div>
                       <div className="space-y-1">
-                        <h2 className="font-sans font-extrabold text-[#14183D] text-xs uppercase tracking-wider">
+                        <h3 className="font-display type-h3 text-text-dark uppercase">
                           0% pustego raportowania
-                        </h2>
-                        <p className="text-[11px] text-[#55506E] leading-relaxed">
+                        </h3>
+                        <p className="type-body-sm text-muted-purple">
                           Menedżerowie nie dostają wyłącznie wykresów – system natychmiast generuje zwięzłe i mądre porady.
                         </p>
                       </div>
                     </div>
 
-                    <div className="bg-white/90 border border-[#C4BBDE]/50 rounded-2xl p-5 shadow-md backdrop-blur-xs flex items-start gap-4">
-                      <div className="p-2.5 bg-[#D1FAE5] text-[#047857] rounded-xl shrink-0">
+                    <div className="bg-white/90 border border-border-indigo/50 rounded-2xl p-5 shadow-md backdrop-blur-xs flex items-start gap-4">
+                      <div className="p-2.5 bg-success-soft text-success rounded-xl shrink-0">
                         <Target className="w-5 h-5" />
                       </div>
                       <div className="space-y-1">
-                        <h2 className="font-sans font-extrabold text-[#14183D] text-xs uppercase tracking-wider">
+                        <h3 className="font-display type-h3 text-text-dark uppercase">
                           Stałe doskonalenie
-                        </h2>
-                        <p className="text-[11px] text-[#55506E] leading-relaxed">
+                        </h3>
+                        <p className="type-body-sm text-muted-purple">
                           Stale kalibrujemy 58 mierzonych czynników, dopasowując je do wyzwań nowoczesnego rynku pracy.
                         </p>
                       </div>
@@ -1645,13 +1635,11 @@ export default function App() {
               </div>
 
               {/* Grid 01. Geneza & 02. Filozofia copy from page 6 & 7 */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
-                
-                <div className="space-y-3 bg-white border border-[#EFEAE1] p-6 rounded-2xl shadow-sm">
-                  <span className="text-[10px] font-mono font-bold uppercase text-[#3B2F8C]">
-                    01 · GENEZA (DLACZEGO HRLY?)
-                  </span>
-                  <h2 className="font-sans font-bold text-[#14183D] text-sm uppercase tracking-tight">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4 items-stretch">
+
+                <div className="h-full space-y-4 bg-white border border-border-soft p-6 rounded-2xl shadow-sm">
+                  <SectionLabel number="02">GENEZA (DLACZEGO HRLY?)</SectionLabel>
+                  <h2 className="font-display type-h2 text-text-dark uppercase">
                     Zagubieni w gąszczu statystyk bez przełożenia
                   </h2>
                   <p>
@@ -1662,11 +1650,9 @@ export default function App() {
                   </p>
                 </div>
 
-                <div className="space-y-3 bg-[#F4F1EC]/60 border border-[#C4BBDE]/50 p-6 rounded-2xl shadow-sm">
-                  <span className="text-[10px] font-mono font-bold uppercase text-[#3B2F8C]">
-                    02 · FILOZOFIA DZIAŁANIA
-                  </span>
-                  <h2 className="font-sans font-bold text-[#14183D] text-sm uppercase tracking-tight">
+                <div className="h-full space-y-4 bg-primary-faint/60 border border-border-indigo/50 p-6 rounded-2xl shadow-sm">
+                  <SectionLabel number="03">FILOZOFIA DZIAŁANIA</SectionLabel>
+                  <h2 className="font-display type-h2 text-text-dark uppercase">
                     Technologia, która staje się niewidzialna
                   </h2>
                   <p>
@@ -1681,17 +1667,17 @@ export default function App() {
 
               {/* Co-founder Quotation - BEAUTIFULLY STYLED PIECE */}
               <div className="relative max-w-3xl mx-auto my-6 px-4">
-                <blockquote className="relative bg-gradient-to-br from-[#FBFAF8] to-[#F4F1EC] border border-[#EFEAE1] p-8 sm:p-10 rounded-[32px] text-center shadow-lg shadow-[#3B2F8C]/5 overflow-hidden">
-                  {/* Decorative quote marks */}
-                  <span className="absolute -top-4 -left-2 text-[120px] font-serif font-black text-[#F4A574]/15 pointer-events-none select-none">“</span>
-                  <span className="absolute -bottom-16 right-4 text-[120px] font-serif font-black text-[#3B2F8C]/10 pointer-events-none select-none">”</span>
-                  
-                  <p className="relative z-10 font-sans italic text-[#14183D] text-xs sm:text-sm font-medium leading-relaxed md:px-6">
-                    „Chcieliśmy stworzyć narzędzie, które każdy lider i specjalista HR może z pełnym przekonaniem przedstawić zarządowi, mówiąc: <span className="font-extrabold not-italic text-[#3B2F8C]">„Oto konkretny plan działania i rekomendacje na najbliższy poniedziałek”</span>. Bez przedzierania się przez skomplikowane wykresy, bez zatrudniania zewnętrznych analityków i bez tygodni żmudnego, ręcznego przetwarzania danych.”
+                <blockquote className="relative bg-gradient-to-br from-neutral-bg to-primary-faint border border-border-soft p-8 sm:p-10 rounded-[32px] text-center shadow-lg shadow-indigo-primary/5 overflow-hidden">
+                  {/* Decorative quote marks — FAZA 8: znaki cudzysłowu jako ikony (były tekstem 120px/900). */}
+                  <Quote aria-hidden="true" className="absolute top-2 left-2 w-16 h-16 rotate-180 text-accent-apricot/25 pointer-events-none select-none" />
+                  <Quote aria-hidden="true" className="absolute bottom-2 right-4 w-16 h-16 text-indigo-primary/15 pointer-events-none select-none" />
+
+                  <p className="relative z-10 font-sans italic text-text-dark type-body-lg md:px-6">
+                    „Chcieliśmy stworzyć narzędzie, które każdy lider i specjalista HR może z pełnym przekonaniem przedstawić zarządowi, mówiąc: <span className="font-bold not-italic text-indigo-primary">„Oto konkretny plan działania i rekomendacje na najbliższy poniedziałek”</span>. Bez przedzierania się przez skomplikowane wykresy, bez zatrudniania zewnętrznych analityków i bez tygodni żmudnego, ręcznego przetwarzania danych.”
                   </p>
-                  
-                  <div className="relative z-10 mt-6 pt-4 border-t border-[#EFEAE1]/80 inline-block mx-auto">
-                    <cite className="block text-[10px] text-[#3B2F8C] font-mono uppercase font-black tracking-wider not-italic">
+
+                  <div className="relative z-10 mt-6 pt-4 border-t border-border-soft/80 inline-block mx-auto">
+                    <cite className="block type-label text-indigo-primary font-mono uppercase not-italic">
                       — Współtwórcy Platformy HRly
                     </cite>
                   </div>
@@ -1699,70 +1685,70 @@ export default function App() {
               </div>
 
               {/* Statistics Pane Page 7 */}
-              <div className="bg-white border border-[#EFEAE1] rounded-2xl p-6 text-center grid grid-cols-1 sm:grid-cols-3 gap-6 shadow-sm">
-                <div className="space-y-1">
-                  <span className="text-[10px] text-[#6A5E8C] font-mono block uppercase">ZESPÓŁ</span>
-                  <strong className="text-2xl font-black text-[#14183D]">Ekspercki team</strong>
-                  <p className="text-[11px] text-[#55506E]">Zróżnicowane kompetencje strategiczne</p>
+              <div className="bg-white border border-border-soft rounded-2xl p-6 sm:p-8 text-center grid grid-cols-1 sm:grid-cols-3 gap-6 shadow-sm items-stretch">
+                <div className="space-y-2">
+                  <span className="type-label text-muted-indigo font-mono block uppercase">ZESPÓŁ</span>
+                  <strong className="font-display type-h3 text-text-dark block uppercase">Ekspercki team</strong>
+                  <p className="type-body-sm text-muted-purple">Zróżnicowane kompetencje strategiczne</p>
                 </div>
-                <div className="border-t sm:border-t-0 sm:border-x border-[#EFEAE1] pt-4 sm:pt-0 space-y-1">
-                  <span className="text-[10px] text-[#6A5E8C] font-mono block uppercase">DOŚWIADCZENIE HR</span>
-                  <strong className="text-2xl font-black text-[#14183D]">30+ Lat w branży</strong>
-                  <p className="text-[11px] text-[#55506E]">Doświadczenia na stanowiskach kadr</p>
+                <div className="border-t sm:border-t-0 sm:border-x border-border-soft pt-4 sm:pt-0 space-y-2">
+                  <span className="type-label text-muted-indigo font-mono block uppercase">DOŚWIADCZENIE HR</span>
+                  <strong className="font-display type-h3 text-text-dark block uppercase">30+ Lat w branży</strong>
+                  <p className="type-body-sm text-muted-purple">Doświadczenia na stanowiskach kadr</p>
                 </div>
-                <div className="border-t sm:border-t-0 pt-4 sm:pt-0 space-y-1">
-                  <span className="text-[10px] text-[#6A5E8C] font-mono block uppercase">GŁÓWNY CEL</span>
-                  <strong className="text-2xl font-black text-[#14183D]">1 Misja: dane w działanie</strong>
-                  <p className="text-[11px] text-[#55506E]">Eliminujemy puste statystyki bez pokrycia</p>
+                <div className="border-t sm:border-t-0 pt-4 sm:pt-0 space-y-2">
+                  <span className="type-label text-muted-indigo font-mono block uppercase">GŁÓWNY CEL</span>
+                  <strong className="font-display type-h3 text-text-dark block uppercase">1 Misja: dane w działanie</strong>
+                  <p className="type-body-sm text-muted-purple">Eliminujemy puste statystyki bez pokrycia</p>
                 </div>
               </div>
 
               {/* Team Profile cards page 7 */}
               <div className="space-y-6 pt-4">
-                <h2 className="text-xs uppercase font-extrabold tracking-wider text-[#6A5E8C] font-mono border-b border-[#EFEAE1] pb-2 text-center">
+                <h2 className="font-display type-h2 text-text-dark uppercase border-b border-border-soft pb-4 text-center">
                   Poznaj nasz zespół operacyjny
                 </h2>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
+
                   {/* Monika Ćwikła */}
-                  <div className="bg-white border border-[#EFEAE1] p-5.5 rounded-2xl space-y-3 relative shadow-sm group hover:border-[#C4BBDE] transition-all">
-                    <div className="w-12 h-12 rounded-full bg-[#E3DEEE] text-[#3B2F8C] flex items-center justify-center text-lg font-black shrink-0 shadow-inner">
+                  <div className="h-full bg-white border border-border-soft p-6 rounded-2xl space-y-3 relative shadow-sm group hover:border-border-indigo transition-all">
+                    <div className="w-12 h-12 rounded-full bg-primary-light text-indigo-primary flex items-center justify-center type-h3 font-display shrink-0 shadow-inner">
                       MĆ
                     </div>
-                    <div>
-                      <h3 className="font-sans font-black text-sm text-[#14183D] leading-none">Monika Ćwikła</h3>
-                      <p className="text-[10px] text-[#C4672D] font-bold mt-1 uppercase font-mono">HR i Strategia</p>
+                    <div className="space-y-1">
+                      <h3 className="font-display type-h3 text-text-dark">Monika Ćwikła</h3>
+                      <p className="type-label text-indigo-primary uppercase font-mono">HR i Strategia</p>
                     </div>
-                    <p className="text-[11px] text-[#55506E] leading-relaxed">
+                    <p className="type-body-sm text-muted-purple">
                       Ponad 10 lat doświadczenia w HR, budowaniu i zarządzaniu zespołami. Łączy perspektywę HR i biznesu, dbając o to, żeby HRly dostarczało realną wartość managerom i organizacjom.
                     </p>
                   </div>
 
                   {/* Anna Kępczyńska */}
-                  <div className="bg-white border border-[#EFEAE1] p-5.5 rounded-2xl space-y-3 relative shadow-sm group hover:border-[#C4BBDE] transition-all">
-                    <div className="w-12 h-12 rounded-full bg-[#E3DEEE] text-[#3B2F8C] flex items-center justify-center text-lg font-black shrink-0 shadow-inner">
+                  <div className="h-full bg-white border border-border-soft p-6 rounded-2xl space-y-3 relative shadow-sm group hover:border-border-indigo transition-all">
+                    <div className="w-12 h-12 rounded-full bg-primary-light text-indigo-primary flex items-center justify-center type-h3 font-display shrink-0 shadow-inner">
                       AK
                     </div>
-                    <div>
-                      <h3 className="font-sans font-black text-sm text-[#14183D] leading-none">Anna Kępczyńska</h3>
-                      <p className="text-[10px] text-[#C4672D] font-bold mt-1 uppercase font-mono">Psychologia i Management</p>
+                    <div className="space-y-1">
+                      <h3 className="font-display type-h3 text-text-dark">Anna Kępczyńska</h3>
+                      <p className="type-label text-indigo-primary uppercase font-mono">Psychologia i Management</p>
                     </div>
-                    <p className="text-[11px] text-[#55506E] leading-relaxed">
+                    <p className="type-body-sm text-muted-purple">
                       Doświadczony psycholog i menedżer z wieloletnim doświadczeniem w konsultingu personalnym. Na co dzień odpowiada za przyjazny w odbiorze, głęboko empatyczny i strategicznie zrozumiały język ankiet oraz komunikacji z liderami.
                     </p>
                   </div>
 
                   {/* Jakub Zacios */}
-                  <div className="bg-white border border-[#EFEAE1] p-5.5 rounded-2xl space-y-3 relative shadow-sm group hover:border-[#C4BBDE] transition-all">
-                    <div className="w-12 h-12 rounded-full bg-[#E3DEEE] text-[#3B2F8C] flex items-center justify-center text-lg font-black shrink-0 shadow-inner">
+                  <div className="h-full bg-white border border-border-soft p-6 rounded-2xl space-y-3 relative shadow-sm group hover:border-border-indigo transition-all">
+                    <div className="w-12 h-12 rounded-full bg-primary-light text-indigo-primary flex items-center justify-center type-h3 font-display shrink-0 shadow-inner">
                       JZ
                     </div>
-                    <div>
-                      <h3 className="font-sans font-black text-sm text-[#14183D] leading-none">Jakub Zacios</h3>
-                      <p className="text-[10px] text-[#C4672D] font-bold mt-1 uppercase font-mono">Technologia i Analiza</p>
+                    <div className="space-y-1">
+                      <h3 className="font-display type-h3 text-text-dark">Jakub Zacios</h3>
+                      <p className="type-label text-indigo-primary uppercase font-mono">Technologia i Analiza</p>
                     </div>
-                    <p className="text-[11px] text-[#55506E] leading-relaxed">
+                    <p className="type-body-sm text-muted-purple">
                       Zdolny architekt technologiczny, główny twórca nowatorskiego matematycznego silnika analitycznego oraz metodologii badania 58 czynników. Odpowiada za integrację z bazami danych i sprawne wyciąganie automatycznych raportów.
                     </p>
                   </div>
@@ -1771,19 +1757,19 @@ export default function App() {
               </div>
 
               {/* Misja i Wizja blocks page 7 */}
-              <div className="bg-gradient-to-br from-[#3B2F8C] to-[#231B5E] text-white p-6 sm:p-10 rounded-3xl grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="space-y-2">
-                  <span className="text-[10px] font-mono font-bold text-[#C4672D] block uppercase">GŁÓWNA MISJA SPÓŁKI</span>
-                  <h3 className="font-sans font-black text-sm tracking-tight text-white uppercase">Pomagamy firmom podejmować trafne decyzje</h3>
-                  <p className="text-[#F4F1EC] leading-relaxed text-[11px]">
+              <div className="bg-indigo-primary bg-gradient-to-br from-indigo-primary to-indigo-hover text-white p-6 sm:p-10 rounded-3xl grid grid-cols-1 md:grid-cols-2 gap-8 section-dark">
+                <div className="space-y-3">
+                  <span className="type-label font-mono text-accent-apricot block uppercase">GŁÓWNA MISJA SPÓŁKI</span>
+                  <h3 className="font-display type-h3 text-white uppercase">Pomagamy firmom podejmować trafne decyzje</h3>
+                  <p className="type-body-sm text-on-dark-body">
                     Pomagamy firmom i zarządom podejmować trafne, merytoryczne decyzje biznesowe oparte o rzeczywiste, zweryfikowane dane — tak, aby budowanie i rozwijanie wyjątkowych zespołów stało się dokładną nauką, a nie losową sztuką.
                   </p>
                 </div>
 
-                <div className="space-y-2 border-t md:border-t-0 md:border-l border-white/10 pt-4 md:pt-0 md:pl-8">
-                  <span className="text-[10px] font-mono font-bold text-[#C4672D] block uppercase">SPÓJNA WIZJA ŚWIATA</span>
-                  <h3 className="font-sans font-black text-sm tracking-tight text-white uppercase">Gdzie HR mówi uniwersalnym językiem biznesu</h3>
-                  <p className="text-[#F4F1EC] leading-relaxed text-[11px]">
+                <div className="space-y-3 border-t md:border-t-0 md:border-l border-white/10 pt-4 md:pt-0 md:pl-8">
+                  <span className="type-label font-mono text-on-dark-muted block uppercase">SPÓJNA WIZJA ŚWIATA</span>
+                  <h3 className="font-display type-h3 text-white uppercase">Gdzie HR mówi uniwersalnym językiem biznesu</h3>
+                  <p className="type-body-sm text-on-dark-body">
                     Świat, w którym dział personalny mówi zrozumiałym, twardym językiem finansów i biznesu, a każda nowoczesna organizacja ma swobodny dostęp do narzędzi budujących zaangażowane, produktywne i zdrowe zespoły.
                   </p>
                 </div>
@@ -1802,9 +1788,9 @@ export default function App() {
               transition={{ duration: 0.3 }}
             >
               <Suspense fallback={
-                <div className="min-h-[50vh] flex flex-col items-center justify-center bg-[#FBFAF8]">
-                  <div className="w-10 h-10 border-4 border-[#3B2F8C] border-t-transparent rounded-full animate-spin"></div>
-                  <p className="text-xs text-[#55506E] mt-3 animate-pulse">Ładowanie artykułów blogowych...</p>
+                <div className="min-h-[50vh] flex flex-col items-center justify-center bg-neutral-bg">
+                  <div className="w-10 h-10 border-4 border-indigo-primary border-t-transparent rounded-full animate-spin"></div>
+                  <p className="type-body-sm text-muted-purple mt-3 animate-pulse">Ładowanie artykułów blogowych...</p>
                 </div>
               }>
                 <HrlyBlogSection />
@@ -1824,91 +1810,91 @@ export default function App() {
             >
               
               {/* Left Column: Coordinates details with Trust cards */}
-              <div className="lg:col-span-5 bg-gradient-to-b from-[#FBFAF8] to-[#FFFFFF] border border-[#EFEAE1]/85 rounded-[28px] p-6 sm:p-8 flex flex-col justify-between space-y-8 shadow-xs relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-[#C4672D]/5 rounded-full blur-2xl pointer-events-none" />
-                <div className="absolute bottom-0 left-0 w-32 h-32 bg-[#3B2F8C]/4 rounded-full blur-2xl pointer-events-none" />
-                
+              <div className="lg:col-span-6 bg-neutral-surface bg-gradient-to-b from-neutral-bg to-neutral-surface border border-border-soft/85 rounded-[28px] p-6 sm:p-8 flex flex-col justify-between space-y-8 shadow-xs relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-accent-apricot/10 rounded-full blur-2xl pointer-events-none" />
+                <div className="absolute bottom-0 left-0 w-32 h-32 bg-indigo-primary/5 rounded-full blur-2xl pointer-events-none" />
+
                 <div className="space-y-6 relative z-10">
-                  <div className="space-y-3">
-                    <span className="inline-flex items-center gap-1.5 text-[9px] sm:text-[10px] tracking-widest font-extrabold uppercase bg-[#E3DEEE] text-[#3B2F8C] px-3.5 py-1.5 rounded-full border border-[#C4BBDE]/40 shadow-2xs leading-none">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#C4672D]" />
-                      BEZPOŚREDNI KONTAKT
-                    </span>
-                    <h1 className="font-display font-black text-2xl sm:text-3xl text-[#14183D] uppercase tracking-tight">
-                      Porozmawiajmy o <br className="hidden sm:inline" />
-                      <span className="text-[#3B2F8C]">zaangażowaniu</span>
+                  <div className="space-y-4">
+                    {/* Etykieta sekcji 01 (numeracja per trasa; numer dokłada SectionLabel) */}
+                    <SectionLabel number="01">BEZPOŚREDNI KONTAKT</SectionLabel>
+                    <h1 className="font-display type-display text-text-dark uppercase">
+                      Porozmawiajmy o{' '}
+                      <span className="text-indigo-primary">zaangażowaniu</span>
                     </h1>
-                    <p className="text-xs text-[#55506E] leading-relaxed">
+                    <p className="type-body-lg text-muted-purple">
                       Chętnie odpowiemy na Twoje pytania, zaprezentujemy interaktywny pulpit menedżerski na żywo lub przygotujemy dedykowaną wycenę dla Twojej organizacji.
                     </p>
                   </div>
 
                   <div className="space-y-3">
-                    
-                    <a href="mailto:kontakt@hrly.pl" className="bg-white border border-[#EFEAE1]/60 rounded-xl p-4 flex gap-3.5 items-center hover:border-[#C4BBDE] hover:shadow-2xs transition-all group cursor-pointer block">
-                      <div className="w-10 h-10 rounded-xl bg-[#3B2F8C]/10 text-[#3B2F8C] flex items-center justify-center shrink-0 group-hover:bg-[#3B2F8C] group-hover:text-white transition-colors duration-300">
-                        <Mail className="w-5 h-5 text-[#C4672D]" />
-                      </div>
-                      <div>
-                        <span className="text-[9px] text-[#6A5E8C] font-mono block uppercase font-bold tracking-wider">Napisz e-mail</span>
-                        <strong className="text-xs text-[#14183D] group-hover:text-[#3B2F8C] transition-colors">kontakt@hrly.pl</strong>
-                      </div>
-                    </a>
 
-                    <div className="bg-white border border-[#EFEAE1]/60 rounded-xl p-4 flex gap-3.5 items-center hover:border-[#C4BBDE] hover:shadow-2xs transition-all group">
-                      <div className="w-10 h-10 rounded-xl bg-[#3B2F8C]/10 text-[#3B2F8C] flex items-center justify-center shrink-0 group-hover:bg-[#3B2F8C] group-hover:text-white transition-colors duration-300">
-                        <Clock className="w-5 h-5" />
+                    {/* FAZA 8: karta nie jest już linkiem (link o wysokości karty psuł zbiór
+                        wysokości przycisków) — klikalny jest sam adres e-mail. */}
+                    <div className="bg-white border border-border-soft/60 rounded-xl p-4 flex gap-3.5 items-center hover:border-border-indigo hover:shadow-2xs transition-all group">
+                      <div className="w-10 h-10 rounded-xl bg-indigo-primary/10 text-indigo-primary flex items-center justify-center shrink-0 group-hover:bg-indigo-primary group-hover:text-white transition-colors duration-300">
+                        <Mail className="w-5 h-5" />
                       </div>
                       <div>
-                        <span className="text-[9px] text-[#6A5E8C] font-mono block uppercase font-bold tracking-wider">Czas odpowiedzi</span>
-                        <strong className="text-xs text-[#14183D]">Maksymalnie 24 godziny</strong>
+                        <span className="type-label text-muted-indigo font-mono block uppercase">Napisz e-mail</span>
+                        <a href="mailto:kontakt@hrly.pl" className="type-body font-semibold text-text-dark hover:text-indigo-primary transition-colors">kontakt@hrly.pl</a>
                       </div>
                     </div>
 
-                    <div className="bg-white border border-[#EFEAE1]/60 rounded-xl p-4 flex gap-3.5 items-center hover:border-[#C4BBDE] hover:shadow-2xs transition-all group">
-                      <div className="w-10 h-10 rounded-xl bg-[#3B2F8C]/10 text-[#3B2F8C] flex items-center justify-center shrink-0 group-hover:bg-[#3B2F8C] group-hover:text-white transition-colors duration-300">
+                    <div className="bg-white border border-border-soft/60 rounded-xl p-4 flex gap-3.5 items-center hover:border-border-indigo hover:shadow-2xs transition-all group">
+                      <div className="w-10 h-10 rounded-xl bg-indigo-primary/10 text-indigo-primary flex items-center justify-center shrink-0 group-hover:bg-indigo-primary group-hover:text-white transition-colors duration-300">
+                        <Clock className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <span className="type-label text-muted-indigo font-mono block uppercase">Czas odpowiedzi</span>
+                        <strong className="type-body font-semibold text-text-dark">Maksymalnie 24 godziny</strong>
+                      </div>
+                    </div>
+
+                    <div className="bg-white border border-border-soft/60 rounded-xl p-4 flex gap-3.5 items-center hover:border-border-indigo hover:shadow-2xs transition-all group">
+                      <div className="w-10 h-10 rounded-xl bg-indigo-primary/10 text-indigo-primary flex items-center justify-center shrink-0 group-hover:bg-indigo-primary group-hover:text-white transition-colors duration-300">
                         <MapPin className="w-5 h-5" />
                       </div>
                       <div>
-                        <span className="text-[9px] text-[#6A5E8C] font-mono block uppercase font-bold tracking-wider">Lokalizacja spółki</span>
-                        <strong className="text-xs text-[#14183D]">Warszawa, Polska</strong>
+                        <span className="type-label text-muted-indigo font-mono block uppercase">Lokalizacja spółki</span>
+                        <strong className="type-body font-semibold text-text-dark">Warszawa, Polska</strong>
                       </div>
                     </div>
 
                   </div>
                 </div>
 
-                <div className="space-y-4 pt-4 border-t border-[#EFEAE1]/70 relative z-10">
+                <div className="space-y-4 pt-4 border-t border-border-soft/70 relative z-10">
                   <div className="grid grid-cols-2 gap-3">
-                    <div className="bg-white/50 border border-[#EFEAE1]/55 rounded-lg p-3 text-center">
-                      <span className="text-[14px] font-black text-[#3B2F8C] block">100%</span>
-                      <span className="text-[9px] uppercase font-bold text-[#6A5E8C] font-mono">Poufność danych</span>
+                    <div className="bg-white/50 border border-border-soft/55 rounded-lg p-3 text-center space-y-1">
+                      <span className="type-h3 font-mono text-indigo-primary block">100%</span>
+                      <span className="type-label uppercase text-muted-indigo font-mono">Poufność danych</span>
                     </div>
-                    <div className="bg-white/50 border border-[#EFEAE1]/55 rounded-lg p-3 text-center">
-                      <span className="text-[14px] font-black text-[#3B2F8C] block">RODO</span>
-                      <span className="text-[9px] uppercase font-bold text-[#6A5E8C] font-mono">Zgodność prawna</span>
+                    <div className="bg-white/50 border border-border-soft/55 rounded-lg p-3 text-center space-y-1">
+                      <span className="type-h3 font-mono text-indigo-primary block">RODO</span>
+                      <span className="type-label uppercase text-muted-indigo font-mono">Zgodność prawna</span>
                     </div>
                   </div>
 
-                  <p className="text-[9.5px] text-[#6A5E8C] leading-relaxed text-center font-medium">
-                    Właścicielem platformy i praw autorskich do kwestionariuszy jest podmiot prawny: <strong className="text-[#55506E]">HRLY Sp. z o.o.</strong> z siedzibą w Warszawie.
+                  <p className="type-body-sm text-muted-indigo text-center">
+                    Właścicielem platformy i praw autorskich do kwestionariuszy jest podmiot prawny: <strong className="font-semibold text-muted-purple">HRLY Sp. z o.o.</strong> z siedzibą w Warszawie.
                   </p>
                 </div>
 
               </div>
 
               {/* Right Column: Contact Form */}
-              <div className="lg:col-span-7 relative flex flex-col justify-center">
-                <div className="absolute top-0 right-0 w-48 h-48 bg-[#3B2F8C]/3 rounded-full blur-3xl pointer-events-none" />
-                
+              <div className="lg:col-span-6 relative flex flex-col justify-center">
+                <div className="absolute top-0 right-0 w-48 h-48 bg-indigo-primary/5 rounded-full blur-3xl pointer-events-none" />
+
                 {!contactSuccess ? (
                   <form onSubmit={handleContactSubmit} className="space-y-5 relative z-10">
-                    
-                    <div className="border-b border-[#EFEAE1] pb-3.5">
-                      <h2 className="font-sans font-black text-sm text-[#14183D] uppercase tracking-wider">
+
+                    <div className="border-b border-border-soft pb-4 space-y-2">
+                      <h2 className="font-display type-h2 text-text-dark uppercase">
                         Formularz zapytania
                       </h2>
-                      <p className="text-[10px] text-[#A39AB4] font-mono mt-1 uppercase font-bold">
+                      <p className="type-label text-muted-indigo font-mono uppercase">
                         Wypełnij wymagane pola, odpowiemy ekspresowo
                       </p>
                     </div>
@@ -1916,7 +1902,7 @@ export default function App() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       
                       <div className="space-y-1.5">
-                        <label className="text-[10px] uppercase font-extrabold text-[#55506E] font-mono tracking-wider block">Twoje Imię *</label>
+                        <label className="type-label uppercase text-muted-purple font-mono block">Twoje Imię *</label>
                         <div className="relative">
                           <input
                             type="text"
@@ -1924,14 +1910,14 @@ export default function App() {
                             placeholder="np. Anna Kępczyńska"
                             value={contactName}
                             onChange={(e) => setContactName(e.target.value)}
-                            className="w-full text-xs bg-[#FBFAF8] border border-[#EFEAE1] rounded-xl pl-9 pr-3 py-2.5 text-[#14183D] focus:border-[#3B2F8C] focus:bg-white placeholder-[#A39AB4]/60 transition-all shadow-2xs"
+                            className="w-full type-body-sm bg-neutral-bg border border-border-soft rounded-xl pl-9 pr-3 py-3 text-text-dark focus:border-indigo-primary focus:bg-white placeholder-muted-indigo/70 transition-all shadow-2xs"
                           />
-                          <User className="w-4 h-4 text-[#6A5E8C] absolute left-3 top-3" />
+                          <User className="w-4 h-4 text-muted-indigo absolute left-3 top-3.5" />
                         </div>
                       </div>
 
                       <div className="space-y-1.5">
-                        <label className="text-[10px] uppercase font-extrabold text-[#55506E] font-mono tracking-wider block">Adres Email *</label>
+                        <label className="type-label uppercase text-muted-purple font-mono block">Adres Email *</label>
                         <div className="relative">
                           <input
                             type="email"
@@ -1939,9 +1925,9 @@ export default function App() {
                             placeholder="np. analityka@twojafirma.pl"
                             value={contactEmail}
                             onChange={(e) => setContactEmail(e.target.value)}
-                            className="w-full text-xs bg-[#FBFAF8] border border-[#EFEAE1] rounded-xl pl-9 pr-3 py-2.5 text-[#14183D] focus:border-[#3B2F8C] focus:bg-white placeholder-[#A39AB4]/60 transition-all shadow-2xs"
+                            className="w-full type-body-sm bg-neutral-bg border border-border-soft rounded-xl pl-9 pr-3 py-3 text-text-dark focus:border-indigo-primary focus:bg-white placeholder-muted-indigo/70 transition-all shadow-2xs"
                           />
-                          <Mail className="w-4 h-4 text-[#6A5E8C] absolute left-3 top-3" />
+                          <Mail className="w-4 h-4 text-muted-indigo absolute left-3 top-3.5" />
                         </div>
                       </div>
 
@@ -1950,41 +1936,41 @@ export default function App() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       
                       <div className="space-y-1.5">
-                        <label className="text-[10px] uppercase font-extrabold text-[#55506E] font-mono tracking-wider block">Nazwa Firmy</label>
+                        <label className="type-label uppercase text-muted-purple font-mono block">Nazwa Firmy</label>
                         <div className="relative">
                           <input
                             type="text"
                             placeholder="np. HRLY Sp. z o.o."
                             value={contactCompany}
                             onChange={(e) => setContactCompany(e.target.value)}
-                            className="w-full text-xs bg-[#FBFAF8] border border-[#EFEAE1] rounded-xl pl-9 pr-3 py-2.5 text-[#14183D] focus:border-[#3B2F8C] focus:bg-white placeholder-[#A39AB4]/60 transition-all shadow-2xs"
+                            className="w-full type-body-sm bg-neutral-bg border border-border-soft rounded-xl pl-9 pr-3 py-3 text-text-dark focus:border-indigo-primary focus:bg-white placeholder-muted-indigo/70 transition-all shadow-2xs"
                           />
-                          <Building className="w-4 h-4 text-[#6A5E8C] absolute left-3 top-3" />
+                          <Building className="w-4 h-4 text-muted-indigo absolute left-3 top-3.5" />
                         </div>
                       </div>
 
                       <div className="space-y-1.5">
-                        <label className="text-[10px] uppercase font-extrabold text-[#55506E] font-mono tracking-wider block">Temat rozmowy</label>
+                        <label className="type-label uppercase text-muted-purple font-mono block">Temat rozmowy</label>
                         <div className="relative">
                           <select
                             value={contactSubject}
                             onChange={(e) => setContactSubject(e.target.value)}
-                            className="w-full text-xs bg-[#FBFAF8] border border-[#EFEAE1] rounded-xl pl-9 pr-8 py-2.5 text-[#14183D] focus:border-[#3B2F8C] focus:bg-white cursor-pointer appearance-none shadow-2xs font-medium"
+                            className="w-full type-body-sm bg-neutral-bg border border-border-soft rounded-xl pl-9 pr-8 py-3 text-text-dark focus:border-indigo-primary focus:bg-white cursor-pointer appearance-none shadow-2xs"
                           >
                             <option value="Zapytanie o platformę">Demo platformy analitycznej</option>
                             <option value="Pytanie o ofertę">Wycena wdrożenia i cennik</option>
                             <option value="Wsparcie techniczne">Współpraca partnerska / Doradztwo</option>
                             <option value="Inne">Inne zapytanie</option>
                           </select>
-                          <ChevronDown className="w-4 h-4 text-[#55506E] absolute right-3 top-3 pointer-events-none" />
-                          <HelpCircle className="w-4 h-4 text-[#6A5E8C] absolute left-3 top-3" />
+                          <ChevronDown className="w-4 h-4 text-muted-purple absolute right-3 top-3.5 pointer-events-none" />
+                          <HelpCircle className="w-4 h-4 text-muted-indigo absolute left-3 top-3.5" />
                         </div>
                       </div>
 
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="text-[10px] uppercase font-extrabold text-[#55506E] font-mono tracking-wider block">Wiadomość *</label>
+                      <label className="type-label uppercase text-muted-purple font-mono block">Wiadomość *</label>
                       <div className="relative">
                         <textarea
                           required
@@ -1992,57 +1978,49 @@ export default function App() {
                           placeholder="Opisz krótko potrzeby Twojej organizacji, liczbę pracowników lub obszary, które chcesz zbadać (np. rotacja, wypalenie zawodowe)..."
                           value={contactMessage}
                           onChange={(e) => setContactMessage(e.target.value)}
-                          className="w-full text-xs bg-[#FBFAF8] border border-[#EFEAE1] rounded-xl pl-9 pr-3 py-2.5 text-[#14183D] focus:border-[#3B2F8C] focus:bg-white resize-none placeholder-[#A39AB4]/60 transition-all shadow-2xs"
+                          className="w-full type-body-sm bg-neutral-bg border border-border-soft rounded-xl pl-9 pr-3 py-3 text-text-dark focus:border-indigo-primary focus:bg-white resize-none placeholder-muted-indigo/70 transition-all shadow-2xs"
                         />
-                        <MessageSquareText className="w-4 h-4 text-[#6A5E8C] absolute left-3 top-3" />
+                        <MessageSquareText className="w-4 h-4 text-muted-indigo absolute left-3 top-3.5" />
                       </div>
                     </div>
 
                     {/* RODO Consent Checkbox */}
-                    <div className="flex items-start gap-2.5 pt-1 font-normal text-[10px] text-[#55506E] leading-relaxed">
+                    <div className="flex items-start gap-2.5 pt-1 type-body-sm text-muted-purple">
                       <input
                         type="checkbox"
                         id="form-consent"
                         required
                         checked={contactConsent}
                         onChange={(e) => setContactConsent(e.target.checked)}
-                        className="w-4 h-4 rounded border-[#C4BBDE]/50 text-[#3B2F8C] focus:ring-[#3B2F8C] cursor-pointer mt-0.5 accent-[#3B2F8C]"
+                        className="w-4 h-4 rounded border-border-indigo/50 text-indigo-primary focus:ring-indigo-primary cursor-pointer mt-0.5 accent-indigo-primary"
                       />
                       <label htmlFor="form-consent" className="select-none cursor-pointer">
                         * Wyrażam zgodę na przetwarzanie moich danych osobowych zgodnie z polityką prywatności HRly w celu obsługi korespondencji i udzielenia odpowiedzi rynkowej.
                       </label>
                     </div>
 
-                    <button
-                      type="submit"
-                      disabled={!contactConsent}
-                      className="w-full py-3 px-4 bg-[#3B2F8C] hover:bg-[#231B5E] text-white rounded-xl text-xs font-mono font-bold uppercase tracking-tight shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <span>Wyślij zapytanie do konsultanta</span>
-                      <ArrowRight className="w-4 h-4 text-[#F4A574]" />
-                    </button>
+                    <Button type="submit" size="lg" fullWidth icon={<ArrowRight />} disabled={!contactConsent}>
+                      Wyślij zapytanie do konsultanta
+                    </Button>
 
                   </form>
                 ) : (
-                  <div className="text-center py-10 space-y-5">
-                    <div className="w-16 h-16 bg-[#D1FAE5] text-[#047857] border border-[#047857]/30 rounded-full flex items-center justify-center mx-auto shadow-inner">
+                  <div className="text-center py-10 space-y-5 relative z-10">
+                    <div className="w-16 h-16 bg-success-soft text-success border border-success/30 rounded-full flex items-center justify-center mx-auto shadow-inner">
                       <CheckCircle2 className="w-8 h-8" />
                     </div>
 
-                    <div className="space-y-2.5">
-                      <span className="text-[10px] uppercase font-bold tracking-widest text-[#047857] font-mono block">Dziękujemy za kontakt!</span>
-                      <h2 className="font-sans font-black text-xl text-[#14183D] tracking-tight">Wiadomość została wysłana!</h2>
-                      <p className="text-xs text-[#55506E] max-w-md mx-auto leading-relaxed">
-                        Droga / Drogi <strong>{contactName}</strong>, Twoje zapytanie dotyczące tematu <strong>{contactSubject}</strong> zostało zapisane. Nasz zespół (kontakt@hrly.pl) skontaktuje się z Tobą w ciągu najbliższych 24 godzin z odpowiedzią rynkową.
+                    <div className="space-y-3">
+                      <span className="type-label uppercase text-success font-mono block">Dziękujemy za kontakt!</span>
+                      <h2 className="font-display type-h2 text-text-dark uppercase">Wiadomość została wysłana!</h2>
+                      <p className="type-body text-muted-purple max-w-md mx-auto">
+                        Droga / Drogi <strong className="font-semibold text-text-dark">{contactName}</strong>, Twoje zapytanie dotyczące tematu <strong className="font-semibold text-text-dark">{contactSubject}</strong> zostało zapisane. Nasz zespół (kontakt@hrly.pl) skontaktuje się z Tobą w ciągu najbliższych 24 godzin z odpowiedzią rynkową.
                       </p>
                     </div>
 
-                    <button
-                      onClick={handleCloseContactSuccess}
-                      className="px-6 py-2.5 bg-[#F4F1EC] hover:bg-[#EFEAE1] text-[#3B2F8C] text-xs font-bold rounded-xl transition-colors cursor-pointer"
-                    >
+                    <Button variant="secondary" size="md" onClick={handleCloseContactSuccess}>
                       Napisz kolejną wiadomość
-                    </button>
+                    </Button>
                   </div>
                 )}
 
@@ -2107,80 +2085,74 @@ export default function App() {
 
       {/* ================= OPTIONAL DEMO CALENDAR DIALOG (Lightbox) ================= */}
       {demoDialogOpen && (
-        <div className="fixed inset-0 bg-[#14183D]/65 backdrop-blur-sm flex items-center justify-center p-4 z-[9999] animate-fade-in">
-          <div className="bg-white border border-[#EFEAE1] rounded-2xl max-w-sm w-full p-6 space-y-4 shadow-2xl relative">
-            
-            <button 
+        <div className="fixed inset-0 bg-text-dark/65 backdrop-blur-sm flex items-center justify-center p-4 z-[9999] animate-fade-in">
+          <div className="bg-white border border-border-soft rounded-2xl max-w-md w-full p-6 space-y-5 shadow-2xl relative">
+
+            <button
               onClick={() => setDemoDialogOpen(false)}
-              className="absolute top-4 right-4 p-1.5 hover:bg-[#F4F1EC] text-[#55506E] rounded-full cursor-pointer"
+              className="absolute top-4 right-4 p-1.5 hover:bg-primary-faint text-muted-purple rounded-full cursor-pointer"
+              aria-label="Zamknij okno"
               title="Zamknij okno"
             >
               <X className="w-5 h-5" />
             </button>
 
             {!demoSuccess ? (
-              <form onSubmit={handleDemoSubmit} className="space-y-4 pt-1.5">
-                <div className="space-y-1">
-                  <span className="text-[9px] uppercase font-bold tracking-widest text-[#F4A574] font-mono">Konsultacja HR</span>
-                  <h2 className="font-sans font-black text-base text-[#14183D] tracking-tight">
+              <form onSubmit={handleDemoSubmit} className="space-y-5 pt-1.5">
+                <div className="space-y-2">
+                  <span className="type-label uppercase text-indigo-primary font-mono block">Konsultacja HR</span>
+                  <h2 className="font-display type-h3 text-text-dark uppercase">
                     Umów spotkanie Demo HRly
                   </h2>
-                  <p className="text-[11px] text-[#55506E] leading-relaxed">
+                  <p className="type-body-sm text-muted-purple">
                     Nasz starszy doradca personalny skontaktuje się, by zaprezentować interaktywny pulpit dla Twojej kadry.
                   </p>
                 </div>
 
-                <div className="space-y-2.5">
-                  <div className="space-y-1">
-                    <label className="text-[10px] uppercase font-bold text-[#55506E] block">Służbowy adres Email *</label>
+                <div className="space-y-3">
+                  <div className="space-y-1.5">
+                    <label className="type-label uppercase text-muted-purple font-mono block">Służbowy adres Email *</label>
                     <input
                       type="email"
                       required
                       placeholder="menedzer@twojaorganizacja.pl"
                       value={demoEmail}
                       onChange={(e) => setDemoEmail(e.target.value)}
-                      className="w-full text-xs bg-[#FBFAF8] border border-[#EFEAE1] rounded-lg p-2.5 text-[#14183D] focus:border-[#3B2F8C]"
+                      className="w-full type-body-sm bg-neutral-bg border border-border-soft rounded-lg p-3 text-text-dark placeholder-muted-indigo/70 focus:border-indigo-primary"
                     />
                   </div>
 
-                  <div className="space-y-1">
-                    <label className="text-[10px] uppercase font-bold text-[#55506E] block">Sugerowany termin (Dzień) *</label>
+                  <div className="space-y-1.5">
+                    <label className="type-label uppercase text-muted-purple font-mono block">Sugerowany termin (Dzień) *</label>
                     <input
                       type="date"
                       required
                       value={demoDate}
                       onChange={(e) => setDemoDate(e.target.value)}
-                      className="w-full text-xs bg-[#FBFAF8] border border-[#EFEAE1] rounded-lg p-2.5 text-[#14183D] focus:border-[#3B2F8C] cursor-pointer"
+                      className="w-full type-body-sm bg-neutral-bg border border-border-soft rounded-lg p-3 text-text-dark focus:border-indigo-primary cursor-pointer"
                     />
                   </div>
                 </div>
 
-                <button
-                  type="submit"
-                  className="w-full py-3 px-4 bg-[#3B2F8C] hover:bg-[#231B5E] text-white rounded-xl text-xs font-display font-extrabold uppercase tracking-wider shadow transition-all active:scale-[0.98] duration-200 flex items-center justify-center gap-1.5 cursor-pointer"
-                >
+                <Button type="submit" size="lg" fullWidth icon={<ArrowRight />}>
                   Potwierdź i rezerwuj termin
-                  <ArrowRight className="w-4 h-4 text-[#F4A574]" />
-                </button>
+                </Button>
               </form>
             ) : (
               <div className="text-center py-4 space-y-4">
-                <div className="w-12 h-12 bg-[#D1FAE5] text-[#047857] rounded-full flex items-center justify-center mx-auto shadow-inner animate-bounce">
+                <div className="w-12 h-12 bg-success-soft text-success rounded-full flex items-center justify-center mx-auto shadow-inner animate-bounce">
                   <CheckCircle2 className="w-6 h-6" />
                 </div>
-                <div className="space-y-1.5">
-                  <span className="text-[9px] uppercase font-mono font-bold text-[#047857]">Termin zablokowany!</span>
-                  <h3 className="font-sans font-bold text-sm text-[#14183D]">Demo zarezerwowane na dzień {demoDate}!</h3>
-                  <p className="text-[11px] text-[#55506E] leading-relaxed mx-auto max-w-xs">
-                    Wysłaliśmy natychmiastowe zaproszenie do wideokonferencji Google Meet na podany adres e-mail: <strong>{demoEmail}</strong>. Do zobaczenia w akcji!
+                <div className="space-y-2">
+                  <span className="type-label uppercase font-mono text-success block">Termin zablokowany!</span>
+                  <h3 className="font-display type-h3 text-text-dark uppercase">Demo zarezerwowane na dzień {demoDate}!</h3>
+                  <p className="type-body-sm text-muted-purple mx-auto max-w-xs">
+                    Wysłaliśmy natychmiastowe zaproszenie do wideokonferencji Google Meet na podany adres e-mail: <strong className="font-semibold text-text-dark">{demoEmail}</strong>. Do zobaczenia w akcji!
                   </p>
                 </div>
-                <button
-                  onClick={handleCloseDemoSuccess}
-                  className="px-4 py-2 bg-[#F4F1EC] text-[#3B2F8C] text-[11px] font-bold rounded-lg transition-colors cursor-pointer"
-                >
+                <Button variant="ghost" size="md" onClick={handleCloseDemoSuccess}>
                   Powróć do strony
-                </button>
+                </Button>
               </div>
             )}
 

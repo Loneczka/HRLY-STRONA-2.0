@@ -1,5 +1,7 @@
 import React, { useState, useMemo } from 'react';
-import { Search, BookOpen, Clock, Calendar, ChevronRight, Send, CircleCheck as CheckCircle, Mail, SquarePen as PenSquare } from 'lucide-react';
+import { Search, BookOpen, Calendar, ChevronRight, Send, CircleCheck as CheckCircle, SquarePen as PenSquare } from 'lucide-react';
+import Button from './Button';
+import SectionLabel from './SectionLabel';
 import { loadConfig, addSubscriber, type BlogPost } from '../hooks/useSiteConfig';
 import { sanitizeHtml } from '../lib/sanitize';
 
@@ -142,47 +144,42 @@ function NewsletterBox() {
   };
 
   return (
-    <div className="section-dark" style={{
-      background: 'linear-gradient(135deg, #14183D 0%, #3B2F8C 100%)',
-      borderRadius: '24px',
-      padding: '48px 40px',
-      color: '#fff',
-      textAlign: 'center',
-      marginTop: '64px',
-    }}>
-      <div style={{ fontSize: '32px', marginBottom: '12px' }}>📬</div>
-      <h2 style={{ fontSize: '24px', fontWeight: 800, margin: '0 0 8px', letterSpacing: '-0.02em' }}>
+    /* FAZA 8: gradient zostaje jako background-image, ale `bg-text-dark` daje realny
+       background-color — bez niego audyt kontrastu widzi biel strony pod tekstem. */
+    <div className="section-dark mt-16 rounded-3xl px-6 py-12 sm:px-10 text-center bg-text-dark bg-gradient-to-br from-text-dark to-indigo-primary">
+      <div aria-hidden="true" className="type-h2 text-on-dark-body mb-3">📬</div>
+      <h2 className="type-h2 font-display text-white">
         Bądź na bieżąco z HR
       </h2>
-      <p style={{ color: 'rgba(255,255,255,0.7)', margin: '0 0 28px', fontSize: '15px' }}>
+      <p className="type-body-lg text-on-dark-body mt-2 mb-7">
         Najnowsze analizy, trendy i wskazówki prosto na Twój email.
       </p>
       {sent ? (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', color: '#A7F3D0', fontWeight: 600 }}>
-          <CheckCircle size={20} />
+        <div className="flex items-center justify-center gap-2 type-body font-semibold text-success-on-dark">
+          <CheckCircle size={20} aria-hidden="true" />
           <span>Zapisano! Sprawdź skrzynkę.</span>
         </div>
       ) : (
-        <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '12px', maxWidth: '400px', margin: '0 auto' }}>
+        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-[400px] mx-auto">
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="twoj@email.pl"
+            aria-label="Twój adres e-mail"
             required
-            style={{
-              flex: 1, padding: '12px 16px', borderRadius: '12px',
-              border: 'none', fontSize: '14px', background: 'rgba(255,255,255,0.15)',
-              color: '#fff',
-            }}
+            className="flex-1 min-w-0 h-10 px-4 rounded-xl border border-white/30 bg-white/15 text-white type-body-sm placeholder:text-on-dark-muted"
           />
-          <button type="submit" disabled={loading} style={{
-            padding: '12px 24px', borderRadius: '12px', border: 'none',
-            background: '#F4A574', color: '#14183D', fontWeight: 700,
-            fontSize: '14px', cursor: 'pointer', whiteSpace: 'nowrap',
-          }}>
-            {loading ? '...' : <><Send size={14} style={{ marginRight: 6, display: 'inline' }} />Zapisz</>}
-          </button>
+          <Button
+            type="submit"
+            variant="primary"
+            tone="dark"
+            size="md"
+            aria-disabled={loading}
+            icon={loading ? undefined : <Send />}
+          >
+            {loading ? '...' : 'Zapisz'}
+          </Button>
         </form>
       )}
     </div>
@@ -193,7 +190,6 @@ function NewsletterBox() {
 export default function HrlyBlogSection() {
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState('Wszystkie');
-  const [readingPost, setReadingPost] = useState<BlogPost | null>(null);
 
   // Load published posts from CMS (localStorage)
   const allPosts = useMemo(() => {
@@ -225,29 +221,19 @@ export default function HrlyBlogSection() {
   // Empty state
   if (allPosts.length === 0) {
     return (
-      <section id="blog" style={{ padding: '80px 0', background: '#FBFAF8' }}>
-        <div style={{ maxWidth: '900px', margin: '0 auto', padding: '0 24px', textAlign: 'center' }}>
-          <span style={{
-            display: 'inline-block', background: '#E3DEEE', color: '#3B2F8C',
-            fontSize: '11px', fontWeight: 700, letterSpacing: '0.12em',
-            textTransform: 'uppercase', padding: '5px 14px', borderRadius: '999px', marginBottom: '20px',
-          }}>
-            Baza wiedzy HR
-          </span>
-          <h1 style={{ fontSize: 'clamp(28px, 5vw, 42px)', fontWeight: 800, color: '#14183D', letterSpacing: '-0.03em', margin: '0 0 16px' }}>
-            Artykuły & Analizy
+      <section id="blog" className="py-20 bg-neutral-bg">
+        <div className="max-w-[900px] mx-auto px-6 text-center">
+          <SectionLabel number="01" className="mb-5">Baza wiedzy HR</SectionLabel>
+          <h1 className="type-display font-display text-text-dark">
+            Artykuły &amp; Analizy
           </h1>
-          <p style={{ color: '#6B6484', fontSize: '16px', marginBottom: '48px' }}>
+          <p className="type-body-lg text-muted-purple mt-4 mb-12">
             Wkrótce tutaj pojawią się artykuły HR i analizy rynkowe.
           </p>
-          <div style={{
-            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px',
-            padding: '48px', background: '#fff', borderRadius: '24px',
-            border: '2px dashed #E3DEEE', color: '#A39AB4',
-          }}>
-            <PenSquare size={40} />
-            <p style={{ margin: 0, fontWeight: 600 }}>Brak opublikowanych artykułów</p>
-            <p style={{ margin: 0, fontSize: '14px' }}>Dodaj artykuł w panelu administracyjnym</p>
+          <div className="flex flex-col items-center gap-3 p-12 bg-neutral-surface rounded-3xl border-2 border-dashed border-primary-light text-muted-indigo">
+            <PenSquare size={40} aria-hidden="true" />
+            <p className="type-body font-semibold text-text-dark">Brak opublikowanych artykułów</p>
+            <p className="type-body-sm text-muted-purple">Dodaj artykuł w panelu administracyjnym</p>
           </div>
           <NewsletterBox />
         </div>
@@ -256,130 +242,95 @@ export default function HrlyBlogSection() {
   }
 
   return (
-    <section id="blog" style={{ padding: '80px 0', background: '#FBFAF8' }}>
-      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
+    <section id="blog" className="py-20 bg-neutral-bg">
+      <div className="max-w-[1200px] mx-auto px-6">
 
         {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: '48px' }}>
-          <span style={{
-            display: 'inline-block', background: '#E3DEEE', color: '#3B2F8C',
-            fontSize: '11px', fontWeight: 700, letterSpacing: '0.12em',
-            textTransform: 'uppercase', padding: '5px 14px', borderRadius: '999px', marginBottom: '20px',
-          }}>
-            Baza wiedzy HR
-          </span>
-          <h1 style={{ fontSize: 'clamp(28px, 5vw, 42px)', fontWeight: 800, color: '#14183D', letterSpacing: '-0.03em', margin: '0 0 16px' }}>
-            Artykuły & Analizy
+        <div className="text-center mb-12">
+          <SectionLabel number="01" className="mb-5">Baza wiedzy HR</SectionLabel>
+          <h1 className="type-display font-display text-text-dark">
+            Artykuły &amp; Analizy
           </h1>
-          <p style={{ color: '#6B6484', fontSize: '16px', maxWidth: '560px', margin: '0 auto' }}>
+          <p className="type-body-lg text-muted-purple max-w-[560px] mx-auto mt-4">
             Praktyczna wiedza o zarządzaniu ludźmi, analityce HR i trendach rynkowych.
           </p>
         </div>
 
         {/* Search + Filters */}
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', alignItems: 'center', marginBottom: '32px' }}>
-          <div style={{ position: 'relative', flex: 1, minWidth: '220px' }}>
-            <Search size={16} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: '#A39AB4' }} />
+        <div className="flex flex-wrap gap-4 items-center mb-8">
+          <div className="relative flex-1 min-w-[220px]">
+            <Search
+              size={16}
+              aria-hidden="true"
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-indigo"
+            />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Szukaj artykułów..."
-              style={{
-                width: '100%', padding: '10px 14px 10px 40px',
-                borderRadius: '12px', border: '1.5px solid #E8E3F0',
-                fontSize: '14px', color: '#14183D', background: '#fff',
-                boxSizing: 'border-box',
-              }}
+              aria-label="Szukaj artykułów"
+              className="w-full h-10 pl-10 pr-3.5 rounded-xl border border-border-indigo bg-neutral-surface type-body-sm text-text-dark placeholder:text-muted-indigo"
             />
           </div>
-          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          <div className="flex gap-2 flex-wrap">
             {categories.map((cat) => (
-              <button
+              <Button
                 key={cat}
+                variant={activeCategory === cat ? 'secondary' : 'ghost'}
+                size="md"
+                aria-pressed={activeCategory === cat}
                 onClick={() => setActiveCategory(cat)}
-                style={{
-                  padding: '8px 16px', borderRadius: '999px', border: 'none',
-                  fontSize: '13px', fontWeight: 600, cursor: 'pointer',
-                  background: activeCategory === cat ? '#3B2F8C' : '#F0EDFA',
-                  color: activeCategory === cat ? '#fff' : '#3B2F8C',
-                  transition: 'all 0.2s',
-                }}
               >
                 {cat}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
 
         {/* Articles grid */}
         {filtered.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '64px', color: '#A39AB4' }}>
-            <BookOpen size={40} style={{ marginBottom: '12px', opacity: 0.5 }} />
-            <p>Brak artykułów dla wybranych filtrów.</p>
+          <div className="text-center py-16 text-muted-purple">
+            <BookOpen size={40} aria-hidden="true" className="mx-auto mb-3 opacity-50" />
+            <p className="type-body">Brak artykułów dla wybranych filtrów.</p>
           </div>
         ) : (
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-            gap: '24px',
-          }}>
+          <div className="grid gap-6 [grid-template-columns:repeat(auto-fill,minmax(280px,1fr))]">
             {filtered.map((post, idx) => (
               <article
                 key={post.id}
                 onClick={() => handleCardClick(post)}
-                style={{
-                  background: '#fff',
-                  borderRadius: '20px',
-                  border: '1px solid #E8E3F0',
-                  overflow: 'hidden',
-                  cursor: 'pointer',
-                  transition: 'transform 0.2s, box-shadow 0.2s',
-                  boxShadow: '0 2px 8px rgba(20,24,61,0.06)',
-                }}
-                onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLElement).style.transform = 'translateY(-4px)';
-                  (e.currentTarget as HTMLElement).style.boxShadow = '0 12px 32px rgba(59,47,140,0.12)';
-                }}
-                onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
-                  (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 8px rgba(20,24,61,0.06)';
-                }}
+                className="bg-neutral-surface rounded-2xl border border-border-indigo overflow-hidden cursor-pointer shadow-sm transition-[transform,box-shadow] duration-200 hover:-translate-y-1 hover:shadow-xl flex flex-col"
               >
                 {/* Cover image */}
-                <div style={{ position: 'relative', aspectRatio: '16/9', overflow: 'hidden' }}>
+                <div className="relative aspect-video overflow-hidden">
                   <img
                     src={getArticleImage(post, idx)}
                     alt={post.title}
                     loading="lazy"
                     decoding="async"
-                    style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                    className="w-full h-full object-cover block"
                   />
-                  <div style={{
-                    position: 'absolute', top: '12px', left: '12px',
-                    background: '#3B2F8C', color: '#fff',
-                    fontSize: '10px', fontWeight: 700, letterSpacing: '0.1em',
-                    textTransform: 'uppercase', padding: '4px 10px', borderRadius: '999px',
-                  }}>
+                  <span className="absolute top-3 left-3 bg-indigo-primary text-white type-label font-mono uppercase px-2.5 py-1 rounded-full">
                     {post.category}
-                  </div>
+                  </span>
                 </div>
 
                 {/* Content */}
-                <div style={{ padding: '20px' }}>
-                  <h2 style={{ fontSize: '16px', fontWeight: 700, color: '#14183D', margin: '0 0 8px', lineHeight: 1.3 }}>
+                <div className="p-5 flex flex-col flex-1">
+                  <h3 className="type-h3 font-display text-text-dark mb-2">
                     {post.title}
-                  </h2>
-                  <p style={{ fontSize: '13px', color: '#6B6484', margin: '0 0 16px', lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                  </h3>
+                  <p className="type-body-sm text-muted-purple mb-4 line-clamp-3">
                     {post.excerpt}
                   </p>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '12px', color: '#A39AB4' }}>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <Calendar size={12} />
+                  <div className="flex items-center justify-between gap-3 mt-auto type-label font-mono">
+                    <span className="flex items-center gap-1.5 text-muted-purple normal-case">
+                      <Calendar size={12} aria-hidden="true" />
                       {new Date(post.publishedAt).toLocaleDateString('pl-PL', { year: 'numeric', month: 'short', day: 'numeric' })}
                     </span>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#3B2F8C', fontWeight: 600 }}>
-                      Czytaj dalej <ChevronRight size={14} />
+                    <span className="flex items-center gap-1 text-indigo-primary font-bold">
+                      Czytaj dalej <ChevronRight size={14} aria-hidden="true" />
                     </span>
                   </div>
                 </div>
