@@ -18,6 +18,23 @@
   --color-warning-orange: #B45309;
   --color-danger-red: #B91C1C;
   --color-focus: #3B2F8C;
+
+  /* FAZA 3 — kolory komponentu Button (jedno źródło; STOP 3.2 = decyzja właściciela).
+     primary na JASNYM tle — PLACEHOLDER = obecny fiolet; przy wyborze brzoskwini:
+       cta-primary #F4A574, hover #E0915F, active #C97D4B, text #14183D.
+     primary na CIEMNYM tle (tone="dark") — fiolet na navy ma 1,6:1, więc osobne wypełnienie;
+       PLACEHOLDER = inwersja (biały / fiolet); alternatywa: brzoskwinia #F4A574 / #E0915F / #C97D4B, text #14183D.
+     outline — tekst i obramowanie secondary/ghost: zawsze ciemny (brzoskwinia na białym = 2:1), niezależny od decyzji. */
+  --color-cta-primary: #3B2F8C;
+  --color-cta-primary-hover: #231B5E;
+  --color-cta-primary-active: #1A1447;
+  --color-cta-primary-text: #FFFFFF;
+  --color-cta-primary-dark: #FFFFFF;
+  --color-cta-primary-dark-hover: #F4F1EC;
+  --color-cta-primary-dark-active: #E3DEEE;
+  --color-cta-primary-dark-text: #3B2F8C;
+  --color-cta-outline: #3B2F8C;
+  --color-cta-outline-hover: #231B5E;
   
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
   --font-display: 'Plus Jakarta Sans', sans-serif;

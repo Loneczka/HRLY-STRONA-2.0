@@ -7,7 +7,7 @@ Lista zadań:
 - [x] FAZA 0 — Rekonesans i baseline
 - [x] FAZA 1 — Blokery dostępności
 - [x] FAZA 2 — Jedna skala typograficzna
-- [ ] FAZA 3 — Jeden komponent przycisku (STOP 3.2)
+- [~] FAZA 3 — Jeden komponent przycisku (3.1 zrobione, STOP 3.2 — czeka na decyzję)
 - [ ] FAZA 4 — Kolor: reguła zamiast przypadku
 - [ ] FAZA 5 — Bugi wizualne
 - [ ] FAZA 6 — Hero (STOP 6.3 warunkowy)
@@ -210,3 +210,37 @@ Zrzuty 1440 (pełna strona), 390 (pełna strona) i modal 1440/390: nic nie nacho
 - FAZA 3: `text-[11px]` na CTA „Zobacz naszą ofertę” → 12 px (jedyny tekst < 12 px na stronie głównej).
 - FAZA 4: numerały „01/02/03” w sekcji 02 (`#C4672D` na białym) — po zmianie na 18 px/700 na mobile przestają być „large text” i mają 3.88:1 (na 1440 przy 20 px/700 nadal large, OK); przyciemnić kolor albo zaakceptować. Pozostałe 7 błędów kontrastu — bez zmian od baseline. Modal: 40 (1440) / 32 (390) błędów kontrastu — również FAZA 4 (etykiety `#A39AB4`/`text-gray-400` na tłach, wyniki obszarów).
 - `index.html` (waga 600 JetBrains Mono): zostawić czy cofnąć.
+
+---
+
+## FAZA 3 — Jeden komponent przycisku   [W TOKU — 3.1 ZROBIONE, STOP 3.2]
+
+Zmienione pliki: `src/components/Button.tsx` (nowy — jedyny nowy plik tej fazy), `src/index.css` (tokeny `--color-cta-*`). CTA na stronie **jeszcze nie podmienione** (3.3 po decyzji).
+
+### 3.1 Komponent `Button`
+- `variant: primary | secondary | ghost`, `size: md (h-10, px-5, 14/600) | lg (h-12, px-7, 16/700)`, `tone: light | dark`, `icon` (po prawej, 16 px, `aria-hidden`), `fullWidth`, forma `<a href>` lub `<button type="button">`.
+- Zawsze `rounded-xl` (12 px), `font-sans` (Inter), `normal-case` (sentence case wymuszony), tracking 0, `transition-[background-color,color,border-color,scale] duration-150`.
+- Stany: default / `hover:` / `active:` (`scale-[0.98]` na primary) / `focus-visible` (globalny ring z FAZY 1; wariant dark dodatkowo `focus-visible:outline-accent-apricot`, żeby ring był brzoskwiniowy także poza `.section-dark`) / disabled (`disabled:` i `aria-disabled:` → opacity-50 + brak zdarzeń; dla `<a aria-disabled>` komponent zdejmuje `href`, ustawia `tabIndex=-1` i blokuje `onClick`, żeby Enter też nie działał).
+- Kolory wyłącznie z tokenów `@theme`: `--color-cta-primary(-hover|-active|-text)` [jasne tło], `--color-cta-primary-dark(-hover|-active|-text)` [ciemne tło], `--color-cta-outline(-hover)` [tekst/obramowanie secondary i ghost]. Secondary hover/active = `bg-cta-outline/5` / `/10` (color-mix), więc jedna podmiana tokenów wystarczy po decyzji.
+- Lint (tsc) i build czyste; wszystkie użyte utility (w tym `hover:bg-cta-outline/5`, `focus-visible:outline-accent-apricot`, `transition-[…,scale]`) są w zbudowanym CSS.
+- Recenzja (2 agentów, 16 uwag) — naniesione: `scale` zamiast `transform` w transition; rozmiary tekstu `text-sm`/`text-base` zamiast `type-body*` (token body ma 15 px na mobile, a lg ma być 16/700 zawsze); realne `aria-disabled` dla linku; `normal-case`; decoupling secondary/ghost od `cta-primary` (brzoskwinia na białym = 2,0:1 — nie nadaje się na tekst/obramowanie); osobne wypełnienie primary na ciemnym tle (fiolet na navy = 1,6:1); ring na tone=dark.
+
+### Mapowanie CTA do 3.3 (po decyzji)
+| CTA | Button |
+|---|---|
+| Header „Załóż darmowe konto” (598) | `primary md` + ikona ArrowRight |
+| Menu mobilne „Załóż darmowe konto” (657) | `primary md fullWidth` |
+| Hero „Wypróbuj za darmo →” (717, tekst z CMS) | `primary lg` + ikona ArrowRight |
+| Hero „Jak to działa →” (725, tekst z CMS) | `secondary lg` |
+| Baner demo „Otwórz przykładowy raport” (791) | `primary lg` + ikona ArrowUpRight, sentence case |
+| 05 „Zobacz naszą ofertę” (1039, ciemna) | `secondary md tone=dark` + ikona ArrowRight |
+| 07 „Zacznij bezpłatny test” (1154, ciemna) | `primary lg tone=dark` |
+
+Odstępstwa od planu i dlaczego:
+1. Ikona jest wyśrodkowana w pionie (`items-center`), nie „do baseline” — przy 14/16 px tekście i 16 px ikonie wyśrodkowanie daje lepsze optyczne wyrównanie; do potwierdzenia.
+2. Dodatkowe tokeny `--color-cta-primary-dark-*` i `--color-cta-outline*` (protokół zakładał jeden kolor primary) — bez nich primary na ciemnych sekcjach (05, 07) ginie w tle (1,6:1), a secondary/ghost w brzoskwini nie przeszłyby kontrastu.
+3. Wysokości: nav-pills (34 px) i linki footera (38 px) nie są CTA — nie przechodzą na `Button`; skrypt będzie je nadal raportować obok 40/48.
+
+Do decyzji właściciela (STOP):
+- **3.2 — kolor primary** (rekomendacja i warianty w podsumowaniu).
+- **`@types/react` + `@types/react-dom`** (devDependencies): repo nie ma typów Reacta, więc `React.ButtonHTMLAttributes` itd. są `any` i typowanie propsów `Button` (rozdzielenie `<a>`/`<button>`, `href`+`disabled`) nie jest egzekwowane przez `tsc`. Runtime działa poprawnie. Dodanie to nowa zależność (dev) — zgodnie z protokołem to STOP; bez zgody nie dodaję.
