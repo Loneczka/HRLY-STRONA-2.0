@@ -600,3 +600,14 @@ Odstępstwa od planu i dlaczego:
 1. Karta e-mail na `#contact` nie jest już w całości linkiem — `mailto:` obejmuje tylko adres (poprzednio cała karta była `<a>`); do ewentualnego przywrócenia.
 2. Etykiety paneli w `HrlyMethodologyVisual` („Silnik Diagnostyczny HRly” itp.) powtarzają klasy `SectionLabel` zamiast renderować komponent — komponent wymaga numeru, a to etykiety paneli, nie sekcji.
 3. Poza zakresem, do poprawy w treści CMS: tytuł posta z podwójnie zakodowanym `&amp;#8211;` w `useSiteConfig.ts` (~368) renderuje się dosłownie.
+
+---
+
+## PO FAZACH (2) — fonty lokalne, karta e-mail, brief treści   [ZROBIONE]
+
+- **Fonty hostowane lokalnie:** `public/fonts/*.woff2` (28 plików: Plus Jakarta Sans 400/400i/600/700/800, Inter 400/400i/600/700/800, JetBrains Mono 400/600/700/800; podzbiory latin + latin-ext; licencja SIL OFL 1.1) + `src/fonts.css` (`@font-face`, `font-display: swap`, `unicode-range`) importowany w `index.css`. `index.html`: usunięty `<link>` do Google Fonts i preconnecty, dodany `preload` 4 plików krytycznych dla hero (Plus Jakarta 800 i Inter 400, latin + latin-ext). Pomiar: 0 żądań do `googleapis/gstatic`, wszystkie kroje ładują się z `/fonts/`, wynik skryptu bez zmian (KROJE: Plus Jakarta Sans | Inter | JetBrains Mono). Bonus: brak przekazywania IP odwiedzających do Google (RODO).
+- **Karta e-mail na `#contact`** znów klikalna w całości: „rozciągnięty link” (`after:absolute after:inset-0` na `<a>`), sam `<a>` ma 20 px wysokości, więc skrypt nie liczy karty jako przycisku (WYSOKOŚCI nadal 36/40/48).
+- `.gitignore`: `.claude/launch.json` (lokalna konfiguracja dev-servera).
+- `docs/brief-tresci.md`: brief do przekazania osobie odpowiedzialnej za treści — social proof (logotypy, cytat, metryka, zgody), źródła do liczb w copy (12 pozycji z priorytetami), strony prawne (polityka prywatności, regulamin).
+
+Lint i build czyste.

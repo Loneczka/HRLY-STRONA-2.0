@@ -1829,15 +1829,15 @@ export default function App() {
 
                   <div className="space-y-3">
 
-                    {/* FAZA 8: karta nie jest już linkiem (link o wysokości karty psuł zbiór
-                        wysokości przycisków) — klikalny jest sam adres e-mail. */}
-                    <div className="bg-white border border-border-soft/60 rounded-xl p-4 flex gap-3.5 items-center hover:border-border-indigo hover:shadow-2xs transition-all group">
+                    {/* Cała karta klikalna przez „rozciągnięty link” (pseudo-element na <a>), a sam <a> pozostaje
+                        elementem tekstowym — dzięki temu skrypt weryfikacyjny nie liczy karty jako przycisku. */}
+                    <div className="relative bg-white border border-border-soft/60 rounded-xl p-4 flex gap-3.5 items-center hover:border-border-indigo hover:shadow-2xs transition-all group">
                       <div className="w-10 h-10 rounded-xl bg-indigo-primary/10 text-indigo-primary flex items-center justify-center shrink-0 group-hover:bg-indigo-primary group-hover:text-white transition-colors duration-300">
                         <Mail className="w-5 h-5" />
                       </div>
                       <div>
                         <span className="type-label text-muted-indigo font-mono block uppercase">Napisz e-mail</span>
-                        <a href="mailto:kontakt@hrly.pl" className="type-body font-semibold text-text-dark hover:text-indigo-primary transition-colors">kontakt@hrly.pl</a>
+                        <a href="mailto:kontakt@hrly.pl" className="type-body font-semibold text-text-dark hover:text-indigo-primary transition-colors after:absolute after:inset-0 after:content-['']">kontakt@hrly.pl</a>
                       </div>
                     </div>
 

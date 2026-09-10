@@ -9,3 +9,5 @@ coverage/
 hrly_strona_old/
 .vercel
 .env
+# lokalna konfiguracja dev-servera dla Claude Code
+.claude/launch.json
