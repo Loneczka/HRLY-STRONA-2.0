@@ -4,28 +4,13 @@ Strona jest technicznie gotowa; poniższe elementy wymagają treści, których n
 
 ---
 
-## 1. Sekcja „Zaufali nam” (social proof) — między hero a „Pulpit demonstracyjny”
+## 1. Sekcja „Zaufali nam” (social proof) — ODŁOŻONA: firma nie ma jeszcze klientów
 
-Komponent jest gotowy i wyłączony; włączamy go, gdy będzie komplet poniższych materiałów.
-
-### 1a. Logotypy klientów — 4 do 6 sztuk
-Dla każdego klienta:
-- **nazwa firmy** (pełna, do atrybutu `alt` — czytniki ekranu),
-- **logotyp w SVG**, wersja jednokolorowa (mono) na przezroczystym tle; wyświetlamy w wysokości 32 px, w skali szarości, przy 60% krycia — logo musi być czytelne w tej skali,
-- jeśli SVG nie istnieje: PNG min. 400 px szerokości na przezroczystym tle (gorsza opcja),
-- **pisemna zgoda klienta** na użycie znaku na stronie (klauzula referencyjna w umowie albo osobna zgoda mailowa) — bez zgody nie publikujemy.
-Jeśli logotypów nie da się zdobyć, akceptujemy same nazwy firm (renderują się jako tekst) — zgoda nadal wymagana.
-
-### 1b. Cytat klienta — dokładnie jeden
-- **treść wypowiedzi**: 1–3 zdania, optymalnie 150–280 znaków (dłuższe łamią kartę),
-- **imię i nazwisko**, **stanowisko**, **firma**,
-- opcjonalnie **zdjęcie** (kwadrat, min. 80×80 px, JPG/PNG),
-- **zgoda tej osoby** na publikację imienia, stanowiska, firmy i (jeśli jest) wizerunku — to RODO, nie kurtuazja.
-
-### 1c. Jedna liczba (metryka) ze źródłem
-- **wartość** — np. liczba wdrożeń, przebadanych pracowników, firm korzystających,
-- **podpis** — co ta liczba oznacza (np. „przebadanych pracowników w 2025”),
-- **źródło w pełnym brzmieniu** — np. „Dane wewnętrzne HRly, IV kw. 2025”. Bez źródła liczba nie idzie na stronę.
+Komponent jest gotowy i wyłączony. Logotypów i cytatów klientów **nie wymyślamy** — sekcja zostaje wyłączona do czasu pierwszych wdrożeń. Do rozważenia zamiast tego, bez udawania referencji (każda opcja wymaga tylko własnych treści):
+- **„Zespół i metoda”** — krótkie bio 2–3 osób stojących za produktem (imię i nazwisko, rola, doświadczenie, zdjęcie, zgoda) + jedno zdanie o metodologii z odesłaniem do źródeł z pkt 2. Zawartość: na stronie „O nas” są już nazwiska zespołu — potwierdzić, że mogą być użyte na stronie głównej.
+- **„Program pilotażowy”** — uczciwa informacja, że platforma jest w fazie pierwszych wdrożeń, z ofertą pilotażu (co dostaje firma pilotażowa, na jakich warunkach). Treść: 2–3 zdania + warunki.
+- **Liczba z własnych danych** — np. liczba przygotowanych pytań w kwestionariuszach, liczba obszarów i czynników (58 / 11 — to już jest), liczba przebadanych osób w pilotażu (gdy będzie). Zawsze ze źródłem „dane wewnętrzne HRly, data”.
+Kiedy pojawią się pierwsi klienci, wracamy do pierwotnego zakresu: 4–6 logotypów (SVG mono, nazwa, pisemna zgoda), 1 cytat (150–280 znaków, imię i nazwisko, stanowisko, firma, zgoda), 1 metryka ze źródłem.
 
 ---
 
@@ -65,10 +50,8 @@ Każda pozycja poniżej wymaga jednej z trzech decyzji: **(a) źródło** (tytu�
 
 ---
 
-## 3. Strony prawne (linki w stopce są dziś wyszarzone, bo stron nie ma)
-- **Polityka prywatności** — pełna treść (administrator danych, cele i podstawy, odbiorcy, okres przechowywania, prawa osób, cookies/analityka — na stronie działa Umami, formularz kontaktowy zapisuje leady).
-- **Regulamin** (usługi / okresu testowego) — pełna treść; musi zgadzać się z „14 dni testu bez karty”.
-Format: tekst (docx/markdown), z datą obowiązywania.
+## 3. Strony prawne — PROJEKTY GOTOWE do weryfikacji prawnika: `docs/prawne/polityka-prywatnosci.md` i `docs/prawne/regulamin.md`
+Oba dokumenty są napisane na podstawie faktycznego działania serwisu; pola `[…]` (KRS, NIP, adres, daty, terminy) i punkty `[DECYZJA]` wymagają uzupełnienia przez firmę, a całość — weryfikacji prawnika. Ważne: formularze na stronie dziś zapisują dane tylko w przeglądarce odwiedzającego (nie trafiają do firmy) — polityka opisuje to jako WARIANT A i zawiera WARIANT B na czas po podłączeniu formularzy.
 
 ---
 
