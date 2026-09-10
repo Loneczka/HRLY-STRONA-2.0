@@ -1,130 +1,103 @@
-import React, { useState, useMemo } from 'react';
-import { Search, BookOpen, Calendar, ChevronRight, Send, CircleCheck as CheckCircle, SquarePen as PenSquare } from 'lucide-react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { Search, BookOpen, Calendar, ChevronRight, ArrowLeft, Send, CircleCheck as CheckCircle, SquarePen as PenSquare, User } from 'lucide-react';
 import Button from './Button';
 import SectionLabel from './SectionLabel';
 import { loadConfig, addSubscriber, type BlogPost } from '../hooks/useSiteConfig';
 import { sanitizeHtml } from '../lib/sanitize';
 
 // ── Image fallback ────────────────────────────────────────────
-const FALLBACK_IMAGES = [
-  "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80",
-  "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&q=80",
-  "https://images.unsplash.com/photo-1552581230-c01bc9148c5b?auto=format&fit=crop&w=600&q=80",
-  "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=600&q=80",
-  "https://images.unsplash.com/photo-1531535934202-f022eed250c2?auto=format&fit=crop&w=600&q=80",
-];
+// Okładki importowane z WordPressa wskazują na /wp/wp-content/uploads/…, którego nie ma już na serwerze.
+// Gdy obrazek się nie załaduje, karta dostaje lokalną, brandową okładkę zastępczą (public/images/cover-*.svg) — bez zewnętrznych żądań.
+const FALLBACK_IMAGES = ['/images/cover-1.svg', '/images/cover-2.svg', '/images/cover-3.svg'];
 
-const getArticleImage = (post: BlogPost, idx: number) => {
-  if (post.imageUrl) return post.imageUrl;
-  return FALLBACK_IMAGES[idx % FALLBACK_IMAGES.length];
+const fallbackFor = (idx: number) => FALLBACK_IMAGES[Math.abs(idx) % FALLBACK_IMAGES.length];
+
+const getArticleImage = (post: BlogPost, idx: number) => post.imageUrl || fallbackFor(idx);
+
+const swapToFallback = (idx: number) => (e: React.SyntheticEvent<HTMLImageElement>) => {
+  const img = e.currentTarget;
+  if (img.dataset.fallback === '1') return;
+  img.dataset.fallback = '1';
+  img.src = fallbackFor(idx);
 };
 
-// ── Markdown → HTML (for article new tab) ─────────────────────
-function escapeHtml(s: string): string {
-  return s
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
-}
+// Tytuły z importu WordPress mają czasem podwójnie zakodowane encje („&amp;#8211;”).
+const decodeEntities = (s: string) =>
+  s.replace(/&amp;/g, '&').replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(Number(n))).replace(/&ndash;/g, '–').replace(/&mdash;/g, '—').replace(/&quot;/g, '"');
 
-function parseInlineToHtml(text: string): string {
-  const regex = /(!?\[[^\]]*\]\([^)]*\)|\*\*[^*]+\*\*|\*[^*]+\*)/g;
-  const tokens = text.split(regex);
-  return tokens.map((token) => {
-    if (token.startsWith('![') && token.includes('](')) {
-      const alt = (token.match(/!\[([^\]]*)\]/) || [])[1] || '';
-      const url = (token.match(/\(([^)]*)\)/) || [])[1] || '';
-      return `<img src="${escapeHtml(url)}" alt="${escapeHtml(alt)}" referrerpolicy="no-referrer" />`;
-    } else if (token.startsWith('[') && token.includes('](')) {
-      const label = (token.match(/\[([^\]]*)\]/) || [])[1] || '';
-      const url = (token.match(/\(([^)]*)\)/) || [])[1] || '';
-      return `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(label)}</a>`;
-    } else if (token.startsWith('**') && token.endsWith('**')) {
-      return `<strong>${escapeHtml(token.slice(2, -2))}</strong>`;
-    } else if (token.startsWith('*') && token.endsWith('*')) {
-      return `<em>${escapeHtml(token.slice(1, -1))}</em>`;
-    }
-    return escapeHtml(token);
-  }).join('');
-}
+const formatDate = (iso: string, style: 'short' | 'long' = 'short') =>
+  new Date(iso).toLocaleDateString('pl-PL', { year: 'numeric', month: style, day: 'numeric' });
 
-function markdownToHtml(md: string): string {
-  if (!md) return '';
-  const lines = md.split('\n');
-  const out: string[] = [];
-  let list: string[] = [];
-  const flush = () => {
-    if (list.length) { out.push(`<ul>${list.join('')}</ul>`); list = []; }
-  };
-  for (const raw of lines) {
-    const line = raw.trim();
-    if (line.startsWith('## ')) { flush(); out.push(`<h2>${parseInlineToHtml(line.slice(3))}</h2>`); }
-    else if (line.startsWith('### ')) { flush(); out.push(`<h3>${parseInlineToHtml(line.slice(4))}</h3>`); }
-    else if (line.startsWith('- ') || line.startsWith('* ')) { list.push(`<li>${parseInlineToHtml(line.slice(2))}</li>`); }
-    else if (line.startsWith('> ')) { flush(); out.push(`<blockquote>${parseInlineToHtml(line.slice(2))}</blockquote>`); }
-    else if (line === '') { flush(); }
-    else { flush(); out.push(`<p>${parseInlineToHtml(line)}</p>`); }
-  }
-  flush();
-  return out.join('\n');
-}
+// ── Article view (in-app, replaces the old window.open popup) ──
+function ArticleView({ post, index, onBack }: { post: BlogPost; index: number; onBack: () => void }) {
+  useEffect(() => {
+    const previousTitle = document.title;
+    document.title = `${decodeEntities(post.seoTitle || post.title)} · HRly`;
+    window.scrollTo({ top: 0 });
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onBack(); };
+    window.addEventListener('keydown', onKey);
+    return () => { document.title = previousTitle; window.removeEventListener('keydown', onKey); };
+  }, [post, onBack]);
 
-function openArticleInNewTab(post: BlogPost) {
-  const win = window.open('', '_blank');
-  if (!win) return;
-  const title = escapeHtml(post.seoTitle || post.title);
-  const html = `<!doctype html>
-<html lang="pl">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>${title} · HRly</title>
-<meta name="description" content="${escapeHtml(post.seoDescription || post.excerpt)}" />
-<style>
-  :root { color-scheme: light; }
-  * { box-sizing: border-box; }
-  body { margin: 0; background: #FBFAF8; color: #55506E; font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; line-height: 1.7; }
-  .wrap { max-width: 760px; margin: 0 auto; padding: 32px 20px 80px; }
-  .brand { font-weight: 800; font-size: 20px; letter-spacing: -0.03em; color: #14183D; text-transform: lowercase; margin-bottom: 28px; display: inline-block; text-decoration: none; }
-  .cover { width: 100%; aspect-ratio: 21/9; object-fit: cover; border-radius: 18px; border: 1px solid #EFEAE1; margin: 8px 0 24px; }
-  .meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; font-size: 12px; color: #A39AB4; margin-bottom: 12px; }
-  .cat { text-transform: uppercase; font-weight: 700; letter-spacing: .12em; color: #3B2F8C; background: #E3DEEE; padding: 3px 10px; border-radius: 999px; font-size: 10px; }
-  h1 { font-size: clamp(26px, 5vw, 38px); font-weight: 800; letter-spacing: -0.03em; color: #14183D; line-height: 1.2; margin: 0 0 16px; }
-  h2 { font-size: 22px; font-weight: 700; color: #14183D; margin: 36px 0 10px; }
-  h3 { font-size: 17px; font-weight: 600; color: #14183D; margin: 28px 0 8px; }
-  p { margin: 0 0 16px; }
-  ul { padding-left: 20px; margin: 0 0 16px; }
-  li { margin-bottom: 6px; }
-  blockquote { border-left: 4px solid #3B2F8C; margin: 24px 0; padding: 12px 20px; background: #F0EDFA; border-radius: 0 8px 8px 0; font-style: italic; }
-  img { max-width: 100%; border-radius: 12px; margin: 16px 0; }
-  a { color: #3B2F8C; }
-  strong { color: #14183D; }
-  .tag { display: inline-block; background: #E3DEEE; color: #3B2F8C; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 999px; margin: 2px; }
-</style>
-</head>
-<body>
-<div class="wrap">
-  <a class="brand" href="/" target="_self">hrly</a>
-  ${post.imageUrl ? `<img class="cover" src="${escapeHtml(post.imageUrl)}" alt="${escapeHtml(post.title)}" loading="eager" decoding="async" />` : ''}
-  <div class="meta">
-    <span class="cat">${escapeHtml(post.category)}</span>
-    <span>✍️ ${escapeHtml(post.author)}</span>
-    <span>📅 ${new Date(post.publishedAt).toLocaleDateString('pl-PL', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
-  </div>
-  <h1>${escapeHtml(post.title)}</h1>
-  <p style="font-size:18px;color:#6B6484;margin-bottom:32px;">${escapeHtml(post.excerpt)}</p>
-  ${sanitizeHtml(post.content)}
-  <div style="margin-top:32px;">
-    ${(post.tags || []).map((t) => `<span class="tag">#${escapeHtml(t)}</span>`).join('')}
-  </div>
-  <hr style="margin:40px 0;border:none;border-top:1px solid #EFEAE1;" />
-  <p style="font-size:13px;color:#A39AB4;">© ${new Date().getFullYear()} HRly. Wszelkie prawa zastrzeżone.</p>
-</div>
-</body>
-</html>`;
-  win.document.write(html);
-  win.document.close();
+  const html = useMemo(() => sanitizeHtml(post.content), [post.content]);
+
+  return (
+    <section id="blog" className="py-12 sm:py-16 bg-neutral-bg">
+      <article className="max-w-[800px] mx-auto px-6">
+        <div className="mb-8">
+          <Button variant="ghost" size="md" icon={undefined} onClick={onBack} className="-ml-5">
+            <span className="inline-flex items-center gap-2"><ArrowLeft className="w-4 h-4" aria-hidden="true" />Wszystkie artykuły</span>
+          </Button>
+        </div>
+
+        <header className="mb-8">
+          <div className="flex flex-wrap items-center gap-3 mb-5">
+            <span className="bg-primary-light/60 text-indigo-primary border border-border-indigo/35 type-label font-mono uppercase px-3 py-1.5 rounded-full">
+              {post.category}
+            </span>
+            <span className="flex items-center gap-1.5 type-label font-mono text-muted-purple normal-case">
+              <Calendar size={12} aria-hidden="true" />
+              {formatDate(post.publishedAt, 'long')}
+            </span>
+            {post.author ? (
+              <span className="flex items-center gap-1.5 type-label font-mono text-muted-purple normal-case">
+                <User size={12} aria-hidden="true" />
+                {post.author}
+              </span>
+            ) : null}
+          </div>
+          <h1 className="type-h2 font-display text-text-dark">{decodeEntities(post.title)}</h1>
+          {post.excerpt ? <p className="type-body-lg text-muted-purple mt-4">{decodeEntities(post.excerpt)}</p> : null}
+        </header>
+
+        <div className="relative aspect-[21/9] overflow-hidden rounded-3xl border border-border-soft mb-10 bg-primary-faint">
+          <img
+            src={getArticleImage(post, index)}
+            alt=""
+            decoding="async"
+            onError={swapToFallback(index)}
+            className="w-full h-full object-cover block"
+          />
+        </div>
+
+        <div className="article-body" dangerouslySetInnerHTML={{ __html: html }} />
+
+        {post.tags && post.tags.length > 0 ? (
+          <ul className="flex flex-wrap gap-2 mt-10" aria-label="Tagi">
+            {post.tags.map((t) => (
+              <li key={t} className="bg-primary-light/60 text-indigo-primary type-label font-mono px-3 py-1.5 rounded-full">#{t}</li>
+            ))}
+          </ul>
+        ) : null}
+
+        <div className="mt-12 pt-8 border-t border-border-soft">
+          <Button variant="secondary" size="md" onClick={onBack}>
+            <span className="inline-flex items-center gap-2"><ArrowLeft className="w-4 h-4" aria-hidden="true" />Wróć do bazy wiedzy</span>
+          </Button>
+        </div>
+      </article>
+    </section>
+  );
 }
 
 // ── Newsletter Component ──────────────────────────────────────
@@ -190,6 +163,7 @@ function NewsletterBox() {
 export default function HrlyBlogSection() {
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState('Wszystkie');
+  const [openPost, setOpenPost] = useState<{ post: BlogPost; index: number } | null>(null);
 
   // Load published posts from CMS (localStorage)
   const allPosts = useMemo(() => {
@@ -214,9 +188,11 @@ export default function HrlyBlogSection() {
     });
   }, [allPosts, activeCategory, search]);
 
-  const handleCardClick = (post: BlogPost) => {
-    openArticleInNewTab(post);
-  };
+  const closeArticle = React.useCallback(() => setOpenPost(null), []);
+
+  if (openPost) {
+    return <ArticleView post={openPost.post} index={openPost.index} onBack={closeArticle} />;
+  }
 
   // Empty state
   if (allPosts.length === 0) {
@@ -299,16 +275,16 @@ export default function HrlyBlogSection() {
             {filtered.map((post, idx) => (
               <article
                 key={post.id}
-                onClick={() => handleCardClick(post)}
-                className="bg-neutral-surface rounded-2xl border border-border-indigo overflow-hidden cursor-pointer shadow-sm transition-[transform,box-shadow] duration-200 hover:-translate-y-1 hover:shadow-xl flex flex-col"
+                className="bg-neutral-surface rounded-2xl border border-border-indigo overflow-hidden shadow-sm transition-[transform,box-shadow] duration-200 hover:-translate-y-1 hover:shadow-xl flex flex-col relative"
               >
                 {/* Cover image */}
-                <div className="relative aspect-video overflow-hidden">
+                <div className="relative aspect-video overflow-hidden bg-primary-faint">
                   <img
                     src={getArticleImage(post, idx)}
-                    alt={post.title}
+                    alt=""
                     loading="lazy"
                     decoding="async"
+                    onError={swapToFallback(idx)}
                     className="w-full h-full object-cover block"
                   />
                   <span className="absolute top-3 left-3 bg-indigo-primary text-white type-label font-mono uppercase px-2.5 py-1 rounded-full">
@@ -319,18 +295,25 @@ export default function HrlyBlogSection() {
                 {/* Content */}
                 <div className="p-5 flex flex-col flex-1">
                   <h3 className="type-h3 font-display text-text-dark mb-2">
-                    {post.title}
+                    {/* Cała karta klikalna przez rozciągnięty link; sam <a> ma wysokość tytułu. */}
+                    <a
+                      href="#blog"
+                      onClick={(e) => { e.preventDefault(); setOpenPost({ post, index: idx }); }}
+                      className="after:absolute after:inset-0 after:content-[''] hover:text-indigo-primary transition-colors"
+                    >
+                      {decodeEntities(post.title)}
+                    </a>
                   </h3>
                   <p className="type-body-sm text-muted-purple mb-4 line-clamp-3">
-                    {post.excerpt}
+                    {decodeEntities(post.excerpt)}
                   </p>
                   <div className="flex items-center justify-between gap-3 mt-auto type-label font-mono">
                     <span className="flex items-center gap-1.5 text-muted-purple normal-case">
                       <Calendar size={12} aria-hidden="true" />
-                      {new Date(post.publishedAt).toLocaleDateString('pl-PL', { year: 'numeric', month: 'short', day: 'numeric' })}
+                      {formatDate(post.publishedAt)}
                     </span>
-                    <span className="flex items-center gap-1 text-indigo-primary font-bold">
-                      Czytaj dalej <ChevronRight size={14} aria-hidden="true" />
+                    <span className="flex items-center gap-1 text-indigo-primary font-bold" aria-hidden="true">
+                      Czytaj dalej <ChevronRight size={14} />
                     </span>
                   </div>
                 </div>

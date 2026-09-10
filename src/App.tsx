@@ -1818,7 +1818,7 @@ export default function App() {
                   <div className="space-y-4">
                     {/* Etykieta sekcji 01 (numeracja per trasa; numer dokłada SectionLabel) */}
                     <SectionLabel number="01">BEZPOŚREDNI KONTAKT</SectionLabel>
-                    <h1 className="font-display type-display text-text-dark uppercase">
+                    <h1 className="font-display type-h2 text-text-dark uppercase">
                       Porozmawiajmy o{' '}
                       <span className="text-indigo-primary">zaangażowaniu</span>
                     </h1>

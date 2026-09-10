@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-label="">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3B2F8C"/><stop offset="1" stop-color="#14183D"/></linearGradient>
+<pattern id="dots" width="28" height="28" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.6" fill="#F4A574" fill-opacity="0.35"/></pattern></defs>
+<rect width="1200" height="675" fill="url(#g)"/><rect width="1200" height="675" fill="url(#dots)"/>
+<g transform="translate(600 337)" fill="none" stroke="#F4A574"><circle r="150" stroke-width="6" stroke-opacity="0.35"/><circle r="100" stroke-width="8" stroke-opacity="0.6"/><circle r="54" stroke-width="10"/><circle r="16" fill="#F4A574" stroke="none"/></g>
+</svg>
